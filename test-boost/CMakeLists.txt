@@ -8,13 +8,22 @@ project( test-boost )
 # Office-Umgebung hat 2.8
 cmake_minimum_required(VERSION 3.2)
 
-set( CMAKE_CXX_STANDARD 14 )
-add_compile_options( -std=c++0x )
-set( CXX11_SUPPORT TRUE )
 
-set( BOOST_ROOT "$ENV{HOME}/dev/devlibs/boost_1_64_0" )
-set( BOOST_ROOT "$ENV{HOME}/Sub_SW_S54S51/trunk/ext/boost_1_55_0" )
-set( BOOST_ROOT "D:/Raba/lib/boost_1_55_0" )
+if ( IS_DIRECTORY "$ENV{HOME}/dev/devlibs/boost_1_64_0" )
+  message( "Mac oder neues Linux" )
+  set( CMAKE_CXX_STANDARD 14 )
+  set( BOOST_ROOT "$ENV{HOME}/dev/devlibs/boost_1_64_0" )
+elseif ( IS_DIRECTORY "$ENV{HOME}/Sub_SW_S54S51/trunk/ext/boost_1_55_0" )
+  message( "Altes Linux" )
+  add_compile_options( -std=c++0x )
+  set( BOOST_ROOT "$ENV{HOME}/Sub_SW_S54S51/trunk/ext/boost_1_55_0" )
+elseif ( IS_DIRECTORY "D:/Raba/lib/boost_1_55_0" )
+  message( "Windows" )
+  set( CXX11_SUPPORT TRUE )
+  set( BOOST_ROOT "D:/Raba/lib/boost_1_55_0" )
+else()
+  message( FATAL_ERROR "BOOST_ROOT not found" )
+endif()
 
 set( Boost_USE_STATIC_LIBS ON )
 
