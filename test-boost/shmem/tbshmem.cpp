@@ -41,7 +41,7 @@ const TestDataA& Generator<TestDataA>::next() {
 	return data;
 }
 
-static constexpr auto SLEEP = boost::chrono::microseconds(20000);
+static constexpr auto SLEEP = boost::chrono::microseconds(200000);
 rtest::MsgCollector COLL;
 
 template<typename DATA, typename ID = ShmDefaultId>
@@ -90,10 +90,7 @@ struct Reader: ShmReader<DATA, ID> {
 			do {
 				typename ShmReader<DATA, ID>::time_point_type dtime;
 				{
-					bip::scoped_lock<bip::interprocess_sharable_mutex> lck(
-							ShmReader<DATA, ID>::fptr->mutex);
-					ShmReader<DATA, ID>::fptr->cond.wait(lck);
-					data = ShmReader<DATA, ID>::getNoLock();
+					data = ShmReader<DATA, ID>::timed_wait_for( boost::posix_time::microsec(1000000) );
 					dtime = ShmReader<DATA, ID>::fptr->timestamp;
 				}
 				std::ostringstream os;
