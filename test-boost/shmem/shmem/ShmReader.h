@@ -11,6 +11,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/posix_time/posix_time_duration.hpp>
 #include <boost/date_time/microsec_time_clock.hpp>
+#include <boost/interprocess/sync/sharable_lock.hpp>
 #include "shmem.h"
 
 namespace rshm {
