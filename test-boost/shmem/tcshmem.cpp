@@ -93,7 +93,7 @@ int main(int argc, char** argv) {
 		}
 
 		//
-		// Writer
+		// Reader
 		//
 		if (arg == "r") {
 			COLL << "Starting reader";
@@ -126,7 +126,6 @@ int main(int argc, char** argv) {
 	} catch (bip::interprocess_exception &ex) {
 		COLL << boost::format("BIP error: %1%") % ex.what();
 	}
-	COLL.finalize();
 	return 0;
 }
 
