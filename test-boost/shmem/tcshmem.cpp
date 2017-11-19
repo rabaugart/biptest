@@ -21,17 +21,21 @@ namespace bip = boost::interprocess;
 
 rtest::MsgCollector COLL;
 
+#if 0
 typedef bip::string ipstring;
-
-static const ipstring SH_NAME{"myshared"};
+static const ipstring SH_NAME_C{"myshared"};
+#define SH_NAME_S SH_NAME_C.c_str()
+#else
+#define SH_NAME_S "myshared"
+#endif
 
 //Erase previous shared memory and schedule erasure on exit
 struct shm_remove {
 	shm_remove() {
-		bip::shared_memory_object::remove(SH_NAME.c_str());
+		bip::shared_memory_object::remove(SH_NAME_S);
 	}
 	~shm_remove() {
-		bip::shared_memory_object::remove(SH_NAME.c_str());
+		bip::shared_memory_object::remove(SH_NAME_S);
 	}
 };
 
@@ -62,7 +66,7 @@ int main(int argc, char** argv) {
 			shm_remove remover;
 			//Create a shared memory object.
 			bip::shared_memory_object shm(bip::create_only         //only create
-					, SH_NAME.c_str()           //name
+					, SH_NAME_S           //name
 					, bip::read_write                //read-write mode
 					);
 
@@ -99,7 +103,7 @@ int main(int argc, char** argv) {
 			COLL << "Starting reader";
 			//Create a shared memory object.
 			bip::shared_memory_object shm(bip::open_only         //only open
-					, SH_NAME.c_str()           //name
+					, SH_NAME_S           //name
 					, bip::read_write                //read-write mode
 					);
 
