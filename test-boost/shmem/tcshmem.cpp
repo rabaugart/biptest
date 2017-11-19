@@ -14,7 +14,9 @@
 #include <boost/interprocess/sync/interprocess_sharable_mutex.hpp>
 #include <boost/interprocess/sync/interprocess_condition_any.hpp>
 #include <boost/interprocess/containers/string.hpp>
+#include <boost/process.hpp>
 #include <boost/format.hpp>
+#include <boost/asio.hpp>
 #include "test/MsgCollector.h"
 
 namespace bip = boost::interprocess;
@@ -49,10 +51,11 @@ struct test_data {
 };
 
 static constexpr auto SLEEP = boost::chrono::microseconds(100000);
-static constexpr unsigned long long COUNT = 200;
+static constexpr unsigned long long COUNT = 100;
 static constexpr size_t READ_COUNT = 40;
 
 int main(int argc, char** argv) {
+	const std::string prog = argv[0];
 	const std::string arg = argc > 1 ? argv[1] : "w";
 	rtest::MsgCollector COLL;
 
@@ -127,6 +130,39 @@ int main(int argc, char** argv) {
 			}
 
 		}
+
+		//
+		// Subprocesses
+		//
+		if ( arg == "a" ) {
+			COLL << "Starting subprocesses";
+
+			namespace bp = boost::process;
+
+			boost::asio::io_service ios;
+
+			std::future<std::string> dataw;
+
+			bp::child cw(prog, "w", //set the input
+			        bp::std_in.close(),
+			        bp::std_out > dataw, //so it can be written without anything
+			        bp::std_err > bp::null,
+			        ios);
+
+			std::future<std::string> datar;
+
+			bp::child cr(prog, "r", //set the input
+			        bp::std_in.close(),
+			        bp::std_out > datar, //so it can be written without anything
+			        bp::std_err > bp::null,
+			        ios);
+
+			ios.run(); //this will actually block until the compiler is finished
+
+			std::cout << dataw.get() << std::endl;
+			std::cout << datar.get() << std::endl;
+		}
+
 	} catch (bip::interprocess_exception &ex) {
 		COLL << boost::format("BIP error: %1%") % ex.what();
 	}
