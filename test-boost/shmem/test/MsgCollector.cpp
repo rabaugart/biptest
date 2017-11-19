@@ -10,13 +10,13 @@
 namespace rtest {
 
 MsgCollector::MsgCollector() : outThread(std::ref(*this)), running(true) {
-	outThread.detach();
 }
 
 void MsgCollector::finalize() {
 	if (running) {
 		running = false;
 		*this << "Finished";
+		outThread.join();
 		std::unique_lock<std::mutex> lck(mtx);
 		if (!mqueue.empty()) {
 			const auto msg = mqueue.front();

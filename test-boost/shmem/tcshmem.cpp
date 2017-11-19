@@ -19,7 +19,6 @@
 
 namespace bip = boost::interprocess;
 
-rtest::MsgCollector COLL;
 
 #if 0
 typedef bip::string ipstring;
@@ -55,6 +54,7 @@ static constexpr size_t READ_COUNT = 40;
 
 int main(int argc, char** argv) {
 	const std::string arg = argc > 1 ? argv[1] : "w";
+	rtest::MsgCollector COLL;
 
 	try {
 
