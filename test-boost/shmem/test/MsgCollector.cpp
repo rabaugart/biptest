@@ -14,15 +14,16 @@ MsgCollector::MsgCollector() : outThread(std::ref(*this)), running(true) {
 }
 
 void MsgCollector::finalize() {
-	running = false;
-	*this << "Finished";
-	std::unique_lock<std::mutex> lck(mtx);
-	if ( !mqueue.empty() ) {
-		const auto msg = mqueue.front();
-		mqueue.pop();
-		std::cout << msg.first << " " << msg.second << "\n";
+	if (running) {
+		running = false;
+		*this << "Finished";
+		std::unique_lock<std::mutex> lck(mtx);
+		if (!mqueue.empty()) {
+			const auto msg = mqueue.front();
+			mqueue.pop();
+			std::cout << msg.first << " " << msg.second << "\n";
+		}
 	}
-	//outThread.join();
 }
 
 void MsgCollector::operator ()() {
@@ -43,6 +44,10 @@ MsgCollector& MsgCollector::operator<<( const std::string& s )
 	mqueue.push(std::make_pair(boost::posix_time::microsec_clock::local_time(),s));
 	cond.notify_all();
 	return *this;
+}
+
+MsgCollector::~MsgCollector() {
+	finalize();
 }
 
 MsgCollector& MsgCollector::operator<<( const boost::format& bf )

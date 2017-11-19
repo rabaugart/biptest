@@ -21,6 +21,7 @@ namespace rtest {
 class MsgCollector {
 public:
 	MsgCollector();
+	~MsgCollector();
 
 	void operator()();
 
