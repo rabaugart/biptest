@@ -35,6 +35,7 @@ protected:
 	std::condition_variable cond;
 	std::queue<std::pair<boost::posix_time::ptime,std::string>> mqueue;
 	std::thread outThread;
+	bool running;
 };
 
 } /* namespace rtest */

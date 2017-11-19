@@ -9,21 +9,24 @@
 
 namespace rtest {
 
-MsgCollector::MsgCollector() : outThread(std::ref(*this)){
+MsgCollector::MsgCollector() : outThread(std::ref(*this)), running(true) {
 	outThread.detach();
 }
 
 void MsgCollector::finalize() {
+	running = false;
+	*this << "Finished";
 	std::unique_lock<std::mutex> lck(mtx);
 	if ( !mqueue.empty() ) {
 		const auto msg = mqueue.front();
 		mqueue.pop();
 		std::cout << msg.first << " " << msg.second << "\n";
 	}
+	//outThread.join();
 }
 
 void MsgCollector::operator ()() {
-	while (true) {
+	while (running) {
 		std::unique_lock<std::mutex> lck(mtx);
 		cond.wait(lck);
 		if ( !mqueue.empty() ) {

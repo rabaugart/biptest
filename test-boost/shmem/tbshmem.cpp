@@ -41,7 +41,8 @@ const TestDataA& Generator<TestDataA>::next() {
 	return data;
 }
 
-static constexpr auto SLEEP = boost::chrono::microseconds(200000);
+static constexpr boost::chrono::microseconds SLEEP(100000);
+static const boost::posix_time::microseconds TIMEOUT(10000000);
 rtest::MsgCollector COLL;
 
 template<typename DATA, typename ID = ShmDefaultId>
@@ -90,7 +91,7 @@ struct Reader: ShmReader<DATA, ID> {
 			do {
 				typename ShmReader<DATA, ID>::time_point_type dtime;
 				{
-					data = ShmReader<DATA, ID>::timed_wait_for( boost::posix_time::microsec(1000000) );
+					data = ShmReader<DATA, ID>::timed_wait_for( TIMEOUT );
 					dtime = ShmReader<DATA, ID>::fptr->timestamp;
 				}
 				std::ostringstream os;

@@ -116,10 +116,9 @@ int main(int argc, char** argv) {
 
 			for (size_t i = 0; i < READ_COUNT; i++) {
 				{
-					bip::sharable_lock<bip::interprocess_sharable_mutex> lock(data->mutex);
+					bip::scoped_lock<bip::interprocess_sharable_mutex> lock(data->mutex);
 					data->cond_written.wait(lock);
 					COLL << boost::format("Read %1%/%2%: %3%") % i % READ_COUNT % data->value;
-					lock.unlock();
 				}
 			}
 
