@@ -102,8 +102,8 @@ int main(int argc, char** argv) {
 		//
 		// Reader
 		//
-		if (arg == "r") {
-			COLL << "Starting reader";
+		if (arg[0] == 'r') {
+			COLL << boost::format("Starting reader %1%") % arg;
 			//Create a shared memory object.
 			bip::shared_memory_object shm(bip::open_only         //only open
 					, SH_NAME_S           //name
@@ -125,7 +125,7 @@ int main(int argc, char** argv) {
 				{
 					bip::scoped_lock<bip::interprocess_sharable_mutex> lock(data->mutex);
 					data->cond_written.wait(lock);
-					COLL << boost::format("Read %1%/%2%: %3%") % i % READ_COUNT % data->value;
+					COLL << boost::format("Read %1% %2%/%3%: %4%") % arg % i % READ_COUNT % data->value;
 				}
 			}
 
@@ -142,7 +142,6 @@ int main(int argc, char** argv) {
 			boost::asio::io_service ios;
 
 			std::future<std::string> dataw;
-
 			bp::child cw(prog, "w", //set the input
 			        bp::std_in.close(),
 			        bp::std_out > dataw, //so it can be written without anything
@@ -150,14 +149,16 @@ int main(int argc, char** argv) {
 			        ios);
 
 			std::future<std::string> datar;
-
-			bp::child cr(prog, "r", //set the input
+			bp::child cr(prog, "r1", //set the input
 			        bp::std_in.close(),
 			        bp::std_out > datar, //so it can be written without anything
 			        bp::std_err > bp::null,
 			        ios);
 
 			ios.run(); //this will actually block until the compiler is finished
+
+			cw.wait();
+			cr.wait();
 
 			std::cout << dataw.get() << std::endl;
 			std::cout << datar.get() << std::endl;
