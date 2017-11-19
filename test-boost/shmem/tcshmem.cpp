@@ -22,7 +22,7 @@
 namespace bip = boost::interprocess;
 
 
-#if 0
+#if 1
 typedef bip::string ipstring;
 static const ipstring SH_NAME_C{"myshared"};
 #define SH_NAME_S SH_NAME_C.c_str()
@@ -58,6 +58,8 @@ int main(int argc, char** argv) {
 	const std::string prog = argv[0];
 	const std::string arg = argc > 1 ? argv[1] : "w";
 	rtest::MsgCollector COLL;
+
+	int retval = 0;
 
 	try {
 
@@ -128,7 +130,6 @@ int main(int argc, char** argv) {
 					COLL << boost::format("Read %1% %2%/%3%: %4%") % arg % i % READ_COUNT % data->value;
 				}
 			}
-
 		}
 
 		//
@@ -158,7 +159,15 @@ int main(int argc, char** argv) {
 			ios.run(); //this will actually block until the compiler is finished
 
 			cw.wait();
+			if ( cw.exit_code() ) {
+				COLL << boost::format( "Writer error %1%" ) % cw.exit_code();
+				retval = 1;
+			}
 			cr.wait();
+			if ( cr.exit_code() ) {
+				COLL << boost::format( "Reader error %1%" ) % cr.exit_code();
+				retval = 1;
+			}
 
 			std::cout << dataw.get() << std::endl;
 			std::cout << datar.get() << std::endl;
@@ -167,6 +176,6 @@ int main(int argc, char** argv) {
 	} catch (bip::interprocess_exception &ex) {
 		COLL << boost::format("BIP error: %1%") % ex.what();
 	}
-	return 0;
+	return retval;
 }
 
