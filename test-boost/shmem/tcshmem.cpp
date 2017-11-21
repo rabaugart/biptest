@@ -5,6 +5,7 @@
  *      Author: netz
  */
 
+#include <algorithm>
 #include <boost/chrono.hpp>
 #include <boost/thread/thread.hpp>
 #include <boost/interprocess/shared_memory_object.hpp>
@@ -14,9 +15,11 @@
 #include <boost/interprocess/sync/interprocess_sharable_mutex.hpp>
 #include <boost/interprocess/sync/interprocess_condition_any.hpp>
 #include <boost/interprocess/containers/string.hpp>
+#include <boost/algorithm/string/regex.hpp>
 #include <boost/process.hpp>
 #include <boost/format.hpp>
 #include <boost/asio.hpp>
+#include <boost/regex.hpp>
 #include "test/MsgCollector.h"
 
 namespace bip = boost::interprocess;
@@ -106,6 +109,7 @@ int main(int argc, char** argv) {
 		//
 		if (arg[0] == 'r') {
 			COLL << boost::format("Starting reader %1%") % arg;
+			boost::this_thread::sleep_for( boost::chrono::milliseconds(500) );
 			//Create a shared memory object.
 			bip::shared_memory_object shm(bip::open_only         //only open
 					, SH_NAME_S           //name
@@ -142,6 +146,13 @@ int main(int argc, char** argv) {
 
 			boost::asio::io_service ios;
 
+			struct com_proc {
+				com_proc( const std::string & prog, const std::string& arg, boost::asio::io_service& ios )
+					: proc(prog,arg,bp::std_in.close(),bp::std_out > data,bp::std_err > bp::null,ios) {}
+				std::future<std::string> data;
+				bp::child proc;
+			};
+
 			std::future<std::string> dataw;
 			bp::child cw(prog, "w", //set the input
 			        bp::std_in.close(),
@@ -169,8 +180,16 @@ int main(int argc, char** argv) {
 				retval = 1;
 			}
 
-			std::cout << dataw.get() << std::endl;
-			std::cout << datar.get() << std::endl;
+			std::vector<std::string> rw;
+			const boost::regex rx("\n");
+			boost::algorithm::split_regex(rw, dataw.get(), rx );
+			std::vector<std::string> rr;
+			boost::algorithm::split_regex(rr, datar.get(), rx );
+			std::for_each( rr.begin(), rr.end(), [&rw]( const std::string &i) { rw.push_back(i);});
+			std::sort( rw.begin(), rw.end() );
+			for ( auto const & i : rw ) {
+				std::cout << i << std::endl;
+			}
 		}
 
 	} catch (bip::interprocess_exception &ex) {

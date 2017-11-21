@@ -27,7 +27,7 @@ endif()
 
 set( Boost_USE_STATIC_LIBS ON )
 
-find_package(Boost COMPONENTS program_options system filesystem thread chrono )
+find_package(Boost COMPONENTS program_options system filesystem thread chrono regex )
 
 message( STATUS "Boost ${Boost_PROGRAM_OPTIONS_LIBRARY}" )
 
@@ -49,6 +49,9 @@ set_target_properties( boost_thread PROPERTIES IMPORTED_LOCATION ${Boost_THREAD_
 
 add_library( boost_chrono STATIC IMPORTED )
 set_target_properties( boost_chrono PROPERTIES IMPORTED_LOCATION ${Boost_CHRONO_LIBRARY} )
+
+add_library( boost_regex STATIC IMPORTED )
+set_target_properties( boost_regex PROPERTIES IMPORTED_LOCATION ${Boost_REGEX_LIBRARY} )
 
 add_subdirectory( tprocess )
 add_subdirectory( shmem )
