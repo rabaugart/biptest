@@ -148,46 +148,38 @@ int main(int argc, char** argv) {
 
 			struct com_proc {
 				com_proc( const std::string & prog, const std::string& arg, boost::asio::io_service& ios )
-					: proc(prog,arg,bp::std_in.close(),bp::std_out > data,bp::std_err > bp::null,ios) {}
+					: proc(prog,arg,bp::std_in.close(),bp::std_out > data,bp::std_err > bp::null,ios), name(arg), rx("\n") {}
+
+				void append( std::vector<std::string>& v ) {
+					std::vector<std::string> rr;
+					boost::algorithm::split_regex(rr, data.get(), rx );
+					std::for_each( rr.begin(), rr.end(), [&v]( const std::string &i) { v.push_back(i);});
+				}
 				std::future<std::string> data;
 				bp::child proc;
+				const std::string name;
+				const boost::regex rx;
 			};
 
-			std::future<std::string> dataw;
-			bp::child cw(prog, "w", //set the input
-			        bp::std_in.close(),
-			        bp::std_out > dataw, //so it can be written without anything
-			        bp::std_err > bp::null,
-			        ios);
+			std::vector<com_proc> procs;
+			procs.emplace_back( prog, "w", ios );
+			procs.emplace_back( prog, "r1", ios );
+			//procs.emplace_back( prog, "r2", ios );
 
-			std::future<std::string> datar;
-			bp::child cr(prog, "r1", //set the input
-			        bp::std_in.close(),
-			        bp::std_out > datar, //so it can be written without anything
-			        bp::std_err > bp::null,
-			        ios);
+			ios.run(); //this will actually block until the subprocs are finished
 
-			ios.run(); //this will actually block until the compiler is finished
-
-			cw.wait();
-			if ( cw.exit_code() ) {
-				COLL << boost::format( "Writer error %1%" ) % cw.exit_code();
-				retval = 1;
-			}
-			cr.wait();
-			if ( cr.exit_code() ) {
-				COLL << boost::format( "Reader error %1%" ) % cr.exit_code();
-				retval = 1;
+			std::vector<std::string> suboutputs;
+			for ( auto& i : procs ) {
+				i.proc.wait();
+				if ( i.proc.exit_code() ) {
+					std::cout << boost::format( "Error %1%: %2%\n") % i.name % i.proc.exit_code();
+					retval = 1;
+				}
+				i.append( suboutputs );
 			}
 
-			std::vector<std::string> rw;
-			const boost::regex rx("\n");
-			boost::algorithm::split_regex(rw, dataw.get(), rx );
-			std::vector<std::string> rr;
-			boost::algorithm::split_regex(rr, datar.get(), rx );
-			std::for_each( rr.begin(), rr.end(), [&rw]( const std::string &i) { rw.push_back(i);});
-			std::sort( rw.begin(), rw.end() );
-			for ( auto const & i : rw ) {
+			std::sort( suboutputs.begin(), suboutputs.end() );
+			for ( auto const & i : suboutputs ) {
 				std::cout << i << std::endl;
 			}
 		}
