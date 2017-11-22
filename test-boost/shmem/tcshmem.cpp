@@ -44,9 +44,11 @@ struct shm_remove {
 };
 
 struct test_data {
+
+	typedef boost::interprocess::interprocess_mutex mutex_type;
 	unsigned long long value;
 	//Mutex to protect access to the data
-	boost::interprocess::interprocess_sharable_mutex mutex;
+	mutex_type mutex;
 
 	//Condition to wait when the has been written
 	boost::interprocess::interprocess_condition_any cond_written;
@@ -102,7 +104,7 @@ int main(int argc, char** argv) {
 			for (unsigned long long i = 0; i < COUNT; i++) {
 				boost::this_thread::sleep_until(start + (i+1)*SLEEP);
 				{
-					bip::scoped_lock<bip::interprocess_sharable_mutex> lock(data->mutex);
+					bip::scoped_lock<test_data::mutex_type> lock(data->mutex);
 					data->value = i;
 					COLL << boost::format( "Writing %1%/%2%" ) % i % COUNT;
 					data->cond_written.notify_all();
@@ -135,7 +137,7 @@ int main(int argc, char** argv) {
 
 			for (size_t i = 0; i < READ_COUNT; i++) {
 				{
-					bip::scoped_lock<bip::interprocess_sharable_mutex> lock(data->mutex);
+					bip::scoped_lock<test_data::mutex_type> lock(data->mutex);
 					data->cond_written.wait(lock);
 					COLL << boost::format("Read %1% %2%/%3%: %4%") % arg % i % READ_COUNT % data->value;
 				}
