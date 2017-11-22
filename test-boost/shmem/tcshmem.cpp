@@ -79,11 +79,17 @@ int main(int argc, char** argv) {
 					);
 
 			//Set size
-			shm.truncate(sizeof(test_data));
+			shm.truncate(bip::mapped_region::get_page_size());
 
 			//Map the whole shared memory in this process
 			bip::mapped_region region(shm                       //What to map
 					, bip::read_write //Map it as read-write
+#if 0
+					, 0
+					, bip::mapped_region::get_page_size()
+					//, (void*)(bip::mapped_region::get_page_size() * 10000)
+					, (void*)0x3F000000
+#endif
 					);
 
 			//Get the address of the mapped region
