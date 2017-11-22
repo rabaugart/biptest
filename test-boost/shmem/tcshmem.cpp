@@ -5,6 +5,8 @@
  *      Author: netz
  */
 
+#define BOOST_INTERPROCESS_POSIX_PROCESS_SHARED
+
 #include <algorithm>
 #include <boost/chrono.hpp>
 #include <boost/thread/thread.hpp>
