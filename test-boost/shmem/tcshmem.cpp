@@ -137,9 +137,13 @@ int main(int argc, char** argv) {
 
 			for (size_t i = 0; i < READ_COUNT; i++) {
 				{
-					bip::scoped_lock<test_data::mutex_type> lock(data->mutex);
-					data->cond_written.wait(lock);
-					COLL << boost::format("Read %1% %2%/%3%: %4%") % arg % i % READ_COUNT % data->value;
+					bip::scoped_lock<test_data::mutex_type> lock(data->mutex,bip::try_to_lock);
+					if (lock) {
+						data->cond_written.wait(lock);
+						COLL << boost::format("Read %1% %2%/%3%: %4%") % arg % i % READ_COUNT % data->value;
+					} else {
+						boost::this_thread::sleep_for( boost::chrono::microseconds(200) );
+					}
 				}
 			}
 		}
