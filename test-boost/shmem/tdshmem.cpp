@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
     constexpr size_t sh_size = 1000;
     constexpr key_t key = 1234;
 
-    const int id = ::shmget(key, sh_size, IPC_CREAT);
+    const int id = ::shmget(key, sh_size, IPC_CREAT | 511 );
 
     if (id < 0) {
         std::cerr << "Error retrieving shared memory " << strerror(errno) << std::endl;
