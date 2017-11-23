@@ -89,8 +89,7 @@ int main(int argc, char** argv) {
 			bip::mapped_region region(shm                       //What to map
 					, bip::read_write //Map it as read-write
 					, 0
-					, bip::mapped_region::get_page_size()
-					//, (void*)(bip::mapped_region::get_page_size() * 10000)
+					, 0
 					, (void*)0x3f00000000
 					);
 
@@ -128,8 +127,7 @@ int main(int argc, char** argv) {
 			bip::mapped_region region(shm                       //What to map
 					, bip::read_write //Map it as read-write
                     , 0
-                    , bip::mapped_region::get_page_size()
-                    //, (void*)(bip::mapped_region::get_page_size() * 10000)
+                    , 0
                     , (void*)0x3f00000000
 					);
 
