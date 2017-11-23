@@ -88,11 +88,11 @@ int main(int argc, char** argv) {
 			//Map the whole shared memory in this process
 			bip::mapped_region region(shm                       //What to map
 					, bip::read_write //Map it as read-write
-#if 0
+#if 1
 					, 0
 					, bip::mapped_region::get_page_size()
 					//, (void*)(bip::mapped_region::get_page_size() * 10000)
-					, (void*)0x3F000000
+					, (void*)0x3f00000000
 #endif
 					);
 

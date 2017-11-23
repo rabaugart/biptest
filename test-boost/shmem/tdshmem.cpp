@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    void* const addr = ::shmat( id, (void*)0, 0 );
+    void* const addr = ::shmat( id, (void*)0x3f00000000, SHM_RND );
     if ( (long) addr < 0 ) {
         std::cerr << "Error in shmat " << strerror(errno) << std::endl;
     }
