@@ -12,6 +12,8 @@
 
 #include <boost/format.hpp>
 
+#include <string.h>
+
 int main(int argc, char** argv) {
 
     constexpr size_t sh_size = 1000;
