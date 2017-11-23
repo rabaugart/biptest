@@ -88,12 +88,10 @@ int main(int argc, char** argv) {
 			//Map the whole shared memory in this process
 			bip::mapped_region region(shm                       //What to map
 					, bip::read_write //Map it as read-write
-#if 1
 					, 0
 					, bip::mapped_region::get_page_size()
 					//, (void*)(bip::mapped_region::get_page_size() * 10000)
 					, (void*)0x3f00000000
-#endif
 					);
 
 			//Get the address of the mapped region
@@ -129,6 +127,10 @@ int main(int argc, char** argv) {
 			//Map the whole shared memory in this process
 			bip::mapped_region region(shm                       //What to map
 					, bip::read_write //Map it as read-write
+                    , 0
+                    , bip::mapped_region::get_page_size()
+                    //, (void*)(bip::mapped_region::get_page_size() * 10000)
+                    , (void*)0x3f00000000
 					);
 
 			//Get the address of the mapped region
@@ -178,7 +180,7 @@ int main(int argc, char** argv) {
 			std::vector<com_proc> procs;
 			procs.emplace_back( prog, "w", ios );
 			procs.emplace_back( prog, "r1", ios );
-			//procs.emplace_back( prog, "r2", ios );
+			procs.emplace_back( prog, "r2", ios );
 
 			ios.run(); //this will actually block until the subprocs are finished
 
