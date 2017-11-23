@@ -7,30 +7,38 @@
 
 #include <sys/shm.h>
 #include <iostream>
+#include <stdexcept>
+#include <map>
 
-int main( int argc, char** argv ) {
+#include <boost/format.hpp>
 
-	constexpr size_t sh_size = 1000;
-	constexpr key_t key = 1234;
+int main(int argc, char** argv) {
 
-	const int id = ::shmget( key, sh_size, IPC_CREAT );
+    constexpr size_t sh_size = 1000;
+    constexpr key_t key = 1234;
 
-	if ( id < 0 ) {
-		std::cerr << "Error retrieving shared memory " << errno << std::endl;
-		return 1;
-	}
+    const int id = ::shmget(key, sh_size, IPC_CREAT);
 
-	::shmid_ds ds;
+    if (id < 0) {
+        std::cerr << "Error retrieving shared memory " << strerror(errno) << std::endl;
+        return 1;
+    }
 
-	const int ct = ::shmctl( id, IPC_RMID, &ds );
+    void* const addr = ::shmat( id, (void*)0, 0 );
+    if ( (long) addr < 0 ) {
+        std::cerr << "Error in shmat " << strerror(errno) << std::endl;
+    }
 
-	if ( ct ) {
-		std::cerr << "Error removing shared memory " << ct << std::endl;
-		return 1;
-	}
+    ::shmid_ds ds;
 
-	std::cout << "Shared memory ops ok" << std::endl;
-	return 0;
+    const int ct = ::shmctl(id, IPC_RMID, &ds);
+
+    if (ct) {
+        std::cerr << "Error removing shared memory " << ct << std::endl;
+        return 1;
+    }
+
+    std::cout << "Shared memory ops ok" << std::endl;
+    return 0;
 }
-
 
