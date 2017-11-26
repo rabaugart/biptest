@@ -146,7 +146,7 @@ int main(int argc, char** argv) {
                 {
                     bip::sharable_lock<test_data::mutex_type> lock(data->mutex,
                             bip::defer_lock);
-                    lock.try_lock();
+                    lock.timed_lock(boost::posix_time::microsec_clock::local_time()+boost::posix_time::milliseconds(2000));
                     if (lock) {
                         data->cond_written.wait(lock);
                         COLL
