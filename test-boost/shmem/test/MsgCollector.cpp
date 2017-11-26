@@ -9,10 +9,13 @@
 
 namespace rtest {
 
-MsgCollector::MsgCollector() : outThread(std::ref(*this)), running(true) {
+MsgCollector::MsgCollector() : outThread(std::ref(*this)), running(false) {
 }
 
 void MsgCollector::finalize() {
+#if 1
+    outThread.join();
+#else
 	if (running) {
 		running = false;
 		*this << "Finished";
@@ -24,6 +27,7 @@ void MsgCollector::finalize() {
 			std::cout << msg.first << " " << msg.second << "\n";
 		}
 	}
+#endif
 }
 
 void MsgCollector::operator ()() {
@@ -40,9 +44,13 @@ void MsgCollector::operator ()() {
 
 MsgCollector& MsgCollector::operator<<( const std::string& s )
 {
+#if 1
+    std::cout << boost::posix_time::microsec_clock::local_time() << " " << s << std::endl;
+#else
 	std::unique_lock<std::mutex> lck(mtx);
 	mqueue.push(std::make_pair(boost::posix_time::microsec_clock::local_time(),s));
 	cond.notify_all();
+#endif
 	return *this;
 }
 

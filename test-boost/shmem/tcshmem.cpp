@@ -116,7 +116,7 @@ int main(int argc, char** argv) {
 		//
 		if (arg[0] == 'r') {
 			COLL << boost::format("Starting reader %1%") % arg;
-			boost::this_thread::sleep_for( boost::chrono::milliseconds( arg == "r1" ? 100 : 200) );
+			boost::this_thread::sleep_for( boost::chrono::milliseconds( arg == "r1" ? 200 : 200) );
 			//Create a shared memory object.
 			bip::shared_memory_object shm(bip::open_only         //only open
 					, SH_NAME_S           //name
@@ -147,7 +147,7 @@ int main(int argc, char** argv) {
 						lock.unlock();
 					} else {
 					    COLL << "Waiting";
-					    throw std::runtime_error("Waiting");
+					    //throw std::runtime_error("Waiting");
 						boost::this_thread::sleep_for( boost::chrono::microseconds(2000) );
 					}
 				}
