@@ -123,7 +123,7 @@ int main(int argc, char** argv) {
         if (arg[0] == 'r') {
             COLL << boost::format("Starting reader %1%") % arg;
             boost::this_thread::sleep_for(
-                    arg == "r1" ? SLEEP+SLEEP/3 : 2*SLEEP+SLEEP/3);
+                    arg == "r1" ? SLEEP+SLEEP/3 : SLEEP+SLEEP/3);
             //Create a shared memory object.
             bip::shared_memory_object shm(bip::open_only         //only open
                     , SH_NAME_S           //name
@@ -139,7 +139,7 @@ int main(int argc, char** argv) {
             void * addr = region.get_address();
 
             //Construct the shared structure in memory
-            test_data * data = new (addr) test_data;
+            test_data * data = (test_data*) addr;
 
             size_t waitCounter = 0;
             for (size_t i = 0; i < READ_COUNT && waitCounter < 5; i++) {
