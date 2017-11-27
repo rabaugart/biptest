@@ -5,7 +5,7 @@
  *      Author: netz
  */
 
-#define BOOST_INTERPROCESS_POSIX_PROCESS_SHARED
+//#define BOOST_INTERPROCESS_POSIX_PROCESS_SHARED
 
 #include <algorithm>
 #include <boost/chrono.hpp>
@@ -122,8 +122,7 @@ int main(int argc, char** argv) {
         //
         if (arg[0] == 'r') {
             COLL << boost::format("Starting reader %1%") % arg;
-            boost::this_thread::sleep_for(
-                    arg == "r1" ? SLEEP+SLEEP/3 : SLEEP+SLEEP/3);
+            boost::this_thread::sleep_for(SLEEP/3);
             //Create a shared memory object.
             bip::shared_memory_object shm(bip::open_only         //only open
                     , SH_NAME_S           //name
