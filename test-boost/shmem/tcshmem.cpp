@@ -123,7 +123,7 @@ int main(int argc, char** argv) {
         if (arg[0] == 'r') {
             COLL << boost::format("Starting reader %1%") % arg;
             boost::this_thread::sleep_for(
-                    arg == "r1" ? SLEEP+SLEEP/3 : 2*SLEEP+SLEEP/2);
+                    arg == "r1" ? SLEEP+SLEEP/3 : 2*SLEEP+SLEEP/3);
             //Create a shared memory object.
             bip::shared_memory_object shm(bip::open_only         //only open
                     , SH_NAME_S           //name
@@ -148,11 +148,16 @@ int main(int argc, char** argv) {
                             bip::defer_lock);
                     lock.timed_lock(boost::posix_time::microsec_clock::local_time()+boost::posix_time::milliseconds(2000));
                     if (lock) {
-                        data->cond_written.wait(lock);
-                        COLL
-                                << boost::format("Read %1% %2%/%3%: %4%") % arg
-                                        % i % READ_COUNT % data->value;
-                        lock.unlock();
+                        if (data->cond_written.timed_wait(lock,
+                                boost::posix_time::microsec_clock::local_time()
+                                        + boost::posix_time::microseconds(
+                                                200))) {
+                            COLL
+                                    << boost::format("Read %1% %2%/%3%: %4%")
+                                            % arg % i % READ_COUNT
+                                            % data->value;
+                            lock.unlock();
+                        }
                     } else {
                         COLL << boost::format("Waiting %1%") % arg;
                         waitCounter++;
@@ -207,13 +212,13 @@ int main(int argc, char** argv) {
                 try {
                     i.proc.wait();
                 } catch (bp::process_error const & err) {
-                    std::cout
-                            << boost::format("Process error when waiting %1%\n")
+                    COLL
+                            << boost::format("Process error when waiting %1%")
                                     % err.what();
                 }
                 if (i.proc.exit_code()) {
-                    std::cout
-                            << boost::format("Error %1%: %2%\n") % i.name
+                    COLL
+                            << boost::format("Error %1%: %2%") % i.name
                                     % i.proc.exit_code();
                     retval = 1;
                 }
@@ -226,8 +231,12 @@ int main(int argc, char** argv) {
             }
         }
 
-    } catch (bip::interprocess_exception &ex) {
+    } catch (bip::interprocess_exception const&ex) {
         COLL << boost::format("BIP error: %1%") % ex.what();
+        return 1;
+    } catch ( std::exception const& e2 ) {
+        COLL << boost::format("General error: %1%") % e2.what();
+        return 1;
     }
     return retval;
 }
