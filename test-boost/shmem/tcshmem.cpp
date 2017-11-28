@@ -26,13 +26,10 @@
 
 namespace bip = boost::interprocess;
 
-#if 1
+
 typedef bip::string ipstring;
 static const ipstring SH_NAME_C { "myshared" };
 #define SH_NAME_S SH_NAME_C.c_str()
-#else
-#define SH_NAME_S "myshared"
-#endif
 
 //Erase previous shared memory and schedule erasure on exit
 struct shm_remove {

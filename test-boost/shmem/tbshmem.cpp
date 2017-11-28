@@ -43,7 +43,7 @@ const TestDataA& Generator<TestDataA>::next() {
 
 static constexpr boost::chrono::microseconds SLEEP(100000);
 static const boost::posix_time::microseconds TIMEOUT(10000000);
-rtest::MsgCollector COLL;
+rtest::MsgCollector COLL(rtest::MsgCollector::use_queue);
 
 template<typename DATA, typename ID = ShmDefaultId>
 struct Writer: ShmWriter<DATA, ID> {

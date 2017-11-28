@@ -9,59 +9,59 @@
 
 namespace rtest {
 
-MsgCollector::MsgCollector() : outThread(std::ref(*this)), running(false) {
+MsgCollector::MsgCollector(use_queue_t) :
+                        useQueue(true), outThread(std::ref(*this)), running(true) {
+}
+
+MsgCollector::MsgCollector() :
+                        useQueue(false), outThread(), running(false) {
 }
 
 void MsgCollector::finalize() {
-#if 1
-    outThread.join();
-#else
-	if (running) {
-		running = false;
-		*this << "Finished";
-		outThread.join();
-		std::unique_lock<std::mutex> lck(mtx);
-		if (!mqueue.empty()) {
-			const auto msg = mqueue.front();
-			mqueue.pop();
-			std::cout << msg.first << " " << msg.second << "\n";
-		}
-	}
-#endif
+    if (useQueue && running) {
+        running = false;
+        *this << "Finished";
+        outThread.join();
+        std::unique_lock<std::mutex> lck(mtx);
+        if (!mqueue.empty()) {
+            const auto msg = mqueue.front();
+            mqueue.pop();
+            std::cout << msg.first << " " << msg.second << "\n";
+        }
+    }
 }
 
 void MsgCollector::operator ()() {
-	while (running) {
-		std::unique_lock<std::mutex> lck(mtx);
-		cond.wait(lck);
-		if ( !mqueue.empty() ) {
-			const auto msg = mqueue.front();
-			mqueue.pop();
-			std::cout << msg.first << " " << msg.second << std::endl;
-		}
-	}
+    while (running) {
+        std::unique_lock < std::mutex > lck(mtx);
+        cond.wait(lck);
+        if (!mqueue.empty()) {
+            const auto msg = mqueue.front();
+            mqueue.pop();
+            std::cout << msg.first << " " << msg.second << std::endl;
+        }
+    }
 }
 
-MsgCollector& MsgCollector::operator<<( const std::string& s )
-{
-#if 1
-    std::cout << boost::posix_time::microsec_clock::local_time() << " " << s << std::endl;
-#else
-	std::unique_lock<std::mutex> lck(mtx);
-	mqueue.push(std::make_pair(boost::posix_time::microsec_clock::local_time(),s));
-	cond.notify_all();
-#endif
-	return *this;
+MsgCollector& MsgCollector::operator<<(const std::string& s) {
+    if (!useQueue) {
+        std::cout << boost::posix_time::microsec_clock::local_time() << " " << s
+                << std::endl;
+    } else {
+        std::unique_lock < std::mutex > lck(mtx);
+        mqueue.push(std::make_pair(boost::posix_time::microsec_clock::local_time(), s));
+        cond.notify_all();
+    }
+    return *this;
 }
 
 MsgCollector::~MsgCollector() {
-	finalize();
+    finalize();
 }
 
-MsgCollector& MsgCollector::operator<<( const boost::format& bf )
-{
-	*this << bf.str();
-	return *this;
+MsgCollector& MsgCollector::operator<<(const boost::format& bf) {
+    *this << bf.str();
+    return *this;
 }
 
 } /* namespace rtest */

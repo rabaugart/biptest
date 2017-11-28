@@ -20,7 +20,12 @@ namespace rtest {
 
 class MsgCollector {
 public:
-	MsgCollector();
+
+    struct use_queue_t {};
+    static constexpr use_queue_t use_queue{};
+
+	MsgCollector(use_queue_t);
+    MsgCollector();
 	~MsgCollector();
 
 	void operator()();
@@ -32,6 +37,7 @@ public:
 	MsgCollector& operator<<( const boost::format& bf );
 
 protected:
+	bool const useQueue;
 	std::mutex mtx;
 	std::condition_variable cond;
 	std::queue<std::pair<boost::posix_time::ptime,std::string>> mqueue;

@@ -83,9 +83,8 @@ public:
 	static const std::string seg_name;
 
 protected:
-	ShmAccessorBase( ShmSegment& seg, boost::interprocess::open_or_create_t ooc );
-	ShmAccessorBase( ShmSegment& seg, boost::interprocess::open_only_t ooc );
-	ShmAccessorBase( ShmSegment& seg, boost::interprocess::create_only_t ooc );
+	template<typename OC>
+	ShmAccessorBase( ShmSegment& seg, OC ooc );
 
 	typedef typename boost::interprocess::managed_shared_memory::segment_manager::construct_proxy<DataFrame<SDATA>>::type proxy_type;
 	proxy_type proxy;
@@ -97,21 +96,8 @@ template<typename SDATA,typename ID>
 const std::string ShmAccessorBase<SDATA,ID>::seg_name = DataTraits<SDATA>::SHM_NAME+"_" + ID::name();
 
 template<typename SDATA,typename ID>
-ShmAccessorBase<SDATA,ID>::ShmAccessorBase( ShmSegment& seg, boost::interprocess::open_or_create_t ooc ) :
-	proxy( seg.construct<DataFrame<SDATA>>(seg_name) ),
-	fptr(proxy()), data(fptr->data)
-{
-}
-
-template<typename SDATA,typename ID>
-ShmAccessorBase<SDATA,ID>::ShmAccessorBase( ShmSegment& seg, boost::interprocess::open_only_t ooc ) :
-	proxy( seg.construct<DataFrame<SDATA>>(seg_name) ),
-	fptr(proxy()), data(fptr->data)
-{
-}
-
-template<typename SDATA,typename ID>
-ShmAccessorBase<SDATA,ID>::ShmAccessorBase( ShmSegment& seg, boost::interprocess::create_only_t ooc ) :
+template<typename OC>
+ShmAccessorBase<SDATA,ID>::ShmAccessorBase( ShmSegment& seg, OC ooc ) :
 	proxy( seg.construct<DataFrame<SDATA>>(seg_name) ),
 	fptr(proxy()), data(fptr->data)
 {
