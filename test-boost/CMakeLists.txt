@@ -33,25 +33,25 @@ message( STATUS "Boost ${Boost_PROGRAM_OPTIONS_LIBRARY}" )
 
 include_directories( "${Boost_INCLUDE_DIR}" )
 
-link_directories( "${Boost_LIBRARY_DIR}" )
+link_directories( "${Boost_LIBRARY_DIR_RELEASE}" )
 
 add_library( boost_program_options STATIC IMPORTED )
-set_target_properties( boost_program_options PROPERTIES IMPORTED_LOCATION ${Boost_PROGRAM_OPTIONS_LIBRARY} )
+set_target_properties( boost_program_options PROPERTIES IMPORTED_LOCATION ${Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE} )
 
 add_library( boost_system STATIC IMPORTED )
-set_target_properties( boost_system PROPERTIES IMPORTED_LOCATION ${Boost_SYSTEM_LIBRARY} )
+set_target_properties( boost_system PROPERTIES IMPORTED_LOCATION ${Boost_SYSTEM_LIBRARY_RELEASE} )
 
 add_library( boost_filesystem STATIC IMPORTED )
-set_target_properties( boost_filesystem PROPERTIES IMPORTED_LOCATION ${Boost_FILESYSTEM_LIBRARY} )
+set_target_properties( boost_filesystem PROPERTIES IMPORTED_LOCATION ${Boost_FILESYSTEM_LIBRARY_RELEASE} )
 
 add_library( boost_thread STATIC IMPORTED )
 set_target_properties( boost_thread PROPERTIES IMPORTED_LOCATION ${Boost_THREAD_LIBRARY} )
 
 add_library( boost_chrono STATIC IMPORTED )
-set_target_properties( boost_chrono PROPERTIES IMPORTED_LOCATION ${Boost_CHRONO_LIBRARY} )
+set_target_properties( boost_chrono PROPERTIES IMPORTED_LOCATION ${Boost_CHRONO_LIBRARY_RELEASE} )
 
 add_library( boost_regex STATIC IMPORTED )
-set_target_properties( boost_regex PROPERTIES IMPORTED_LOCATION ${Boost_REGEX_LIBRARY} )
+set_target_properties( boost_regex PROPERTIES IMPORTED_LOCATION ${Boost_REGEX_LIBRARY_RELEASE} )
 
 add_subdirectory( tprocess )
 add_subdirectory( shmem )

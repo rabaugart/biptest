@@ -13,6 +13,8 @@ target_link_libraries( tbshmem boost_thread boost_system boost_chrono )
 add_executable( tcshmem tcshmem.cpp  test/MsgCollector.cpp )
 target_link_libraries( tcshmem boost_thread boost_system boost_chrono boost_regex )
 
-add_executable( tdshmem tdshmem.cpp )
+if ( NOT ${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Windows" )
+  add_executable( tdshmem tdshmem.cpp )
+endif()
 
 
