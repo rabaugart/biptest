@@ -20,7 +20,7 @@ template<typename SDATA,typename ID=ShmDefaultId>
 class ShmReader : public ShmAccessorBase<SDATA,ID>
 {
 public:
-	ShmReader( ShmSegment& seg ) : ShmAccessorBase<SDATA,ID>(seg,boost::interprocess::open_or_create) {}
+	ShmReader( ShmSegment& seg ) : ShmAccessorBase<SDATA,ID>(seg) {}
 
 	SDATA get()
 	{

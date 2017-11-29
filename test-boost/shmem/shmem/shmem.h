@@ -51,8 +51,7 @@ public:
 	};
 
 	template<typename FDATA>
-	typename boost::interprocess::managed_shared_memory::segment_manager::construct_proxy<FDATA>::type
-	  	  construct(const std::string& name);
+	FDATA* find_or_construct(const ipstring& name);
 
 	static constexpr char const* SHM_FRAME_NAME = "MySharedMemory";
 
@@ -63,10 +62,9 @@ private:
 };
 
 template<typename FDATA>
-typename boost::interprocess::managed_shared_memory::segment_manager::construct_proxy<FDATA>::type
-	  	 ShmSegment::construct(const std::string& name)
+FDATA* ShmSegment::find_or_construct(const ipstring& name)
 {
-	return shm.find_or_construct<FDATA>(name.c_str());
+	return shm.find_or_construct<FDATA>(name.c_str())();
 }
 
 template<typename SDATA,typename ID = ShmDefaultId>
@@ -85,11 +83,9 @@ public:
 	static const ipstring seg_name;
 
 protected:
-	template<typename OC>
-	ShmAccessorBase( ShmSegment& seg, OC ooc );
 
-	typedef typename boost::interprocess::managed_shared_memory::segment_manager::construct_proxy<DataFrame<SDATA>>::type proxy_type;
-	proxy_type proxy;
+	ShmAccessorBase( ShmSegment& seg );
+
 	DataFrame<SDATA>* fptr;
 	SDATA& data;
 };
@@ -98,10 +94,9 @@ template<typename SDATA,typename ID>
 const ipstring ShmAccessorBase<SDATA,ID>::seg_name = DataTraits<SDATA>::SHM_NAME+"_" + ID::name();
 
 template<typename SDATA,typename ID>
-template<typename OC>
-ShmAccessorBase<SDATA,ID>::ShmAccessorBase( ShmSegment& seg, OC ooc ) :
-	proxy( seg.construct<DataFrame<SDATA>>(seg_name.c_str()) ),
-	fptr(proxy()), data(fptr->data)
+ShmAccessorBase<SDATA,ID>::ShmAccessorBase( ShmSegment& seg ) :
+	fptr( seg.find_or_construct<DataFrame<SDATA>>(seg_name.c_str()) ),
+	data(fptr->data)
 {
 }
 

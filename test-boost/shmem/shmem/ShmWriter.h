@@ -37,7 +37,7 @@ protected:
 
 template<typename SDATA, typename ID>
 ShmWriter<SDATA, ID>::ShmWriter(ShmSegment& seg) :
-		ShmAccessorBase<SDATA, ID>(seg,boost::interprocess::open_only) {
+		ShmAccessorBase<SDATA, ID>(seg) {
 	ShmAccessorBase<SDATA, ID>::fptr->counter = 0;
 }
 

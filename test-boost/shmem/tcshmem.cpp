@@ -17,12 +17,10 @@
 #include <boost/interprocess/sync/interprocess_sharable_mutex.hpp>
 #include <boost/interprocess/sync/interprocess_condition_any.hpp>
 #include <boost/interprocess/containers/string.hpp>
-#include <boost/algorithm/string/regex.hpp>
-#include <boost/process.hpp>
 #include <boost/format.hpp>
-#include <boost/asio.hpp>
-#include <boost/regex.hpp>
 #include "test/MsgCollector.h"
+#include "test/ComProc.h"
+#include "test/SubProc.h"
 
 namespace bip = boost::interprocess;
 
@@ -171,56 +169,13 @@ int main(int argc, char** argv) {
         if (arg == "a") {
             COLL << "Starting subprocesses";
 
-            namespace bp = boost::process;
+            rtest::SubProc procs;
+            procs.add(prog, "w" );
+            procs.add(prog, "r1" );
+            procs.add(prog, "r2" );
 
-            boost::asio::io_service ios;
+            std::vector<std::string> suboutputs = procs.runAndCollect(COLL);
 
-            struct com_proc {
-                com_proc(const std::string & prog, const std::string& arg,
-                        boost::asio::io_service& ios) :
-                        proc(prog, arg, bp::std_in.close(), bp::std_out > data,
-                                bp::std_err > bp::null, ios), name(arg), rx(
-                                "\n") {
-                }
-
-                void append(std::vector<std::string>& v) {
-                    std::vector<std::string> rr;
-                    boost::algorithm::split_regex(rr, data.get(), rx);
-                    std::for_each(rr.begin(), rr.end(),
-                            [&v]( const std::string &i) {v.push_back(i);});
-                }
-                std::future<std::string> data;
-                bp::child proc;
-                const std::string name;
-                const boost::regex rx;
-            };
-
-            std::vector<com_proc> procs;
-            procs.emplace_back(prog, "w", ios);
-            procs.emplace_back(prog, "r1", ios);
-            procs.emplace_back(prog, "r2", ios);
-
-            ios.run(); //this will actually block until the subprocs are finished
-
-            std::vector<std::string> suboutputs;
-            for (auto& i : procs) {
-                try {
-                    i.proc.wait();
-                } catch (bp::process_error const & err) {
-                    COLL
-                            << boost::format("Process error when waiting %1%")
-                                    % err.what();
-                }
-                if (i.proc.exit_code()) {
-                    COLL
-                            << boost::format("Error %1%: %2%") % i.name
-                                    % i.proc.exit_code();
-                    retval = 1;
-                }
-                i.append(suboutputs);
-            }
-
-            std::sort(suboutputs.begin(), suboutputs.end());
             for (auto const & i : suboutputs) {
                 std::cout << i << std::endl;
             }
