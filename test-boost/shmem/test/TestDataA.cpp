@@ -10,7 +10,7 @@ std::ostream& operator << ( std::ostream& os, const TestDataA& d )
 namespace rshm {
 
 template<>
-const std::string DataTraits<TestDataA>::SHM_NAME{"abc"};
+const ipstring DataTraits<TestDataA>::SHM_NAME{"abc"};
 
 } // end namespace rshm
 

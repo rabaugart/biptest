@@ -26,7 +26,6 @@
 
 namespace bip = boost::interprocess;
 
-
 typedef bip::string ipstring;
 static const ipstring SH_NAME_C { "myshared" };
 #define SH_NAME_S SH_NAME_C.c_str()

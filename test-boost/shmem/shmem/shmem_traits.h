@@ -4,11 +4,13 @@
 
 #include <string>
 
+#include "shmem/shmem_base.h"
+
 namespace rshm {
 
 template<typename SDATA> struct DataTraits
 {
-	static const std::string SHM_NAME;
+	static const ipstring SHM_NAME;
 };
 
 } // end namespace rshm

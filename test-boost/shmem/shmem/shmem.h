@@ -21,9 +21,11 @@
 
 namespace rshm {
 
+typedef boost::interprocess::string ipstring;
+
 struct ShmDefaultId
 {
-	static std::string name() { return "default"; }
+	static ipstring name() { return "default"; }
 };
 
 template<typename SDATA>
@@ -80,7 +82,7 @@ public:
 
 	static time_point_type now()  { return DataFrame<SDATA>::clock_type::now(); }
 
-	static const std::string seg_name;
+	static const ipstring seg_name;
 
 protected:
 	template<typename OC>
@@ -93,12 +95,12 @@ protected:
 };
 
 template<typename SDATA,typename ID>
-const std::string ShmAccessorBase<SDATA,ID>::seg_name = DataTraits<SDATA>::SHM_NAME+"_" + ID::name();
+const ipstring ShmAccessorBase<SDATA,ID>::seg_name = DataTraits<SDATA>::SHM_NAME+"_" + ID::name();
 
 template<typename SDATA,typename ID>
 template<typename OC>
 ShmAccessorBase<SDATA,ID>::ShmAccessorBase( ShmSegment& seg, OC ooc ) :
-	proxy( seg.construct<DataFrame<SDATA>>(seg_name) ),
+	proxy( seg.construct<DataFrame<SDATA>>(seg_name.c_str()) ),
 	fptr(proxy()), data(fptr->data)
 {
 }
