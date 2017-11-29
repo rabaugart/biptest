@@ -14,6 +14,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/optional.hpp>
 #include <boost/interprocess/sync/sharable_lock.hpp>
+#include <test/SubProc.h>
 
 #include "shmem/ShmWriter.h"
 #include "shmem/ShmReader.h"
@@ -124,7 +125,8 @@ int main(int argc, char** argv) {
 	ShmSegment seg;
 	const size_t niter = 20;
 
-	const std::string arg = argc > 1 ? argv[1] : "a";
+	const std::string prog = argv[0];
+	const std::string arg = argc > 1 ? argv[1] : "x";
 
 	if ( arg == "r1" || arg == "r2" ) {
 		Reader<TestDataA> re {seg, arg, niter};
@@ -137,6 +139,27 @@ int main(int argc, char** argv) {
 		wr.join();
 		return 0;
 	}
+
+    //
+    // Subprocesses
+    //
+    if (arg == "a") {
+        COLL << "Starting subprocesses";
+
+        rtest::SubProc procs;
+        procs.add(prog, "w" );
+        procs.add(prog, "r1" );
+#if !defined(ONLY_ONE_READER)
+        //procs.add(prog, "r2" );
+#endif
+
+        std::vector<std::string> suboutputs = procs.runAndCollect(COLL);
+
+        for (auto const & i : suboutputs) {
+            std::cout << i << std::endl;
+        }
+        return 0;
+    }
 
 	bip::shared_memory_object::remove(ShmSegment::SHM_FRAME_NAME);
 

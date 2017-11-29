@@ -5,10 +5,14 @@ if ( ${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Linux" )
   link_libraries( -lpthread -lrt )
 endif()
 
+if ( ${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Darwin" )
+  add_definitions( -DONLY_ONE_READER=1 )
+endif()
+
 add_executable( tashmem tashmem.cpp shmem/shmem.cpp test/TestDataA.cpp )
 
-add_executable( tbshmem tbshmem.cpp shmem/shmem.cpp test/TestDataA.cpp test/MsgCollector.cpp )
-target_link_libraries( tbshmem boost_thread boost_system boost_chrono )
+add_executable( tbshmem tbshmem.cpp shmem/shmem.cpp test/TestDataA.cpp test/MsgCollector.cpp test/ComProc.cpp test/SubProc.cpp )
+target_link_libraries( tbshmem boost_thread boost_system boost_chrono boost_regex )
 
 add_executable( tcshmem tcshmem.cpp  test/MsgCollector.cpp test/ComProc.cpp test/SubProc.cpp )
 target_link_libraries( tcshmem boost_thread boost_system boost_chrono boost_regex )
