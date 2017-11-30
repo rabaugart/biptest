@@ -150,7 +150,7 @@ int main(int argc, char** argv) {
         procs.add(prog, "w" );
         procs.add(prog, "r1" );
 #if !defined(ONLY_ONE_READER)
-        //procs.add(prog, "r2" );
+        procs.add(prog, "r2" );
 #endif
 
         std::vector<std::string> suboutputs = procs.runAndCollect(COLL);

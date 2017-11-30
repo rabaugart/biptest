@@ -58,4 +58,4 @@ add_subdirectory( tprocess )
 add_subdirectory( shmem )
 
 #add_custom_target( one tproc --svn ${CMAKE_SOURCE_DIR} )
-add_custom_target( one tbshmem a )
+add_custom_target( one tcshmem a )

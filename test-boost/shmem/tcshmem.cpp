@@ -81,7 +81,10 @@ int main(int argc, char** argv) {
             //Map the whole shared memory in this process
             bip::mapped_region region(shm                       //What to map
                     , bip::read_write //Map it as read-write
-                    , 0, 0, (void*) 0x3f00000000);
+#if defined(FIXED_MAPPING_ADDRESS)
+                    , 0, 0, (void*) 0x3f00000000
+#endif
+                    );
 
             //Get the address of the mapped region
             void * addr = region.get_address();
@@ -126,7 +129,10 @@ int main(int argc, char** argv) {
             //Map the whole shared memory in this process
             bip::mapped_region region(shm                       //What to map
                     , bip::read_write //Map it as read-write
-                    , 0, 0, (void*) 0x3f00000000);
+#if defined(FIXED_MAPPING_ADDRESS)
+                    , 0, 0, (void*) 0x3f00000000
+#endif
+                    );
 
             //Get the address of the mapped region
             void * addr = region.get_address();
@@ -160,6 +166,7 @@ int main(int argc, char** argv) {
                     }
                 }
             }
+            bip::shared_memory_object::remove( SH_NAME_S );
             COLL << boost::format( "WCounter %1%: %2%") % arg % waitCounter;
         }
 

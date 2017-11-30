@@ -6,7 +6,7 @@ if ( ${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Linux" )
 endif()
 
 if ( ${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Darwin" )
-  add_definitions( -DONLY_ONE_READER=1 )
+  add_definitions( -DONLY_ONE_READER -DFIXED_MAPPING_ADDRESS )
 endif()
 
 add_executable( tashmem tashmem.cpp shmem/shmem.cpp test/TestDataA.cpp )
