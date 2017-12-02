@@ -110,7 +110,7 @@ protected:
             reg = std::move(
                     boost::interprocess::mapped_region(shm,
                             boost::interprocess::read_write
-#if defined(FIXED_MAPPING_ADDRESS)
+#if defined(FIXED_MAPPING_ADDRESSx)
                             , 0, 0, (void*) 0x3f00000000
 #endif
                             ));
@@ -128,7 +128,7 @@ protected:
             reg = std::move(
                     boost::interprocess::mapped_region(shm,
                             boost::interprocess::read_write
-#if defined(FIXED_MAPPING_ADDRESS)
+#if defined(FIXED_MAPPING_ADDRESSx)
                             , 0, 0, (void*) 0x3f00000000
 #endif
                             ));

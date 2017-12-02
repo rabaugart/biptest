@@ -10,6 +10,10 @@ std::ostream& operator << ( std::ostream& os, const TestDataA& d )
 	return os;
 }
 
+bool TestDataA::operator==( TestDataA const & d ) const {
+    return a == d.a && b == d.b;
+}
+
 namespace rashm {
 
 template<>

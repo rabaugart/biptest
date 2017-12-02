@@ -19,23 +19,26 @@ public:
 
     typedef Segment<DATA, ID> base_t;
 
-    typename base_t::scoped_lock_t lock() {
-        return std::move(typename base_t::scoped_lock_t(base_t::frame->mutex));
-    }
-
     SegmentWriter() {
-        auto l = lock();
+        auto l{lock()};
         base_t::frame->setWriterIsPresent(true);
     }
 
     void operator = ( DATA const & d ) {
         auto l = lock();
         *base_t::frame = d;
+        base_t::frame->condition.notify_all();
     }
 
     ~SegmentWriter() {
         base_t::frame->setWriterIsPresent(false);
     }
+
+protected:
+    typename base_t::scoped_lock_t lock() {
+        return typename base_t::scoped_lock_t(base_t::frame->mutex);
+    }
+
 };
 
 }
