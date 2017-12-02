@@ -5,7 +5,7 @@
  *      Author: netz
  */
 
-#include "segment.h"
+#include "Segment.h"
 
 namespace rashm {
 
