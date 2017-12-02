@@ -39,6 +39,8 @@ struct Header {
 
     Header();
 
+    void update(bool valid = true);
+
     //! The timestamp of the last write operation
     timestamp_t timestamp;
 
@@ -72,16 +74,17 @@ struct Frame {
         return DataTraits<data_t>::SHM_NAME + "-" + ID::name();
     }
 
-    void setIsValid( bool b = true ) {
+    void setIsValid(bool b = true) {
         head.isValid = b;
     }
 
-    void setWriterIsPresent( bool b ) {
+    void setWriterIsPresent(bool b) {
         head.writerIsPresent = b;
     }
 
-    void operator = ( data_t const& d ) {
+    void operator =(data_t const& d) {
         data = d;
+        head.update();
     }
 
     Header head;
@@ -92,53 +95,52 @@ struct Frame {
 
 template<typename DATA, typename ID>
 class Segment {
-public:
+protected:
     typedef Frame<DATA, ID> frame_t;
     Segment() :
             name(frame_t::name()), frame(nullptr) {
         try {
             // Trying to construct a new segment and a new frame object
-            shm =
-                    std::make_unique < boost::interprocess::shared_memory_object
-                            > (boost::interprocess::create_only, name.c_str(), boost::interprocess::read_write);
-            if (shm) {
-                shm->truncate(sizeof(frame_t));
-                reg = std::make_unique<boost::interprocess::mapped_region>(*shm,
-                        boost::interprocess::read_write
-#if defined(FIXED_MAPPING_ADDRESS)
-                    , 0, 0, (void*) 0x3f00000000
-#endif
-                        );
-                void * addr = reg->get_address();
+            shm = std::move(
+                    boost::interprocess::shared_memory_object(
+                            boost::interprocess::create_only, name.c_str(),
+                            boost::interprocess::read_write));
 
-                //Construct the shared structure in memory
-                frame = new (addr) frame_t;
-            } else {
-                throw std::runtime_error("Strange error when creating segment");
-            }
+            shm.truncate(sizeof(frame_t));
+            reg = std::move(
+                    boost::interprocess::mapped_region(shm,
+                            boost::interprocess::read_write
+#if defined(FIXED_MAPPING_ADDRESS)
+                            , 0, 0, (void*) 0x3f00000000
+#endif
+                            ));
+            void * addr = reg.get_address();
+
+            //Construct the shared structure in memory
+            frame = new (addr) frame_t;
+
         } catch (boost::interprocess::interprocess_exception& ex) {
-            std::cout << "bip " << ex.what() << std::endl;
             // Creation failed, so try to open an existing one, without construction
-            shm =
-                    std::make_unique < boost::interprocess::shared_memory_object
-                            > (boost::interprocess::open_only, name.c_str(), boost::interprocess::read_write);
-            if (!shm) {
-                throw std::runtime_error("Strange error when opening segment");
-            }
-            reg = std::make_unique<boost::interprocess::mapped_region>(*shm,
-                    boost::interprocess::read_write
+            shm = std::move(
+                    boost::interprocess::shared_memory_object(
+                            boost::interprocess::open_only, name.c_str(),
+                            boost::interprocess::read_write));
+            reg = std::move(
+                    boost::interprocess::mapped_region(shm,
+                            boost::interprocess::read_write
 #if defined(FIXED_MAPPING_ADDRESS)
-                    , 0, 0, (void*) 0x3f00000000
+                            , 0, 0, (void*) 0x3f00000000
 #endif
-                    );
+                            ));
 
-            frame = static_cast<frame_t*>(reg->get_address());
+            frame = static_cast<frame_t*>(reg.get_address());
         }
     }
 
     virtual ~Segment() {
     }
 
+public:
     bool writerIsPresent() const {
         return frame->head.writerIsPresent;
     }
@@ -148,7 +150,8 @@ public:
     }
 
     static void removeSegment() {
-        boost::interprocess::shared_memory_object::remove(segmentName().c_str());
+        boost::interprocess::shared_memory_object::remove(
+                segmentName().c_str());
     }
 
 protected:
@@ -156,8 +159,8 @@ protected:
     typedef boost::interprocess::scoped_lock<typename frame_t::mutex_t> scoped_lock_t;
 
     std::string name;
-    std::unique_ptr<boost::interprocess::shared_memory_object> shm;
-    std::unique_ptr<boost::interprocess::mapped_region> reg;
+    boost::interprocess::shared_memory_object shm;
+    boost::interprocess::mapped_region reg;
     frame_t* frame;
 };
 

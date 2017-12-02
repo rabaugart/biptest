@@ -12,16 +12,25 @@
 
 namespace rashm {
 
-template<typename DATA, typename ID=DefaultId>
-class SegmentWriter : public Segment<DATA,ID> {
+template<typename DATA, typename ID = DefaultId>
+class SegmentWriter: public Segment<DATA, ID> {
 
 public:
 
-    typedef Segment<DATA,ID> base_t;
+    typedef Segment<DATA, ID> base_t;
+
+    typename base_t::scoped_lock_t lock() {
+        return std::move(typename base_t::scoped_lock_t(base_t::frame->mutex));
+    }
 
     SegmentWriter() {
-        typename base_t::scoped_lock_t lck(base_t::frame->mutex);
+        auto l = lock();
         base_t::frame->setWriterIsPresent(true);
+    }
+
+    void operator = ( DATA const & d ) {
+        auto l = lock();
+        *base_t::frame = d;
     }
 
     ~SegmentWriter() {
