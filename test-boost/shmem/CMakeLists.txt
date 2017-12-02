@@ -21,4 +21,6 @@ if ( NOT ${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Windows" )
   add_executable( tdshmem tdshmem.cpp )
 endif()
 
+add_executable( teshmem teshmem.cpp test/TestDataA.cpp rashm/Segment.cpp )
+
 
