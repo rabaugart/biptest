@@ -154,6 +154,10 @@ public:
                 segmentName().c_str());
     }
 
+    size_t counter() const {
+        return frame->head.counter;
+    }
+
 protected:
 
     typedef boost::interprocess::scoped_lock<typename frame_t::mutex_t> scoped_lock_t;
