@@ -7,11 +7,20 @@
 
 #include <iostream>
 #include <sstream>
+#include <vector>
+#include <string>
 
 #include <boost/variant.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/variant.hpp>
+
+#include <boost/mpl/list.hpp>
+#include <boost/mpl/transform.hpp>
+#include <boost/mpl/for_each.hpp>
+#include <boost/mpl/joint_view.hpp>
+#include <boost/mpl/copy.hpp>
+#include <boost/mpl/back_inserter.hpp>
 
 #include "rashm/SegmentWriter.h"
 
@@ -32,10 +41,67 @@ struct Packet {
         ar & head;
         ar & data;
     }
+
+    static std::string name() {
+        return Frame<DATA, ID>::name();
+    }
 };
 
-typedef boost::variant<Packet<TestDataA, DefaultId>, Packet<TestDataA, TIdA>,
-        Packet<TestDataB, DefaultId>, Packet<TestDataB, TIdB1>> all_packet_t;
+template<typename T> struct index_list_t {
+};
+
+template<>
+struct index_list_t<TestDataB> {
+    typedef boost::mpl::list<DefaultId, TIdB1, TIdB2>::type type;
+};
+
+template<>
+struct index_list_t<TestDataA> {
+    typedef boost::mpl::list<DefaultId, TIdA>::type type;
+};
+
+template<typename DATA>
+struct Paketizer {
+    template<typename Id>
+    struct apply {
+        typedef Packet<DATA, Id> type;
+    };
+};
+
+typedef boost::mpl::transform<index_list_t<TestDataA>::type,
+        Paketizer<TestDataA>>::type packets_a_t;
+typedef boost::mpl::transform<index_list_t<TestDataB>::type,
+        Paketizer<TestDataB>>::type packets_b_t;
+#if 0
+typedef boost::mpl::copy<packets_b_t, boost::mpl::back_inserter<packets_a_t> >::type all_packets_t;
+#else
+typedef boost::mpl::joint_view<packets_a_t, packets_b_t>::type all_packets_t;
+#endif
+
+#if 0
+typedef boost::make_variant_over<all_packets_t>::type all_packet_variant_t;
+#else
+typedef boost::variant<Packet<TestDataA, DefaultId>, Packet<TestDataB, TIdB1>> all_packet_variant_t;
+#endif
+
+struct c {
+    c(std::vector<std::string> & v_) :
+            v(v_) {
+    }
+
+    template<typename U>
+    void operator()(U x) {
+        v.push_back(x.name());
+    }
+    std::vector<std::string>& v;
+};
+
+std::vector<std::string> all_names() {
+
+    std::vector<std::string> v;
+    boost::mpl::for_each<all_packets_t>(c(v));
+    return v;
+}
 
 }
 
@@ -58,7 +124,12 @@ public:
 
 int main(int argc, char** argv) {
 
-    rashm::all_packet_t p;
+    auto const v = rashm::all_names();
+    for (auto const& i : v) {
+        std::cout << i << ",";
+    }
+    std::cout << std::endl;
+    rashm::all_packet_variant_t p;
 
     typedef TestDataA test_t;
     rashm::Packet<test_t> pa { rashm::Header(), test_t(987.6, 55) };
@@ -77,7 +148,7 @@ int main(int argc, char** argv) {
     {
         std::istringstream is(os.str());
         boost::archive::text_iarchive ia(is);
-        rashm::all_packet_t p2;
+        rashm::all_packet_variant_t p2;
         ia >> p2;
         boost::apply_visitor(print_names_visitor(), p2);
     }
