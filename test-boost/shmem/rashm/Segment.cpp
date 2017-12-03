@@ -23,5 +23,8 @@ timestamp_t now() {
     return boost::posix_time::microsec_clock::universal_time();
 }
 
+template<>
+const std::string DataTraits<DefaultId>::SHM_NAME{"default"};
+
 }
 

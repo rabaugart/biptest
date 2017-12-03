@@ -13,8 +13,8 @@
 using namespace rashm;
 
 int main(int argc, char **argv) {
-    typedef SegmentWriter<TestDataA> writer_t;
-    typedef SegmentReader<TestDataA> reader_t;
+    typedef SegmentWriter<TestDataA,TIdA> writer_t;
+    typedef SegmentReader<TestDataA,TIdA> reader_t;
 
     writer_t::removeSegment();
 
@@ -22,7 +22,8 @@ int main(int argc, char **argv) {
         writer_t seg;
         TestDataA td;
         seg = td;
-        std::cout << "Name: " << seg.segmentName() << " c:" << seg.counter() << std::endl;
+        std::cout << "Name: " << seg.segmentName() << " c:" << seg.counter()
+                << std::endl;
     }
 
     {
@@ -38,20 +39,28 @@ int main(int argc, char **argv) {
     }
 
     {
-        TestDataA tdr;
-        std::thread t1([&tdr]() {
+        TestDataA tdr1, tdr2;
+        std::thread t1([&tdr1,&tdr2]() {
             reader_t r;
-            tdr = r.wait();
+            tdr1 = r.wait();
+            tdr2 = r.wait();
         });
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+        reader_t r2;
+
+        // If the writer starts to fast the reader will miss the write operation and wait indefinitely
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
         std::cout << "Writer starting" << std::endl;
         writer_t seg;
-        TestDataA td { 123.4, 77 };
-        seg = td;
+        TestDataA td1 { 123.4, 77 };
+        seg = td1;
         std::cout << "Set" << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        seg = TestDataA { 456.7, 99 };
         t1.join();
-        std::cout << "Joined: " << td.a << " "
-                << (td == tdr ? "equal" : "unequal") << " counter:"
+        std::cout << "Joined: " << td1.a << " "
+                << (td1 == tdr1 ? "equal" : "unequal") << " "
+                << (tdr2 == r2.get() ? "equal" : "unequal") << " c:"
                 << seg.counter() << std::endl;
     }
 

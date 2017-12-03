@@ -71,7 +71,7 @@ struct Frame {
     typedef boost::interprocess::interprocess_condition_any condition_t;
 
     static std::string name() {
-        return DataTraits<data_t>::SHM_NAME + "-" + ID::name();
+        return DataTraits<data_t>::SHM_NAME + "-" + DataTraits<ID>::SHM_NAME;
     }
 
     void setIsValid(bool b = true) {

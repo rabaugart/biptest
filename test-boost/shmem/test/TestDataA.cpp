@@ -19,6 +19,9 @@ namespace rashm {
 template<>
 const std::string DataTraits<TestDataA>::SHM_NAME{"testda"};
 
+template<>
+const std::string DataTraits<TIdA>::SHM_NAME{"tida"};
+
 }
 
 namespace rshm {

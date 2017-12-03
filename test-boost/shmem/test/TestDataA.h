@@ -14,6 +14,8 @@ struct TestDataA {
 	int    b;
 };
 
+struct TIdA {};
+
 std::ostream& operator << ( std::ostream& os, const TestDataA& d );
 
 #endif
