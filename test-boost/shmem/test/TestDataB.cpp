@@ -6,7 +6,7 @@
 
 std::ostream& operator << ( std::ostream& os, const TestDataB& d )
 {
-	os << "a:" << d.a << " b:" << d.b;
+	os << "TB a:" << d.a << " b:" << d.b;
 	return os;
 }
 

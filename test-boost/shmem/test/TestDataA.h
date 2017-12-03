@@ -4,6 +4,9 @@
 
 #include <iostream>
 
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+
 struct TestDataA {
 
 	TestDataA() { a = 33.3; b = 5; }
@@ -17,5 +20,19 @@ struct TestDataA {
 struct TIdA {};
 
 std::ostream& operator << ( std::ostream& os, const TestDataA& d );
+
+namespace boost {
+namespace serialization {
+
+template<class Archive>
+void serialize(Archive & ar, TestDataA & d, const unsigned int version)
+{
+    ar & d.a;
+    ar & d.b;
+}
+
+} // namespace serialization
+} // namespace boost
+
 
 #endif

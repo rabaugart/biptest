@@ -14,6 +14,8 @@
 #include <boost/interprocess/sync/interprocess_condition_any.hpp>
 #include <boost/interprocess/shared_memory_object.hpp>
 #include <boost/interprocess/mapped_region.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/posix_time/posix_time_duration.hpp>
@@ -53,6 +55,13 @@ struct Header {
     //! The data is valid
     bool isValid;
 };
+
+template<class Archive>
+void serialize(Archive & ar, Header & d, const unsigned int version)
+{
+    ar & d.counter;
+    ar & d.isValid;
+}
 
 /**
  * The frame stored in shared memory

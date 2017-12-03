@@ -23,4 +23,7 @@ endif()
 
 add_executable( teshmem teshmem.cpp test/TestDataA.cpp test/TestDataB.cpp rashm/Segment.cpp )
 
+add_executable( tfshmem tserial.cpp rashm/Segment.cpp test/TestDataA.cpp test/TestDataB.cpp )
+target_link_libraries( tfshmem boost_serialization )
+
 

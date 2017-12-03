@@ -28,7 +28,7 @@ endif()
 
 set( Boost_USE_STATIC_LIBS ON )
 
-find_package(Boost COMPONENTS program_options system filesystem thread chrono regex )
+find_package(Boost COMPONENTS program_options system filesystem thread chrono regex serialization )
 
 message( STATUS "Boost ${Boost_PROGRAM_OPTIONS_LIBRARY}" )
 
@@ -54,8 +54,11 @@ set_target_properties( boost_chrono PROPERTIES IMPORTED_LOCATION ${Boost_CHRONO_
 add_library( boost_regex STATIC IMPORTED )
 set_target_properties( boost_regex PROPERTIES IMPORTED_LOCATION ${Boost_REGEX_LIBRARY_RELEASE} )
 
+add_library( boost_serialization STATIC IMPORTED )
+set_target_properties( boost_serialization PROPERTIES IMPORTED_LOCATION ${Boost_SERIALIZATION_LIBRARY_RELEASE} )
+
 add_subdirectory( tprocess )
 add_subdirectory( shmem )
 
 #add_custom_target( one tproc --svn ${CMAKE_SOURCE_DIR} )
-add_custom_target( one teshmem )
+add_custom_target( one tfshmem )
