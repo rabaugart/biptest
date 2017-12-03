@@ -28,7 +28,7 @@ endif()
 
 set( Boost_USE_STATIC_LIBS ON )
 
-find_package(Boost COMPONENTS program_options system filesystem thread chrono regex serialization )
+find_package(Boost COMPONENTS program_options system filesystem thread chrono regex serialization date_time )
 
 message( STATUS "Boost ${Boost_PROGRAM_OPTIONS_LIBRARY}" )
 
@@ -56,6 +56,9 @@ set_target_properties( boost_regex PROPERTIES IMPORTED_LOCATION ${Boost_REGEX_LI
 
 add_library( boost_serialization STATIC IMPORTED )
 set_target_properties( boost_serialization PROPERTIES IMPORTED_LOCATION ${Boost_SERIALIZATION_LIBRARY_RELEASE} )
+
+add_library( boost_date_time STATIC IMPORTED )
+set_target_properties( boost_date_time PROPERTIES IMPORTED_LOCATION ${Boost_DATE_TIME_LIBRARY_RELEASE} )
 
 add_subdirectory( tprocess )
 add_subdirectory( shmem )

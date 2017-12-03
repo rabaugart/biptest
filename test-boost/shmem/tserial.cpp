@@ -28,13 +28,11 @@ struct Packet {
     data_t data;
 
     template<class Archive>
-     void serialize(Archive & ar, const unsigned int version)
-     {
-         ar & head;
-         ar & data;
-     }
+    void serialize(Archive & ar, const unsigned int version) {
+        ar & head;
+        ar & data;
+    }
 };
-
 
 typedef boost::variant<Packet<TestDataA, DefaultId>, Packet<TestDataA, TIdA>,
         Packet<TestDataB, DefaultId>, Packet<TestDataB, TIdB1>> all_packet_t;
@@ -49,11 +47,11 @@ public:
         typedef T packet_t;
         std::cout << rashm::DataTraits<typename packet_t::data_t>::SHM_NAME
                 << "/" << rashm::DataTraits<typename packet_t::id_t>::SHM_NAME
-                << " " << v.data << std::endl;
+                << " " << v.head.timestamp << " " << v.data << std::endl;
     }
 
     void operator()(rashm::Packet<TestDataB, TIdB1> const & v) const {
-        std::cout << "tidb1 " << v.data << std::endl;
+        std::cout << "tidb1 " << v.head.timestamp << " " << v.data << std::endl;
     }
 
 };
@@ -62,7 +60,7 @@ int main(int argc, char** argv) {
 
     rashm::all_packet_t p;
 
-    typedef TestDataB test_t;
+    typedef TestDataA test_t;
     rashm::Packet<test_t> pa { rashm::Header(), test_t(987.6, 55) };
     p = pa;
 
@@ -72,8 +70,8 @@ int main(int argc, char** argv) {
 
     {
         boost::archive::text_oarchive oa(os);
-                // write class instance to archive
-                oa << p;
+        // write class instance to archive
+        oa << p;
     }
 
     {

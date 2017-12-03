@@ -19,6 +19,7 @@
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/posix_time/posix_time_duration.hpp>
+#include <boost/date_time/posix_time/time_serialize.hpp>
 
 #include "rashm_traits.h"
 
@@ -59,6 +60,7 @@ struct Header {
 template<class Archive>
 void serialize(Archive & ar, Header & d, const unsigned int version)
 {
+    ar & d.timestamp;
     ar & d.counter;
     ar & d.isValid;
 }
