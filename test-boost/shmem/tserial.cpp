@@ -15,88 +15,19 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/variant.hpp>
 
-#include <boost/mpl/vector.hpp>
-#include <boost/mpl/transform.hpp>
 #include <boost/mpl/for_each.hpp>
-#include <boost/mpl/copy.hpp>
-#include <boost/mpl/fold.hpp>
-#include <boost/mpl/back_inserter.hpp>
+#include <rashm/index_vector.h>
 
 #include "rashm/SegmentWriter.h"
+#include "rashm/data_functors.h"
+#include "rashm/Packet.h"
 
 #include "test/TestDataA.h"
 #include "test/TestDataB.h"
+#include "test/all_data_types.h"
 
-namespace rashm {
 
-template<typename DATA, typename ID = DefaultId>
-struct Packet {
-    typedef DATA data_t;
-    typedef ID id_t;
-    Header head;
-    data_t data;
-
-    template<class Archive>
-    void serialize(Archive & ar, const unsigned int version) {
-        ar & head;
-        ar & data;
-    }
-
-    static std::string name() {
-        return Frame<DATA, ID>::name();
-    }
-};
-
-template<typename T> struct index_list_t {
-};
-
-template<>
-struct index_list_t<TestDataB> {
-    typedef boost::mpl::vector<DefaultId, TIdB1, TIdB2>::type type;
-};
-
-template<>
-struct index_list_t<TestDataA> {
-    typedef boost::mpl::vector<DefaultId, TIdA>::type type;
-};
-
-typedef boost::mpl::vector<TestDataA, TestDataB>::type data_vector_t;
-
-struct packet_functor_t {
-    template<typename DATA, typename ID>
-    struct apply {
-        typedef Packet<DATA, ID> type;
-    };
-};
-
-template<typename FUNC>
-struct fold_functor_t {
-
-    template<typename DATA>
-    struct igenerator {
-        template<typename ID>
-        struct apply {
-            typedef typename FUNC::template apply<DATA, ID>::type type;
-        };
-    };
-
-    template<typename V, typename DATA>
-    struct apply {
-        typedef typename boost::mpl::transform<
-                typename index_list_t<DATA>::type, igenerator<DATA>>::type packets_t;
-        typedef typename boost::mpl::copy<packets_t,
-                boost::mpl::back_inserter<V> >::type type;
-    };
-
-};
-
-template<typename DATA_VEC, typename FUNC>
-struct apply_all_data_ids {
-    typedef typename boost::mpl::fold<DATA_VEC, boost::mpl::vector<>,
-            fold_functor_t<FUNC>>::type type;
-};
-
-typedef apply_all_data_ids<data_vector_t, packet_functor_t>::type all_packets_t;
+typedef rashm::apply_all_data_ids<data_vector_t, rashm::packet_functor_t>::type all_packets_t;
 
 typedef boost::make_variant_over<all_packets_t>::type all_packet_variant_t;
 
@@ -119,7 +50,6 @@ std::vector<std::string> all_names() {
     return v;
 }
 
-}
 
 class print_names_visitor: public boost::static_visitor<> {
 public:
@@ -140,12 +70,12 @@ public:
 
 int main(int argc, char** argv) {
 
-    auto const v = rashm::all_names();
+    auto const v = all_names();
     for (auto const& i : v) {
         std::cout << i << ",";
     }
     std::cout << std::endl;
-    rashm::all_packet_variant_t p;
+    all_packet_variant_t p;
 
     typedef TestDataA test_t;
     rashm::Packet<test_t> pa { rashm::Header(), test_t(987.6, 55) };
@@ -164,7 +94,7 @@ int main(int argc, char** argv) {
     {
         std::istringstream is(os.str());
         boost::archive::text_iarchive ia(is);
-        rashm::all_packet_variant_t p2;
+        all_packet_variant_t p2;
         ia >> p2;
         boost::apply_visitor(print_names_visitor(), p2);
     }

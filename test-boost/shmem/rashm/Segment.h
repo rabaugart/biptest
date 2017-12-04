@@ -17,45 +17,16 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/posix_time/posix_time_duration.hpp>
 #include <boost/date_time/posix_time/time_serialize.hpp>
 
 #include "rashm_traits.h"
+#include "default_id.h"
+#include "Header.h"
 
 namespace rashm {
 
-struct DefaultId {
-    static std::string name() {
-        return "default";
-    }
-};
 
-typedef boost::posix_time::ptime timestamp_t;
-
-timestamp_t now();
-
-/**
- * The header data of the frame with timestamp, validity,...
- */
-struct Header {
-
-    Header();
-
-    void update(bool valid = true);
-
-    //! The timestamp of the last write operation
-    timestamp_t timestamp;
-
-    //! The number of write operations
-    size_t counter;
-
-    //! A writer is connected to the shared memory segment
-    bool writerIsPresent;
-
-    //! The data is valid
-    bool isValid;
-};
 
 template<class Archive>
 void serialize(Archive & ar, Header & d, const unsigned int version)

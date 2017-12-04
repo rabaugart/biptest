@@ -21,9 +21,12 @@ if ( NOT ${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Windows" )
   add_executable( tdshmem tdshmem.cpp )
 endif()
 
-add_executable( teshmem teshmem.cpp test/TestDataA.cpp test/TestDataB.cpp rashm/Segment.cpp )
+add_library( lrashm STATIC rashm/Segment.cpp rashm/Header.cpp )
 
-add_executable( tfshmem tserial.cpp rashm/Segment.cpp test/TestDataA.cpp test/TestDataB.cpp )
-target_link_libraries( tfshmem boost_serialization boost_date_time )
+add_executable( teshmem teshmem.cpp test/TestDataA.cpp test/TestDataB.cpp rashm/Segment.cpp )
+target_link_libraries( teshmem lrashm )
+
+add_executable( tfshmem tserial.cpp test/TestDataA.cpp test/TestDataB.cpp )
+target_link_libraries( tfshmem lrashm boost_serialization boost_date_time )
 
 
