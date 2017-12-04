@@ -19,6 +19,7 @@
 #include <boost/mpl/transform.hpp>
 #include <boost/mpl/for_each.hpp>
 #include <boost/mpl/copy.hpp>
+#include <boost/mpl/fold.hpp>
 #include <boost/mpl/back_inserter.hpp>
 
 #include "rashm/SegmentWriter.h"
@@ -67,12 +68,30 @@ struct Paketizer {
     };
 };
 
+typedef boost::mpl::vector<TestDataA,TestDataB>::type data_vector_t;
+
+#if 1
+
+struct Adder {
+
+    template<typename V, typename DATA>
+    struct apply {
+        typedef typename boost::mpl::transform<typename index_list_t<DATA>::type,
+                Paketizer<DATA>>::type packets_t;
+        typedef typename boost::mpl::copy<packets_t, boost::mpl::back_inserter<V> >::type type;
+    };
+
+};
+
+typedef boost::mpl::fold< data_vector_t, boost::mpl::vector<>, Adder>::type all_packets_t;
+#else
 typedef boost::mpl::transform<index_list_t<TestDataA>::type,
         Paketizer<TestDataA>>::type packets_a_t;
 typedef boost::mpl::transform<index_list_t<TestDataB>::type,
         Paketizer<TestDataB>>::type packets_b_t;
 
-typedef boost::mpl::copy<packets_b_t, boost::mpl::back_inserter<packets_a_t> >::type all_packets_t;
+typedef boost::mpl::copy<packets_b_t, boost::mpl::back_inserter<packets_a_t> >::type all_packets2_t;
+#endif
 
 typedef boost::make_variant_over<all_packets_t>::type all_packet_variant_t;
 
