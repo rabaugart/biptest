@@ -15,10 +15,9 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/variant.hpp>
 
-#include <boost/mpl/list.hpp>
+#include <boost/mpl/vector.hpp>
 #include <boost/mpl/transform.hpp>
 #include <boost/mpl/for_each.hpp>
-#include <boost/mpl/joint_view.hpp>
 #include <boost/mpl/copy.hpp>
 #include <boost/mpl/back_inserter.hpp>
 
@@ -52,12 +51,12 @@ template<typename T> struct index_list_t {
 
 template<>
 struct index_list_t<TestDataB> {
-    typedef boost::mpl::list<DefaultId, TIdB1, TIdB2>::type type;
+    typedef boost::mpl::vector<DefaultId, TIdB1, TIdB2>::type type;
 };
 
 template<>
 struct index_list_t<TestDataA> {
-    typedef boost::mpl::list<DefaultId, TIdA>::type type;
+    typedef boost::mpl::vector<DefaultId, TIdA>::type type;
 };
 
 template<typename DATA>
@@ -72,17 +71,10 @@ typedef boost::mpl::transform<index_list_t<TestDataA>::type,
         Paketizer<TestDataA>>::type packets_a_t;
 typedef boost::mpl::transform<index_list_t<TestDataB>::type,
         Paketizer<TestDataB>>::type packets_b_t;
-#if 0
-typedef boost::mpl::copy<packets_b_t, boost::mpl::back_inserter<packets_a_t> >::type all_packets_t;
-#else
-typedef boost::mpl::joint_view<packets_a_t, packets_b_t>::type all_packets_t;
-#endif
 
-#if 0
+typedef boost::mpl::copy<packets_b_t, boost::mpl::back_inserter<packets_a_t> >::type all_packets_t;
+
 typedef boost::make_variant_over<all_packets_t>::type all_packet_variant_t;
-#else
-typedef boost::variant<Packet<TestDataA, DefaultId>, Packet<TestDataB, TIdB1>> all_packet_variant_t;
-#endif
 
 struct c {
     c(std::vector<std::string> & v_) :
