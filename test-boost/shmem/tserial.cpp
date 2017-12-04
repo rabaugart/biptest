@@ -60,38 +60,43 @@ struct index_list_t<TestDataA> {
     typedef boost::mpl::vector<DefaultId, TIdA>::type type;
 };
 
-template<typename DATA>
-struct Paketizer {
-    template<typename Id>
+typedef boost::mpl::vector<TestDataA, TestDataB>::type data_vector_t;
+
+struct packet_functor_t {
+    template<typename DATA, typename ID>
     struct apply {
-        typedef Packet<DATA, Id> type;
+        typedef Packet<DATA, ID> type;
     };
 };
 
-typedef boost::mpl::vector<TestDataA,TestDataB>::type data_vector_t;
+template<typename FUNC>
+struct fold_functor_t {
 
-#if 1
-
-struct Adder {
+    template<typename DATA>
+    struct igenerator {
+        template<typename ID>
+        struct apply {
+            typedef typename FUNC::template apply<DATA, ID>::type type;
+        };
+    };
 
     template<typename V, typename DATA>
     struct apply {
-        typedef typename boost::mpl::transform<typename index_list_t<DATA>::type,
-                Paketizer<DATA>>::type packets_t;
-        typedef typename boost::mpl::copy<packets_t, boost::mpl::back_inserter<V> >::type type;
+        typedef typename boost::mpl::transform<
+                typename index_list_t<DATA>::type, igenerator<DATA>>::type packets_t;
+        typedef typename boost::mpl::copy<packets_t,
+                boost::mpl::back_inserter<V> >::type type;
     };
 
 };
 
-typedef boost::mpl::fold< data_vector_t, boost::mpl::vector<>, Adder>::type all_packets_t;
-#else
-typedef boost::mpl::transform<index_list_t<TestDataA>::type,
-        Paketizer<TestDataA>>::type packets_a_t;
-typedef boost::mpl::transform<index_list_t<TestDataB>::type,
-        Paketizer<TestDataB>>::type packets_b_t;
+template<typename DATA_VEC, typename FUNC>
+struct apply_all_data_ids {
+    typedef typename boost::mpl::fold<DATA_VEC, boost::mpl::vector<>,
+            fold_functor_t<FUNC>>::type type;
+};
 
-typedef boost::mpl::copy<packets_b_t, boost::mpl::back_inserter<packets_a_t> >::type all_packets2_t;
-#endif
+typedef apply_all_data_ids<data_vector_t, packet_functor_t>::type all_packets_t;
 
 typedef boost::make_variant_over<all_packets_t>::type all_packet_variant_t;
 
