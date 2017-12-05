@@ -25,6 +25,7 @@
 #include "test/TestDataA.h"
 #include "test/TestDataB.h"
 #include "test/all_data_types.h"
+#include "test/TestGenerator.h"
 
 
 typedef rashm::apply_all_data_ids<data_vector_t, rashm::packet_functor_t>::type all_packets_t;
@@ -77,8 +78,9 @@ int main(int argc, char** argv) {
     std::cout << std::endl;
     all_packet_variant_t p;
 
-    typedef TestDataA test_t;
-    rashm::Packet<test_t> pa { rashm::Header(), test_t(987.6, 55) };
+    typedef TestDataB test_t;
+    TestGenerator<test_t> gen;
+    rashm::Packet<test_t,TIdB2> pa { rashm::Header(), gen.next() };
     p = pa;
 
     boost::apply_visitor(print_names_visitor(), p);

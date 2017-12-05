@@ -4,6 +4,8 @@
 #include "rashm/rashm_traits.h"
 #include "shmem/shmem_traits.h"
 
+#include "TestGenerator.h"
+
 std::ostream& operator << ( std::ostream& os, const TestDataB& d )
 {
 	os << "TB a:" << d.a << " b:" << d.b;
@@ -13,6 +15,17 @@ std::ostream& operator << ( std::ostream& os, const TestDataB& d )
 bool TestDataB::operator==( TestDataB const & d ) const {
     return a == d.a && b == d.b;
 }
+
+template<>
+TestGenerator<TestDataB>::TestGenerator() : current { 1.1, 22 } {
+
+}
+
+template<>
+TestDataB TestGenerator<TestDataB>::next() {
+    return current;
+}
+
 
 namespace rashm {
 
