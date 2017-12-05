@@ -13,6 +13,8 @@
 #include <boost/mpl/fold.hpp>
 #include <boost/mpl/back_inserter.hpp>
 
+#include <rashm/index_vector.h>
+
 namespace rashm {
 
 template<typename FUNC>

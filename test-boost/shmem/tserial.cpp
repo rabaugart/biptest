@@ -16,7 +16,6 @@
 #include <boost/serialization/variant.hpp>
 
 #include <boost/mpl/for_each.hpp>
-#include <rashm/index_vector.h>
 
 #include "rashm/SegmentWriter.h"
 #include "rashm/data_functors.h"
