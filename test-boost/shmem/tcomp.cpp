@@ -25,13 +25,17 @@ class CompMap : public std::map<std::string,std::shared_ptr<typename COMP::type>
 
 class WriterBase {
 public:
-    virtual void writeNext() = 0;
+    virtual void start() = 0;
+    virtual void stop() = 0;
 };
 
 template<typename DATA, typename ID>
 class Writer : public WriterBase {
 public:
-    virtual void writeNext() {
+    virtual void start() {
+
+    }
+    virtual void stop() {
 
     }
 };
@@ -44,13 +48,18 @@ struct Coll {
 
     template<typename U>
     void operator()(U x) {
-        v[x.name()] = std::make_shared<Writer<typename U::data_t,typename U::id_t>>();
+        v[x.name()] = COMP::template make<typename U::data_t,typename U::id_t>();
     }
     CompMap<COMP>& v;
 };
 
 struct WriterComp {
     typedef WriterBase type;
+
+    template<typename DATA, typename ID>
+    static std::shared_ptr<type> make() {
+        return std::make_shared<Writer<DATA,ID>>();
+    }
 };
 
 template<typename COMP>
