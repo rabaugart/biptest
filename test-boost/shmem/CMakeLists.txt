@@ -32,4 +32,4 @@ add_executable( tfshmem tserial.cpp )
 target_link_libraries( tfshmem lrashm lratest boost_serialization boost_date_time )
 
 add_executable( tcomp tcomp.cpp )
-target_link_libraries( tcomp lrashm lratest )
+target_link_libraries( tcomp lrashm lratest boost_chrono boost_system boost_program_options )

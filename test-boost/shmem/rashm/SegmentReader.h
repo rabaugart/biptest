@@ -9,6 +9,8 @@
 #define SHMEM_RASHM_SEGMENTREADER_H_
 
 #include <boost/interprocess/sync/sharable_lock.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/date_time/posix_time/posix_time_duration.hpp>
 
 #include "Segment.h"
 
@@ -34,6 +36,16 @@ public:
         auto l{sharable_lock()};
         base_t::frame->condition.wait(l);
         return base_t::frame->data;
+    }
+
+    data_t timed_wait_for(boost::posix_time::microseconds ms)
+    {
+        const boost::posix_time::ptime end = boost::date_time::microsec_clock<boost::posix_time::ptime>::universal_time() + ms;
+        auto lck{sharable_lock()};
+        if ( base_t::frame->condition.timed_wait(lck,end) ) {
+            return base_t::frame->data;
+        }
+        throw std::runtime_error("Timeout");
     }
 
     ~SegmentReader() {
