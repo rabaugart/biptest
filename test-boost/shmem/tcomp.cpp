@@ -19,7 +19,6 @@
 #include "rashm/SegmentWriter.h"
 #include "rashm/SegmentReader.h"
 #include "rashm/data_functors.h"
-#include "rashm/Packet.h"
 
 #include "test/all_data_types.h"
 #include "test/TestGenerator.h"
@@ -61,7 +60,7 @@ public:
     }
 
     virtual void start() {
-        std::cout << "Starting writer " << rashm::Packet<DATA, ID>::name()
+        std::cout << "Starting writer " << rashm::DataIdTraits<DATA, ID>::name()
                 << std::endl;
 
         th = std::move(std::thread(std::ref(*this)));
@@ -122,7 +121,7 @@ public:
     }
 
     virtual void start() {
-        std::cout << "Starting reader " << rashm::Packet<DATA, ID>::name()
+        std::cout << "Starting reader " << rashm::DataIdTraits<DATA, ID>::name()
                 << std::endl;
 
         th = std::move(std::thread(std::ref(*this)));
@@ -191,7 +190,7 @@ template<typename COMP>
 CompMap<COMP> makeMap(CompConfig const& cfg) {
     CompMap<COMP> ret;
 
-    typedef rashm::apply_all_data_ids<data_vector_t, rashm::packet_functor_t>::type all_packets_t;
+    typedef rashm::apply_all_data_ids<data_vector_t, rashm::DataIdTraitsFunctor>::type all_packets_t;
 
     boost::mpl::for_each<all_packets_t>(Coll<COMP>(ret, cfg));
 

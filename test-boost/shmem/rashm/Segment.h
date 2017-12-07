@@ -49,11 +49,12 @@ template<typename DATA, typename ID>
 struct Frame {
 
     typedef DATA data_t;
+    typedef ID id_t;
     typedef boost::interprocess::interprocess_sharable_mutex mutex_t;
     typedef boost::interprocess::interprocess_condition_any condition_t;
 
     static std::string name() {
-        return DataTraits<data_t>::SHM_NAME + "-" + DataTraits<ID>::SHM_NAME;
+        return DataIdTraits<data_t,id_t>::name();
     }
 
     void setIsValid(bool b = true) {
