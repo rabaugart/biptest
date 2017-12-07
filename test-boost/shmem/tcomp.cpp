@@ -88,7 +88,7 @@ public:
     }
 
     virtual void removeSegment() {
-        rashm::Segment<DATA,ID>::removeSegment();
+        rashm::Segment<DATA, ID>::removeSegment();
     }
 
     CompConfig cfg;
@@ -171,7 +171,7 @@ public:
     }
 
     virtual void removeSegment() {
-        rashm::Segment<DATA,ID>::removeSegment();
+        rashm::Segment<DATA, ID>::removeSegment();
     }
 
     CompConfig cfg;
@@ -227,10 +227,9 @@ int main(int argc, char** argv) {
         rashm::CompMap<fac_t> const map = rashm::makeMap<data_vector_t, fac_t>(
                 cfg);
 
-        for ( auto const& i : map ) {
+        for (auto const& i : map) {
             i.second->removeSegment();
         }
-        return 0;
     }
 
     //std::cout << boost::chrono::time_fmt(boost::chrono::local_timezone());
