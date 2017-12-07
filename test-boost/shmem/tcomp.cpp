@@ -196,9 +196,9 @@ int main(int argc, char** argv) {
 
     if (vm.count("help")) {
         std::cout << desc << "\nComponents:\n";
-        typedef WriterFactory comp_t;
+        typedef WriterFactory fac_t;
 
-        rashm::CompMap<comp_t> const map = rashm::makeMap<data_vector_t,comp_t>(cfg);
+        rashm::CompMap<fac_t> const map = rashm::makeMap<data_vector_t,fac_t>(cfg);
 
         for (auto const& i : map) {
             std::cout << i.first << std::endl;
@@ -207,9 +207,9 @@ int main(int argc, char** argv) {
     }
 
     if (vm.count("writer")) {
-        typedef WriterFactory comp_t;
+        typedef WriterFactory fac_t;
 
-        rashm::CompMap<comp_t> const map = rashm::makeMap<data_vector_t,comp_t>(cfg);
+        rashm::CompMap<fac_t> const map = rashm::makeMap<data_vector_t,fac_t>(cfg);
 
         map.at(compName)->start();
         map.at(compName)->join();
@@ -217,9 +217,9 @@ int main(int argc, char** argv) {
     }
 
     if (vm.count("reader")) {
-        typedef ReaderFactory comp_t;
+        typedef ReaderFactory fac_t;
 
-        rashm::CompMap<comp_t> const map = rashm::makeMap<data_vector_t,comp_t>(cfg);
+        rashm::CompMap<fac_t> const map = rashm::makeMap<data_vector_t,fac_t>(cfg);
 
         map.at(compName)->start();
         map.at(compName)->join();
