@@ -5,28 +5,23 @@
  *      Author: netz
  */
 
+
 #include <map>
 #include <memory>
 #include <thread>
 #include <chrono>
 
 #include <boost/program_options.hpp>
-#include <boost/mpl/for_each.hpp>
 #include <boost/chrono.hpp>
 #include <boost/program_options/options_description.hpp>
 
 #include "rashm/Segment.h"
 #include "rashm/SegmentWriter.h"
 #include "rashm/SegmentReader.h"
-#include "rashm/data_functors.h"
+#include "rashm/CompMap.h"
 
 #include "test/all_data_types.h"
 #include "test/TestGenerator.h"
-
-template<typename CFACTORY>
-class CompMap: public std::map<std::string, typename CFACTORY::value_type> {
-
-};
 
 struct CompConfig {
     size_t duration;
@@ -97,9 +92,10 @@ public:
 struct WriterFactory {
     typedef CompBase type;
     typedef std::shared_ptr<type> value_type;
+    typedef CompConfig config_type;
 
     template<typename DATA, typename ID>
-    static value_type make(CompConfig const& cfg) {
+    static value_type make(config_type const& cfg) {
         return std::make_shared<Writer<DATA, ID>>(cfg);
     }
 };
@@ -166,42 +162,14 @@ public:
 struct ReaderFactory {
     typedef CompBase type;
     typedef std::shared_ptr<type> value_type;
+    typedef CompConfig config_type;
 
     template<typename DATA, typename ID>
-    static value_type make(CompConfig const& cfg) {
+    static value_type make(config_type const& cfg) {
         return std::make_shared<Reader<DATA, ID>>(cfg);
     }
 };
 
-namespace {
-
-template<typename CFACTORY, typename CONFIG>
-struct Coll {
-    Coll(CompMap<CFACTORY> & v_, CONFIG cfg_) :
-            v(v_), cfg(cfg_) {
-    }
-
-    template<typename U>
-    void operator()(U x) {
-        v[x.name()] = CFACTORY::template make<typename U::data_t, typename U::id_t>(
-                cfg);
-    }
-    CompMap<CFACTORY>& v;
-    CONFIG cfg;
-};
-
-}
-
-template<typename CFACTORY, typename CONFIG>
-CompMap<CFACTORY> makeMap(CONFIG const& cfg) {
-    CompMap<CFACTORY> ret;
-
-    typedef rashm::apply_all_data_ids<data_vector_t, rashm::DataIdTraitsFunctor>::type all_packets_t;
-
-    boost::mpl::for_each<all_packets_t>(Coll<CFACTORY, CONFIG>(ret, cfg));
-
-    return ret;
-}
 
 int main(int argc, char** argv) {
 
@@ -230,7 +198,7 @@ int main(int argc, char** argv) {
         std::cout << desc << "\nComponents:\n";
         typedef WriterFactory comp_t;
 
-        CompMap<comp_t> const map = makeMap<comp_t>(cfg);
+        rashm::CompMap<comp_t> const map = rashm::makeMap<data_vector_t,comp_t>(cfg);
 
         for (auto const& i : map) {
             std::cout << i.first << std::endl;
@@ -241,7 +209,7 @@ int main(int argc, char** argv) {
     if (vm.count("writer")) {
         typedef WriterFactory comp_t;
 
-        CompMap<comp_t> const map = makeMap<comp_t>(cfg);
+        rashm::CompMap<comp_t> const map = rashm::makeMap<data_vector_t,comp_t>(cfg);
 
         map.at(compName)->start();
         map.at(compName)->join();
@@ -251,7 +219,7 @@ int main(int argc, char** argv) {
     if (vm.count("reader")) {
         typedef ReaderFactory comp_t;
 
-        CompMap<comp_t> const map = makeMap<comp_t>(cfg);
+        rashm::CompMap<comp_t> const map = rashm::makeMap<data_vector_t,comp_t>(cfg);
 
         map.at(compName)->start();
         map.at(compName)->join();
