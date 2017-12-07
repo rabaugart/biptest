@@ -5,14 +5,15 @@
  *      Author: netz
  */
 
-
 #include <map>
 #include <memory>
 #include <thread>
-#include <chrono>
+
+#define BOOST_CHRONO_DONT_PROVIDES_DEPRECATED_IO_SINCE_V2_0_0
 
 #include <boost/program_options.hpp>
 #include <boost/chrono.hpp>
+#include <boost/chrono/chrono_io.hpp>
 #include <boost/program_options/options_description.hpp>
 
 #include "rashm/Segment.h"
@@ -35,6 +36,7 @@ public:
     }
     virtual void start() = 0;
     virtual void join() = 0;
+    virtual void removeSegment() = 0;
 };
 
 //
@@ -85,6 +87,10 @@ public:
         }
     }
 
+    virtual void removeSegment() {
+        rashm::Segment<DATA,ID>::removeSegment();
+    }
+
     CompConfig cfg;
     std::thread th;
 };
@@ -127,32 +133,45 @@ public:
     void operator()() {
         TestGenerator<DATA> gen;
 
-        rashm::SegmentReader<DATA, ID> sr;
-
-        boost::chrono::time_point<boost::chrono::system_clock> start =
+        boost::chrono::time_point<boost::chrono::system_clock> const start =
                 boost::chrono::system_clock::now();
-
-        boost::posix_time::microseconds timeout(cfg.timeout * 1000);
 
         while (boost::chrono::system_clock::now() - start
                 < boost::chrono::seconds(cfg.duration)) {
-
             try {
-                DATA d = sr.timed_wait_for(timeout);
-                std::cout << "Reader " << boost::chrono::system_clock::now()
-                        << " " << d << std::endl;
-            } catch (std::runtime_error const & e) {
-                std::cout << "Timeout" << std::endl;
+                rashm::SegmentReader<DATA, ID> sr(
+                        boost::interprocess::open_only);
+
+                boost::posix_time::microseconds timeout(cfg.timeout * 1000);
+
+                while (boost::chrono::system_clock::now() - start
+                        < boost::chrono::seconds(cfg.duration)) {
+
+                    try {
+                        DATA d = sr.timed_wait_for(timeout);
+                        std::cout << "Reader "
+                                << boost::chrono::system_clock::now() << " "
+                                << d << std::endl;
+                    } catch (std::runtime_error const & e) {
+                        std::cout << "Timeout" << std::endl;
+                    }
+
+                }
+            } catch (boost::interprocess::interprocess_exception const & e) {
+                std::cout << "No segment" << std::endl;
+                std::this_thread::sleep_for(std::chrono::milliseconds(2000));
             }
-
         }
-
     }
 
     void join() {
         if (th.joinable()) {
             th.join();
         }
+    }
+
+    virtual void removeSegment() {
+        rashm::Segment<DATA,ID>::removeSegment();
     }
 
     CompConfig cfg;
@@ -170,7 +189,6 @@ struct ReaderFactory {
     }
 };
 
-
 int main(int argc, char** argv) {
 
     CompConfig cfg;
@@ -181,14 +199,14 @@ int main(int argc, char** argv) {
     po::options_description desc("Allowed options");
     desc.add_options()("help,h", "produce help message")("duration,d",
             po::value<size_t>(&(cfg.duration))->default_value(5),
-            "Duration in seconds")("timeout,t",
-            po::value<size_t>(&(cfg.timeout))->default_value(500),
-            "Timeout in milliseconds")("period,p",
+            "duration in seconds")("timeout,t",
+            po::value<size_t>(&(cfg.timeout))->default_value(1000),
+            "timeout in milliseconds")("period,p",
             po::value<size_t>(&(cfg.period))->default_value(500),
             "Period in milliseconds")("writer,w",
-            po::value<std::string>(&compName), "Start writer by name")(
+            po::value<std::string>(&compName), "start writer by name")(
             "reader,r", po::value<std::string>(&compName),
-            "Start reader by name");
+            "start reader by name")("clear,c", "remove all segments");
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -198,18 +216,31 @@ int main(int argc, char** argv) {
         std::cout << desc << "\nComponents:\n";
         typedef WriterFactory fac_t;
 
-        rashm::CompMap<fac_t> const map = rashm::makeMap<data_vector_t,fac_t>(cfg);
-
-        for (auto const& i : map) {
-            std::cout << i.first << std::endl;
-        }
+        rashm::CompMap<fac_t> const map = rashm::makeMap<data_vector_t, fac_t>(
+                cfg);
         return 1;
     }
+
+    if (vm.count("clear")) {
+        typedef ReaderFactory fac_t;
+
+        rashm::CompMap<fac_t> const map = rashm::makeMap<data_vector_t, fac_t>(
+                cfg);
+
+        for ( auto const& i : map ) {
+            i.second->removeSegment();
+        }
+        return 0;
+    }
+
+    //std::cout << boost::chrono::time_fmt(boost::chrono::local_timezone());
+    boost::chrono::set_time_fmt(std::cout, std::string { "%T" });
 
     if (vm.count("writer")) {
         typedef WriterFactory fac_t;
 
-        rashm::CompMap<fac_t> const map = rashm::makeMap<data_vector_t,fac_t>(cfg);
+        rashm::CompMap<fac_t> const map = rashm::makeMap<data_vector_t, fac_t>(
+                cfg);
 
         map.at(compName)->start();
         map.at(compName)->join();
@@ -219,7 +250,8 @@ int main(int argc, char** argv) {
     if (vm.count("reader")) {
         typedef ReaderFactory fac_t;
 
-        rashm::CompMap<fac_t> const map = rashm::makeMap<data_vector_t,fac_t>(cfg);
+        rashm::CompMap<fac_t> const map = rashm::makeMap<data_vector_t, fac_t>(
+                cfg);
 
         map.at(compName)->start();
         map.at(compName)->join();

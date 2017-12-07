@@ -27,6 +27,9 @@ public:
     SegmentReader() {
     }
 
+    SegmentReader(boost::interprocess::open_only_t) : Segment<DATA,ID>(boost::interprocess::open_only) {
+    }
+
     data_t get() {
         auto l{sharable_lock()};
         return base_t::frame->data;

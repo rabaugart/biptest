@@ -26,11 +26,8 @@
 
 namespace rashm {
 
-
-
 template<class Archive>
-void serialize(Archive & ar, Header & d, const unsigned int version)
-{
+void serialize(Archive & ar, Header & d, const unsigned int version) {
     ar & d.timestamp;
     ar & d.counter;
     ar & d.isValid;
@@ -54,7 +51,7 @@ struct Frame {
     typedef boost::interprocess::interprocess_condition_any condition_t;
 
     static std::string name() {
-        return DataIdTraits<data_t,id_t>::name();
+        return DataIdTraits<data_t, id_t>::name();
     }
 
     void setIsValid(bool b = true) {
@@ -80,6 +77,29 @@ template<typename DATA, typename ID>
 class Segment {
 protected:
     typedef Frame<DATA, ID> frame_t;
+
+    Segment(boost::interprocess::open_only_t) :
+            name(frame_t::name()), shm(boost::interprocess::open_only,
+                    name.c_str(), boost::interprocess::read_write), frame(
+                    nullptr) {
+        shm.truncate(sizeof(frame_t));
+        reg = std::move(
+                boost::interprocess::mapped_region(shm,
+                        boost::interprocess::read_write
+#if defined(FIXED_MAPPING_ADDRESSx)
+                        , 0, 0, (void*) 0x3f00000000
+#endif
+                        ));
+        void * addr = reg.get_address();
+        frame = static_cast<frame_t*>(reg.get_address());
+    }
+
+    Segment& operator = ( Segment&& s ) {
+        shm = std::move(s.shm);
+        frame = s.frame;
+        reg = std::move(s.reg);
+    }
+
     Segment() :
             name(frame_t::name()), frame(nullptr) {
         try {
@@ -145,7 +165,7 @@ protected:
 
     typedef boost::interprocess::scoped_lock<typename frame_t::mutex_t> scoped_lock_t;
 
-    std::string name;
+    const std::string name;
     boost::interprocess::shared_memory_object shm;
     boost::interprocess::mapped_region reg;
     frame_t* frame;

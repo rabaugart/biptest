@@ -23,6 +23,7 @@ TestGenerator<TestDataB>::TestGenerator() : current { 1.1, 22 } {
 
 template<>
 TestDataB TestGenerator<TestDataB>::next() {
+    current.b++;
     return current;
 }
 
