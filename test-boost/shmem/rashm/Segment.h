@@ -158,6 +158,10 @@ public:
                 segmentName().c_str());
     }
 
+    timestamp_t headerTime() const {
+        return frame->head.timestamp;
+    }
+
     size_t counter() const {
         return frame->head.counter;
     }

@@ -70,8 +70,9 @@ public:
 
         while (boost::chrono::system_clock::now() - start
                 < boost::chrono::seconds(cfg.duration)) {
-            std::cout << rashm::now() << " written " << gen.next() << std::endl;
             sw = gen.current;
+            std::cout << sw.headerTime() << " written " << gen.next()
+                    << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(cfg.period));
         }
 
@@ -145,12 +146,13 @@ public:
 
                     try {
                         DATA d = sr.timed_wait_for(timeout);
-                        std::cout << rashm::now() << " read "
+                        std::cout << sr.headerTime() << " read "
                                 << sr.lastAge().total_microseconds() << "us "
                                 << d << std::endl;
                     } catch (std::runtime_error const & e) {
                         std::cout << rashm::now() << " timeout (last "
-                                << sr.lastReceptionTime() << ")" << std::endl;
+                                << sr.lastReceptionTime() << "/"
+                                << sr.headerTime() << ")" << std::endl;
                     }
 
                 }
