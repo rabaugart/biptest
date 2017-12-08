@@ -14,7 +14,7 @@
 using namespace rashm;
 
 int main(int argc, char **argv) {
-    typedef TestDataB test_t;
+    typedef TestDataA test_t;
     typedef SegmentWriter<test_t,TIdB2> writer_t;
     typedef SegmentReader<test_t,TIdB2> reader_t;
 
