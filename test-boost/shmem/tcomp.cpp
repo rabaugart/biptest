@@ -232,7 +232,6 @@ int main(int argc, char** argv) {
         }
     }
 
-    //std::cout << boost::chrono::time_fmt(boost::chrono::local_timezone());
     boost::chrono::set_time_fmt(std::cout, std::string { "%T" });
 
     if (vm.count("writer")) {
@@ -257,7 +256,10 @@ int main(int argc, char** argv) {
         return 0;
     }
 
-    std::cerr << "Command missing" << std::endl;
+    if (!vm.count("clear")) {
+        std::cerr << "Command missing" << std::endl;
+        return 1;
+    }
 
     return 0;
 }

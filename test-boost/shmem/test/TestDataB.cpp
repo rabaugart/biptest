@@ -8,22 +8,23 @@
 
 std::ostream& operator << ( std::ostream& os, const TestDataB& d )
 {
-	os << "TB a:" << d.a << " b:" << d.b;
+	os << "TB l1:" << d.l1 << " l2:" << d.l2 << " l3:" << d.l3;
 	return os;
 }
 
 bool TestDataB::operator==( TestDataB const & d ) const {
-    return a == d.a && b == d.b;
+    return l1 == d.l1 && l2 == d.l2 && l3 == d.l3;
 }
 
 template<>
-TestGenerator<TestDataB>::TestGenerator() : current { 1.1, 22 } {
+TestGenerator<TestDataB>::TestGenerator() : current { 789, 22, 5792 } {
 
 }
 
 template<>
 TestDataB TestGenerator<TestDataB>::next() {
-    current.b++;
+    current.l2++;
+    current.l3--;
     return current;
 }
 

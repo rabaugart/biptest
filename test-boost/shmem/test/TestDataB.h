@@ -11,17 +11,13 @@
 
 struct TestDataB {
 
-    TestDataB() {
-        a = 33.3;
-        b = 5;
-    }
-    TestDataB(double a_, int b_) :
-            a(a_), b(b_) {
-    }
+    //TestDataB() : l1(0), l2(0), l3(3) {
+    //}
 
     bool operator==(TestDataB const &) const;
-    double a;
-    int b;
+    long l1;
+    long l2;
+    long l3;
 };
 
 struct TIdB1 {
@@ -45,8 +41,9 @@ namespace serialization {
 
 template<class Archive>
 void serialize(Archive & ar, TestDataB & d, const unsigned int version) {
-    ar & d.a;
-    ar & d.b;
+    ar & d.l1;
+    ar & d.l2;
+    ar & d.l3;
 }
 
 } // namespace serialization
