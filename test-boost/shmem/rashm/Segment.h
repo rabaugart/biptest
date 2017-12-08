@@ -87,8 +87,8 @@ protected:
         reg = std::move(
                 boost::interprocess::mapped_region(shm,
                         boost::interprocess::read_write
-#if defined(FIXED_MAPPING_ADDRESSx)
-                        , 0, 0, (void*) 0x3f00000000
+#if defined(FIXED_MAPPING_ADDRESS)
+                        , 0, 0, DataTraits<DATA>::BASE_ADDRESS
 #endif
                         ));
         void * addr = reg.get_address();
@@ -114,8 +114,8 @@ protected:
             reg = std::move(
                     boost::interprocess::mapped_region(shm,
                             boost::interprocess::read_write
-#if defined(FIXED_MAPPING_ADDRESSx)
-                            , 0, 0, (void*) 0x3f00000000
+#if defined(FIXED_MAPPING_ADDRESS)
+                            , 0, 0, DataTraits<DATA>::BASE_ADDRESS
 #endif
                             ));
             void * addr = reg.get_address();
@@ -132,8 +132,8 @@ protected:
             reg = std::move(
                     boost::interprocess::mapped_region(shm,
                             boost::interprocess::read_write
-#if defined(FIXED_MAPPING_ADDRESSx)
-                            , 0, 0, (void*) 0x3f00000000
+#if defined(FIXED_MAPPING_ADDRESS)
+                            , 0, 0, DataTraits<DATA>::BASE_ADDRESS
 #endif
                             ));
 
@@ -164,6 +164,10 @@ public:
 
     size_t counter() const {
         return frame->head.counter;
+    }
+
+    const void* address() const {
+        return reg.get_address();
     }
 
 protected:

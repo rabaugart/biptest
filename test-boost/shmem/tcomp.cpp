@@ -65,6 +65,8 @@ public:
 
         rashm::SegmentWriter<DATA, ID> sw;
 
+        std::cout << "Address " << sw.address() << std::endl;
+
         boost::chrono::time_point<boost::chrono::system_clock> start =
                 boost::chrono::system_clock::now();
 
@@ -138,6 +140,8 @@ public:
             try {
                 rashm::SegmentReader<DATA, ID> sr(
                         boost::interprocess::open_only);
+
+                std::cout << "Address " << sr.address() << std::endl;
 
                 boost::posix_time::microseconds timeout(cfg.timeout * 1000);
 
@@ -217,6 +221,9 @@ int main(int argc, char** argv) {
 
         rashm::CompMap<fac_t> const map = rashm::makeMap<data_vector_t, fac_t>(
                 cfg);
+        for (auto const& i : map) {
+            std::cout << i.first << std::endl;
+        }
         return 1;
     }
 

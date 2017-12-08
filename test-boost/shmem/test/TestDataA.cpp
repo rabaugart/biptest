@@ -31,6 +31,11 @@ namespace rashm {
 template<>
 const std::string DataTraits<TestDataA>::SHM_NAME { "testda" };
 
+#if defined(FIXED_MAPPING_ADDRESS)
+template<>
+const void* DataTraits<TestDataA>::BASE_ADDRESS {(void*)0x3f00000000};
+#endif
+
 template<>
 const std::string DataTraits<TIdA>::SHM_NAME { "tida" };
 
