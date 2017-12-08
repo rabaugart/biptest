@@ -9,11 +9,8 @@
 #include <memory>
 #include <thread>
 
-#define BOOST_CHRONO_DONT_PROVIDES_DEPRECATED_IO_SINCE_V2_0_0
-
 #include <boost/program_options.hpp>
 #include <boost/chrono.hpp>
-#include <boost/chrono/chrono_io.hpp>
 #include <boost/program_options/options_description.hpp>
 
 #include "rashm/Segment.h"
@@ -73,8 +70,7 @@ public:
 
         while (boost::chrono::system_clock::now() - start
                 < boost::chrono::seconds(cfg.duration)) {
-            std::cout << "Writer " << boost::chrono::system_clock::now() << " "
-                    << gen.next() << std::endl;
+            std::cout << rashm::now() << " written " << gen.next() << std::endl;
             sw = gen.current;
             std::this_thread::sleep_for(std::chrono::milliseconds(cfg.period));
         }
@@ -150,12 +146,11 @@ public:
                     try {
                         DATA d = sr.timed_wait_for(timeout);
                         std::cout << rashm::now() << " read "
-                                << sr.lastAge().total_microseconds() << "us " << d
-                                << std::endl;
+                                << sr.lastAge().total_microseconds() << "us "
+                                << d << std::endl;
                     } catch (std::runtime_error const & e) {
                         std::cout << rashm::now() << " timeout (last "
-                                << sr.lastReceptionTime() << ")"
-                                << std::endl;
+                                << sr.lastReceptionTime() << ")" << std::endl;
                     }
 
                 }

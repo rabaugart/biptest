@@ -16,6 +16,7 @@
 #include <boost/interprocess/mapped_region.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
+#include <boost/core/noncopyable.hpp>
 
 #include <boost/date_time/posix_time/posix_time_duration.hpp>
 #include <boost/date_time/posix_time/time_serialize.hpp>
@@ -74,7 +75,7 @@ struct Frame {
 };
 
 template<typename DATA, typename ID>
-class Segment {
+class Segment : private boost::noncopyable {
 protected:
     typedef Frame<DATA, ID> frame_t;
 
