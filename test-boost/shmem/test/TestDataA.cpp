@@ -33,7 +33,7 @@ const std::string DataTraits<TestDataA>::SHM_NAME { "testda" };
 
 #if defined(FIXED_MAPPING_ADDRESS)
 template<>
-const void* DataTraits<TestDataA>::BASE_ADDRESS {(void*)0x3f00000000};
+const long DataTraits<TestDataA>::BASE_ADDRESS {0x3f00000000};
 #endif
 
 template<>

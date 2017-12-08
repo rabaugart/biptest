@@ -65,7 +65,11 @@ public:
 
         rashm::SegmentWriter<DATA, ID> sw;
 
-        std::cout << "Address " << sw.address() << std::endl;
+        std::cout << "Address " << sw.address()
+#if defined(FIXED_MAPPING_ADDRESS)
+                << "/" << rashm::DataIdTraits<DATA,ID>::fixedAddress()
+#endif
+                << std::endl;
 
         boost::chrono::time_point<boost::chrono::system_clock> start =
                 boost::chrono::system_clock::now();

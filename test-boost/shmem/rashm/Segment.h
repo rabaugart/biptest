@@ -88,7 +88,7 @@ protected:
                 boost::interprocess::mapped_region(shm,
                         boost::interprocess::read_write
 #if defined(FIXED_MAPPING_ADDRESS)
-                        , 0, 0, DataTraits<DATA>::BASE_ADDRESS
+                        , 0, 0, DataIdTraits<DATA,ID>::fixedAddress()
 #endif
                         ));
         void * addr = reg.get_address();
@@ -115,7 +115,7 @@ protected:
                     boost::interprocess::mapped_region(shm,
                             boost::interprocess::read_write
 #if defined(FIXED_MAPPING_ADDRESS)
-                            , 0, 0, DataTraits<DATA>::BASE_ADDRESS
+                            , 0, 0, DataIdTraits<DATA,ID>::fixedAddress()
 #endif
                             ));
             void * addr = reg.get_address();
@@ -133,7 +133,7 @@ protected:
                     boost::interprocess::mapped_region(shm,
                             boost::interprocess::read_write
 #if defined(FIXED_MAPPING_ADDRESS)
-                            , 0, 0, DataTraits<DATA>::BASE_ADDRESS
+                            , 0, 0, DataIdTraits<DATA,ID>::fixedAddress()
 #endif
                             ));
 
