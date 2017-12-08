@@ -149,16 +149,18 @@ public:
 
                     try {
                         DATA d = sr.timed_wait_for(timeout);
-                        std::cout << "Reader "
-                                << boost::chrono::system_clock::now() << " "
-                                << d << std::endl;
+                        std::cout << rashm::now() << " read "
+                                << sr.lastAge().total_microseconds() << "us " << d
+                                << std::endl;
                     } catch (std::runtime_error const & e) {
-                        std::cout << "Timeout" << std::endl;
+                        std::cout << rashm::now() << " timeout (last "
+                                << sr.lastReceptionTime() << ")"
+                                << std::endl;
                     }
 
                 }
             } catch (boost::interprocess::interprocess_exception const & e) {
-                std::cout << "No segment" << std::endl;
+                std::cout << rashm::now() << " no segment" << std::endl;
                 std::this_thread::sleep_for(std::chrono::milliseconds(2000));
             }
         }
@@ -232,7 +234,7 @@ int main(int argc, char** argv) {
         }
     }
 
-    boost::chrono::set_time_fmt(std::cout, std::string { "%T" });
+    //boost::chrono::set_time_fmt(std::cout, std::string { "%T" });
 
     if (vm.count("writer")) {
         typedef WriterFactory fac_t;

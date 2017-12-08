@@ -13,6 +13,7 @@
 namespace rashm {
 
 typedef boost::posix_time::ptime timestamp_t;
+typedef boost::posix_time::time_duration duration_t;
 
 timestamp_t now();
 

@@ -16,42 +16,59 @@
 
 namespace rashm {
 
-template<typename DATA, typename ID=DefaultId>
-class SegmentReader : public Segment<DATA,ID> {
+template<typename DATA, typename ID = DefaultId>
+class SegmentReader: public Segment<DATA, ID> {
 
 public:
 
-    typedef Segment<DATA,ID> base_t;
+    typedef Segment<DATA, ID> base_t;
     typedef DATA data_t;
 
-    SegmentReader() {
+    SegmentReader() :
+            lastRecvTime() {
     }
 
-    SegmentReader(boost::interprocess::open_only_t) : Segment<DATA,ID>(boost::interprocess::open_only) {
+    SegmentReader(boost::interprocess::open_only_t) :
+            Segment<DATA, ID>(boost::interprocess::open_only), lastRecvTime() {
     }
 
     data_t get() {
-        auto l{sharable_lock()};
+        auto l { sharable_lock() };
         return base_t::frame->data;
     }
 
     data_t wait() {
-        auto l{sharable_lock()};
+        auto l { sharable_lock() };
         base_t::frame->condition.wait(l);
         return base_t::frame->data;
     }
 
-    data_t timed_wait_for(boost::posix_time::microseconds ms)
-    {
-        const boost::posix_time::ptime end = boost::date_time::microsec_clock<boost::posix_time::ptime>::universal_time() + ms;
-        auto lck{sharable_lock()};
-        if ( base_t::frame->condition.timed_wait(lck,end) ) {
+    data_t timed_wait_for(boost::posix_time::microseconds ms) {
+        const boost::posix_time::ptime end = boost::date_time::microsec_clock<
+                boost::posix_time::ptime>::universal_time() + ms;
+        auto lck { sharable_lock() };
+        if (base_t::frame->condition.timed_wait(lck, end)) {
+            lastHead = base_t::frame->head;
+            lastRecvTime = now();
+            age = lastRecvTime-lastHead.timestamp;
             return base_t::frame->data;
         }
         throw std::runtime_error("Timeout");
     }
 
     ~SegmentReader() {
+    }
+
+    Header const& lastReceivedHeader() const {
+        return lastHead;
+    }
+
+    timestamp_t lastReceptionTime() const {
+        return lastRecvTime;
+    }
+
+    duration_t lastAge() const {
+        return age;
     }
 
 protected:
@@ -61,6 +78,10 @@ protected:
     sharable_lock_t sharable_lock() {
         return sharable_lock_t(base_t::frame->mutex);
     }
+
+    Header lastHead;
+    timestamp_t lastRecvTime;
+    duration_t age;
 };
 
 }
