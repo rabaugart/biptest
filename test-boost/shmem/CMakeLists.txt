@@ -2,7 +2,7 @@
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
 
 if ( ${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Linux" )
-  link_libraries( -lpthread -lrt )
+  link_libraries( -lpthread -lrt -lncurses )
 endif()
 
 if ( ${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Darwin" )
@@ -21,7 +21,7 @@ if ( NOT ${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Windows" )
   add_executable( tdshmem tdshmem.cpp )
 endif()
 
-add_library( lrashm STATIC rashm/Segment.cpp rashm/Header.cpp )
+add_library( lrashm STATIC rashm/Segment.cpp rashm/Header.cpp rashm/Console.cpp )
 
 add_library( lratest STATIC  test/TestDataA.cpp test/TestDataB.cpp 
     test/MsgCollector.cpp test/ComProc.cpp test/SubProc.cpp)
@@ -34,3 +34,6 @@ target_link_libraries( tfshmem lrashm lratest boost_serialization boost_date_tim
 add_executable( tcomp tcomp.cpp )
 target_link_libraries( tcomp lrashm lratest boost_chrono boost_system 
     boost_program_options boost_log boost_thread )
+
+add_executable( tterm tterm.cpp )
+target_link_libraries( tterm lrashm lratest )
