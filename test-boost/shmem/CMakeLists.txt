@@ -7,6 +7,7 @@ endif()
 
 if ( ${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Darwin" )
   add_definitions( -DONLY_ONE_READER -DFIXED_MAPPING_ADDRESS )
+  link_libraries( -lncurses )
 endif()
 
 add_executable( tashmem tashmem.cpp shmem/shmem.cpp test/TestDataA.cpp )
