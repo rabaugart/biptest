@@ -37,4 +37,4 @@ target_link_libraries( tcomp lrashm lratest boost_chrono boost_system
     boost_program_options boost_log boost_thread )
 
 add_executable( tterm tterm.cpp )
-target_link_libraries( tterm lrashm lratest )
+target_link_libraries( tterm lrashm lratest boost_log boost_thread boost_chrono boost_system )

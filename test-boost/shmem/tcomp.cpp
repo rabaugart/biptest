@@ -133,7 +133,6 @@ public:
     }
 
     void operator()() {
-        TestGenerator<DATA> gen;
 
         boost::chrono::time_point<boost::chrono::system_clock> const start =
                 boost::chrono::system_clock::now();
