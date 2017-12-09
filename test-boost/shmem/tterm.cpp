@@ -93,7 +93,7 @@ public:
                                 << sr.lastAge().total_microseconds() << "us "
                                 << d;
                         std::ostringstream os;
-                        os << d;
+                        os << d << " (" << sr.lastAge().total_microseconds() << "us)";
                         text = os.str();
                     } catch (std::runtime_error const & e) {
                         BOOST_LOG_TRIVIAL(info) << "timeout (last "
