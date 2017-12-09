@@ -39,6 +39,13 @@ struct Header {
     bool isValid;
 };
 
+template<class Archive>
+void serialize(Archive & ar, Header & d, const unsigned int version) {
+    ar & d.timestamp;
+    ar & d.counter;
+    ar & d.isValid;
+}
+
 }
 
 #endif /* SHMEM_RASHM_HEADER_H_ */

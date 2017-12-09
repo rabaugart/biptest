@@ -67,7 +67,7 @@ public:
 
         std::cout << "Address " << sw.address()
 #if defined(FIXED_MAPPING_ADDRESS)
-                << "/" << rashm::DataIdTraits<DATA,ID>::fixedAddress()
+                << "/" << rashm::DataIdTraits<DATA, ID>::fixedAddress()
 #endif
                 << std::endl;
 
@@ -165,8 +165,14 @@ public:
 
                 }
             } catch (boost::interprocess::interprocess_exception const & e) {
-                std::cout << rashm::now() << " no segment" << std::endl;
-                std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+                if (e.get_error_code()
+                        == boost::interprocess::not_found_error) {
+                    std::cout << rashm::now() << " no segment" << std::endl;
+                    std::this_thread::sleep_for(
+                            std::chrono::milliseconds(1000));
+                } else {
+                    throw;
+                }
             }
         }
     }

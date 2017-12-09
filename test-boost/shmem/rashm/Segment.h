@@ -27,13 +27,6 @@
 
 namespace rashm {
 
-template<class Archive>
-void serialize(Archive & ar, Header & d, const unsigned int version) {
-    ar & d.timestamp;
-    ar & d.counter;
-    ar & d.isValid;
-}
-
 /**
  * The frame stored in shared memory
  *
