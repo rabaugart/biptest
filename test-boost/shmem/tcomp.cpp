@@ -215,7 +215,8 @@ int main(int argc, char** argv) {
             "timeout in milliseconds")("period,p",
             po::value<size_t>(&(cfg.period))->default_value(500),
             "Period in milliseconds")("writer,w",
-            po::value<std::string>(&compName), "start writer by name")(
+                                      po::value<std::string>(&compName), "start writer by name")("wall",
+             "start all writers")(
             "reader,r", po::value<std::string>(&compName),
             "start reader by name")("clear,c", "remove all segments")("quiet,q", "Show only errors");
 
@@ -253,7 +254,22 @@ int main(int argc, char** argv) {
         }
     }
 
-    //boost::chrono::set_time_fmt(std::cout, std::string { "%T" });
+    if (vm.count("wall")) {
+        BOOST_LOG_TRIVIAL(info) << "Starting all";
+        typedef WriterFactory fac_t;
+
+        rashm::CompMap<fac_t> const map = rashm::makeMap<data_vector_t, fac_t>(
+                cfg);
+
+        for (auto& i : map) {
+            i.second->start();
+        }
+
+        for (auto& i : map) {
+            i.second->join();
+        }
+        return 0;
+    }
 
     if (vm.count("writer")) {
         typedef WriterFactory fac_t;
