@@ -33,4 +33,4 @@ target_link_libraries( tfshmem lrashm lratest boost_serialization boost_date_tim
 
 add_executable( tcomp tcomp.cpp )
 target_link_libraries( tcomp lrashm lratest boost_chrono boost_system 
-    boost_program_options boost_thread boost_log )
+    boost_program_options boost_log boost_thread )
