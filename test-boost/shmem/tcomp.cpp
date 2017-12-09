@@ -12,6 +12,8 @@
 #include <boost/program_options.hpp>
 #include <boost/chrono.hpp>
 #include <boost/program_options/options_description.hpp>
+#include <boost/log/trivial.hpp>
+#include <boost/log/expressions.hpp>
 
 #include "rashm/Segment.h"
 #include "rashm/SegmentWriter.h"
@@ -54,8 +56,7 @@ public:
     }
 
     virtual void start() {
-        std::cout << "Starting writer " << rashm::DataIdTraits<DATA, ID>::name()
-                << std::endl;
+        BOOST_LOG_TRIVIAL(info) << "starting writer " << rashm::DataIdTraits<DATA, ID>::name();
 
         th = std::move(std::thread(std::ref(*this)));
     }
@@ -65,11 +66,11 @@ public:
 
         rashm::SegmentWriter<DATA, ID> sw;
 
-        std::cout << "Address " << sw.address()
+        BOOST_LOG_TRIVIAL(info) << "address " << sw.address()
 #if defined(FIXED_MAPPING_ADDRESS)
                 << "/" << rashm::DataIdTraits<DATA, ID>::fixedAddress()
 #endif
-                << std::endl;
+                ;
 
         boost::chrono::time_point<boost::chrono::system_clock> start =
                 boost::chrono::system_clock::now();
@@ -77,8 +78,7 @@ public:
         while (boost::chrono::system_clock::now() - start
                 < boost::chrono::seconds(cfg.duration)) {
             sw = gen.current;
-            std::cout << sw.headerTime() << " written " << gen.next()
-                    << std::endl;
+            BOOST_LOG_TRIVIAL(debug) << sw.headerTime() << " written " << gen.next();
             std::this_thread::sleep_for(std::chrono::milliseconds(cfg.period));
         }
 
@@ -127,8 +127,7 @@ public:
     }
 
     virtual void start() {
-        std::cout << "Starting reader " << rashm::DataIdTraits<DATA, ID>::name()
-                << std::endl;
+        BOOST_LOG_TRIVIAL(info) << "starting reader " << rashm::DataIdTraits<DATA, ID>::name();
 
         th = std::move(std::thread(std::ref(*this)));
     }
@@ -145,7 +144,7 @@ public:
                 rashm::SegmentReader<DATA, ID> sr(
                         boost::interprocess::open_only);
 
-                std::cout << "Address " << sr.address() << std::endl;
+                BOOST_LOG_TRIVIAL(info) << "address " << sr.address();
 
                 boost::posix_time::microseconds timeout(cfg.timeout * 1000);
 
@@ -154,20 +153,20 @@ public:
 
                     try {
                         DATA d = sr.timed_wait_for(timeout);
-                        std::cout << sr.headerTime() << " read "
+                        BOOST_LOG_TRIVIAL(debug) << "read " << sr.headerTime()
                                 << sr.lastAge().total_microseconds() << "us "
-                                << d << std::endl;
+                                << d;
                     } catch (std::runtime_error const & e) {
-                        std::cout << rashm::now() << " timeout (last "
+                        BOOST_LOG_TRIVIAL(info) << "timeout (last "
                                 << sr.lastReceptionTime() << "/"
-                                << sr.headerTime() << ")" << std::endl;
+                                << sr.headerTime() << ")";
                     }
 
                 }
             } catch (boost::interprocess::interprocess_exception const & e) {
                 if (e.get_error_code()
                         == boost::interprocess::not_found_error) {
-                    std::cout << rashm::now() << " no segment" << std::endl;
+                    BOOST_LOG_TRIVIAL(info) << "no segment";
                     std::this_thread::sleep_for(
                             std::chrono::milliseconds(1000));
                 } else {
@@ -219,7 +218,7 @@ int main(int argc, char** argv) {
             "Period in milliseconds")("writer,w",
             po::value<std::string>(&compName), "start writer by name")(
             "reader,r", po::value<std::string>(&compName),
-            "start reader by name")("clear,c", "remove all segments");
+            "start reader by name")("clear,c", "remove all segments")("quiet,q", "Show only errors");
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -235,6 +234,13 @@ int main(int argc, char** argv) {
             std::cout << i.first << std::endl;
         }
         return 1;
+    }
+
+    if (vm.count("quiet")) {
+        boost::log::core::get()->set_filter
+           (
+               boost::log::trivial::severity > boost::log::trivial::info
+           );
     }
 
     if (vm.count("clear")) {

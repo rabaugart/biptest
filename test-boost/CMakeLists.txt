@@ -28,7 +28,8 @@ endif()
 
 set( Boost_USE_STATIC_LIBS ON )
 
-find_package(Boost COMPONENTS program_options system filesystem thread chrono regex serialization date_time )
+find_package(Boost COMPONENTS program_options system filesystem
+    thread chrono regex serialization date_time log )
 
 message( STATUS "Boost ${Boost_PROGRAM_OPTIONS_LIBRARY}" )
 
@@ -44,6 +45,9 @@ set_target_properties( boost_system PROPERTIES IMPORTED_LOCATION ${Boost_SYSTEM_
 
 add_library( boost_filesystem STATIC IMPORTED )
 set_target_properties( boost_filesystem PROPERTIES IMPORTED_LOCATION ${Boost_FILESYSTEM_LIBRARY_RELEASE} )
+
+add_library( boost_log STATIC IMPORTED )
+set_target_properties( boost_log PROPERTIES IMPORTED_LOCATION ${Boost_LOG_LIBRARY_RELEASE} )
 
 add_library( boost_thread STATIC IMPORTED )
 set_target_properties( boost_thread PROPERTIES IMPORTED_LOCATION ${Boost_THREAD_LIBRARY_RELEASE} )
