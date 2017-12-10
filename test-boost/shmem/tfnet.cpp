@@ -235,7 +235,7 @@ struct IdentityVisitor {
 
     template<typename DATA, typename ID>
     void operator()(rashm::Packet<DATA, ID> const& p) const {
-        BOOST_LOG_TRIVIAL(debug)<< "received " << p.name() << " " << p.head.timestamp;
+        BOOST_LOG_TRIVIAL(debug)<< "received (a) " << p.name() << " " << p.head.timestamp;
         rashm::SegmentWriter<DATA,ID> sw; // Todo: Expensive construction
         sw = p.data;
     }
@@ -273,7 +273,7 @@ int main(int argc, char** argv) {
             po::value<std::string>(&(cfg.address))->default_value("127.0.0.1"),
             "ip address")("sender,s", po::value<std::string>(&compName),
             "start sender by name")("sall", "start all senders")("rall", "receive all messages")("recv,r",
-            "start receiver")("quiet,q", "show only errors");
+            "start mapping receiver")("quiet,q", "show only errors");
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
