@@ -228,6 +228,20 @@ struct MappingVisitor {
     }
 };
 
+struct IdentityVisitor {
+
+    template<typename P>
+    void operator()(P const& p) const;
+
+    template<typename DATA, typename ID>
+    void operator()(rashm::Packet<DATA, ID> const& p) const {
+        BOOST_LOG_TRIVIAL(debug)<< "received " << p.name() << " " << p.head.timestamp;
+        rashm::SegmentWriter<DATA,ID> sw; // Todo: Expensive construction
+        sw = p.data;
+    }
+
+};
+
 template<typename VISITOR>
 static void receive(NetConfig const& cfg) {
     boost::asio::io_service io;
@@ -258,8 +272,8 @@ int main(int argc, char** argv) {
             "Period in milliseconds")("address,a",
             po::value<std::string>(&(cfg.address))->default_value("127.0.0.1"),
             "ip address")("sender,s", po::value<std::string>(&compName),
-            "start sender by name")("wall", "start all Senders")("recv,r",
-            "start receiver")("quiet,q", "Show only errors");
+            "start sender by name")("sall", "start all senders")("rall", "receive all messages")("recv,r",
+            "start receiver")("quiet,q", "show only errors");
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -282,10 +296,8 @@ int main(int argc, char** argv) {
                 boost::log::trivial::severity > boost::log::trivial::info);
     }
 
-    if (vm.count("wall")) {
-        BOOST_LOG_TRIVIAL(fatal)<< "Invalid option wall";
-        return 1;
-        BOOST_LOG_TRIVIAL(info) << "Starting all";
+    if (vm.count("sall")) {
+        BOOST_LOG_TRIVIAL(info) << "Starting all senders";
         typedef SenderFactory fac_t;
 
         rashm::CompMap<fac_t> const map = rashm::makeMap<data_vector_t, fac_t>(
@@ -313,8 +325,15 @@ int main(int argc, char** argv) {
     }
 
     if (vm.count("recv")) {
+        BOOST_LOG_TRIVIAL(info) << "Receiving all senders";
 
         receive<MappingVisitor>(cfg);
+        return 0;
+    }
+
+    if (vm.count("rall")) {
+
+        receive<IdentityVisitor>(cfg);
         return 0;
     }
 
