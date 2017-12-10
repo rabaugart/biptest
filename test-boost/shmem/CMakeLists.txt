@@ -38,3 +38,8 @@ target_link_libraries( tcomp lrashm lratest boost_chrono boost_system
 
 add_executable( tterm tterm.cpp )
 target_link_libraries( tterm lrashm lratest boost_log boost_thread boost_chrono boost_system )
+
+add_executable( tfnet tfnet.cpp )
+target_link_libraries( tfnet lrashm lratest boost_chrono boost_serialization boost_date_time boost_system
+    boost_program_options boost_log boost_thread )
+

@@ -151,6 +151,10 @@ public:
                 segmentName().c_str());
     }
 
+    Header const& head() const {
+        return frame->head;
+    }
+
     timestamp_t headerTime() const {
         return frame->head.timestamp;
     }
