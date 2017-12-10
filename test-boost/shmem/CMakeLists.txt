@@ -22,7 +22,7 @@ if ( NOT ${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Windows" )
   add_executable( tdshmem tdshmem.cpp )
 endif()
 
-add_library( lrashm STATIC rashm/Segment.cpp rashm/Header.cpp rashm/Console.cpp )
+add_library( lrashm STATIC rashm/Segment.cpp rashm/Header.cpp )
 
 add_library( lratest STATIC  test/TestDataA.cpp test/TestDataB.cpp 
     test/MsgCollector.cpp test/ComProc.cpp test/SubProc.cpp)
@@ -36,8 +36,10 @@ add_executable( tcomp tcomp.cpp )
 target_link_libraries( tcomp lrashm lratest boost_chrono boost_system 
     boost_program_options boost_log boost_thread )
 
-add_executable( tterm tterm.cpp )
-target_link_libraries( tterm lrashm lratest boost_log boost_thread boost_chrono boost_system )
+if ( NOT ${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Windows" )
+    add_executable( tterm tterm.cpp rashm/Console.cpp )
+    target_link_libraries( tterm lrashm lratest boost_log boost_thread boost_chrono boost_system )
+endif()
 
 add_executable( tfnet tfnet.cpp )
 target_link_libraries( tfnet lrashm lratest boost_chrono boost_serialization boost_date_time boost_system

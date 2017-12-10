@@ -68,14 +68,14 @@ public:
     }
 
     virtual void start() {
-        BOOST_LOG_TRIVIAL(info) << "starting sender " << rashm::DataIdTraits<DATA, ID>::name();
+        BOOST_LOG_TRIVIAL(info)<< "starting sender " << rashm::DataIdTraits<DATA, ID>::name();
 
         th = std::move(std::thread(std::ref(*this)));
     }
 
     void operator()() {
         boost::chrono::time_point<boost::chrono::system_clock> const start =
-                boost::chrono::system_clock::now();
+        boost::chrono::system_clock::now();
 
         while (boost::chrono::system_clock::now() - start
                 < boost::chrono::seconds(cfg.duration)) {
@@ -84,9 +84,9 @@ public:
                         boost::interprocess::open_only);
                 boost::asio::io_service io;
 
-                boost::asio::ip::address const to{boost::asio::ip::address::from_string(cfg.address)};
-                boost::asio::ip::udp::endpoint const ep{to,cfg.port};
-                boost::asio::ip::udp::socket sock{io,ep.protocol()};
+                boost::asio::ip::address const to {boost::asio::ip::address::from_string(cfg.address)};
+                boost::asio::ip::udp::endpoint const ep {to,cfg.port};
+                boost::asio::ip::udp::socket sock {io,ep.protocol()};
 
                 BOOST_LOG_TRIVIAL(info) << "shm address " << sr.address();
 
@@ -102,26 +102,26 @@ public:
 
                         DATA d = sr.timed_wait_for(timeout);
                         BOOST_LOG_TRIVIAL(debug) << "read " << sr.headerTime()
-                                << sr.lastAge().total_microseconds() << "us "
-                                << d;
+                        << sr.lastAge().total_microseconds() << "us "
+                        << d;
 
-                        rashm::Packet<DATA,ID> pa{sr.head(),d}; // Todo: protect head by lock
+                        rashm::Packet<DATA,ID> pa {sr.head(),d}; // Todo: protect head by lock
 
                         std::ostringstream os;
 
                         {
-                        	boost::archive::text_oarchive oa(os); // Todo: use bin archive
-                        	all_packet_variant_t v{pa};
-                        	oa << v;
+                            boost::archive::text_oarchive oa(os); // Todo: use bin archive
+                            all_packet_variant_t v {pa};
+                            oa << v;
                         }
 
-                        std::string buf{os.str()};
+                        std::string buf {os.str()};
                         sock.send_to( boost::asio::buffer(buf), ep );
 
                     } catch (std::runtime_error const & e) { // Todo: create timeout exception
                         BOOST_LOG_TRIVIAL(info) << "timeout (last "
-                                << sr.lastReceptionTime() << "/"
-                                << sr.headerTime() << ")" << e.what();
+                        << sr.lastReceptionTime() << "/"
+                        << sr.headerTime() << ")" << e.what();
                     }
 
                 }
@@ -165,60 +165,58 @@ struct SenderFactory {
 };
 
 template<class VISITOR>
-class udp_server
-{
+class udp_server {
 public:
-  udp_server(NetConfig const& cfg, boost::asio::io_service& io_service)
-    : socket_(io_service, boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), cfg.port))
-  {
-    start_receive();
-  }
-
-private:
-  void start_receive()
-  {
-    socket_.async_receive_from(
-        boost::asio::buffer(recv_buffer_), remote_endpoint_,
-        boost::bind(&udp_server::handle_receive, this,
-          boost::asio::placeholders::error,
-          boost::asio::placeholders::bytes_transferred));
-  }
-
-  void handle_receive(const boost::system::error_code& error,
-      std::size_t size)
-  {
-    if (!error || error == boost::asio::error::message_size)
-    {
-        typedef rashm::apply_all_data_ids<data_vector_t, rashm::packet_functor_t>::type all_packets_t;
-
-        typedef boost::make_variant_over<all_packets_t>::type all_packet_variant_t;
-
-        std::string const in(&(recv_buffer_[0]), size );
-
-        std::istringstream is(in);
-        boost::archive::text_iarchive ia(is);
-        all_packet_variant_t p2;
-        ia >> p2;
-        boost::apply_visitor(VISITOR(), p2);
-
+    udp_server(NetConfig const& cfg, boost::asio::io_service& io_service) :
+            socket_(io_service,
+                    boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(),
+                            cfg.port)) {
         start_receive();
     }
-  }
 
-  boost::asio::ip::udp::socket socket_;
-  boost::asio::ip::udp::endpoint remote_endpoint_;
-  boost::array<char, 10000> recv_buffer_; // Todo: fix buffer size
+private:
+    void start_receive() {
+        socket_.async_receive_from(boost::asio::buffer(recv_buffer_),
+                remote_endpoint_,
+                boost::bind(&udp_server::handle_receive, this,
+                        boost::asio::placeholders::error,
+                        boost::asio::placeholders::bytes_transferred));
+    }
+
+    void handle_receive(const boost::system::error_code& error,
+            std::size_t size) {
+        if (!error || error == boost::asio::error::message_size) {
+            typedef rashm::apply_all_data_ids<data_vector_t,
+                    rashm::packet_functor_t>::type all_packets_t;
+
+            typedef boost::make_variant_over<all_packets_t>::type all_packet_variant_t;
+
+            std::string const in(&(recv_buffer_[0]), size);
+
+            std::istringstream is(in);
+            boost::archive::text_iarchive ia(is);
+            all_packet_variant_t p2;
+            ia >> p2;
+            boost::apply_visitor(VISITOR(), p2);
+
+            start_receive();
+        }
+    }
+
+    boost::asio::ip::udp::socket socket_;
+    boost::asio::ip::udp::endpoint remote_endpoint_;
+    boost::array<char, 10000> recv_buffer_; // Todo: fix buffer size
 };
 
 struct MappingVisitor {
 
-	template<typename P>
-	void operator()( P const& p ) const;
+    template<typename P>
+    void operator()(P const& p) const;
 
     template<typename ID>
-    void operator()( rashm::Packet<TestDataA,ID> const& p ) const {
-        BOOST_LOG_TRIVIAL(debug) << "received TA " << p.name() << " " << p.head.timestamp;
-        rashm::SegmentWriter<TestDataA,TIdA> sw;  // Todo: Expensive construction
+    void operator()(rashm::Packet<TestDataA, ID> const& p) const {
+        BOOST_LOG_TRIVIAL(debug)<< "received TA " << p.name() << " " << p.head.timestamp;
+        rashm::SegmentWriter<TestDataA,TIdA> sw; // Todo: Expensive construction
         sw = p.data;
     }
 
@@ -231,13 +229,14 @@ struct MappingVisitor {
 };
 
 template<typename VISITOR>
-static void receive( NetConfig const& cfg ) {
+static void receive(NetConfig const& cfg) {
     boost::asio::io_service io;
 
-    udp_server<VISITOR> srv{cfg,io};
+    udp_server<VISITOR> srv { cfg, io };
 
-    boost::asio::deadline_timer timer{io,boost::posix_time::seconds(cfg.duration)};
-    timer.async_wait( [&io]( boost::system::error_code const& ) { io.stop(); });
+    boost::asio::deadline_timer timer { io, boost::posix_time::seconds(
+            cfg.duration) };
+    timer.async_wait([&io]( boost::system::error_code const& ) {io.stop();});
 
     io.run();
 }
@@ -257,10 +256,10 @@ int main(int argc, char** argv) {
             "timeout in milliseconds")("port,p",
             po::value<unsigned short>(&(cfg.port))->default_value(9090),
             "Period in milliseconds")("address,a",
-                                      po::value<std::string>(&(cfg.address))->default_value("127.0.0.1"),
-                                      "ip address")("sender,s",
-                                      po::value<std::string>(&compName), "start sender by name")("wall",
-             "start all Senders")("recv,r", "start receiver")("quiet,q", "Show only errors");
+            po::value<std::string>(&(cfg.address))->default_value("127.0.0.1"),
+            "ip address")("sender,s", po::value<std::string>(&compName),
+            "start sender by name")("wall", "start all Senders")("recv,r",
+            "start receiver")("quiet,q", "Show only errors");
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -279,14 +278,12 @@ int main(int argc, char** argv) {
     }
 
     if (vm.count("quiet")) {
-        boost::log::core::get()->set_filter
-           (
-               boost::log::trivial::severity > boost::log::trivial::info
-           );
+        boost::log::core::get()->set_filter(
+                boost::log::trivial::severity > boost::log::trivial::info);
     }
 
     if (vm.count("wall")) {
-        BOOST_LOG_TRIVIAL(fatal) << "Invalid option wall";
+        BOOST_LOG_TRIVIAL(fatal)<< "Invalid option wall";
         return 1;
         BOOST_LOG_TRIVIAL(info) << "Starting all";
         typedef SenderFactory fac_t;
