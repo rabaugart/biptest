@@ -213,15 +213,20 @@ private:
 struct MappingVisitor {
 
 	template<typename P>
-	void operator()( const P& ) const;
+	void operator()( P const& p ) const;
 
     template<typename ID>
     void operator()( rashm::Packet<TestDataA,ID> const& p ) const {
-        BOOST_LOG_TRIVIAL(debug) << "Got TestDataA";
+        BOOST_LOG_TRIVIAL(debug) << "received TA " << p.name() << " " << p.head.timestamp;
+        rashm::SegmentWriter<TestDataA,TIdA> sw;  // Todo: Expensive construction
+        sw = p.data;
     }
+
     template<typename ID>
     void operator()( rashm::Packet<TestDataB,ID> const& p ) const {
-        BOOST_LOG_TRIVIAL(debug) << "Got TestDataB";
+        BOOST_LOG_TRIVIAL(debug) << "received TB " << p.name() << " " << p.head.timestamp;
+        rashm::SegmentWriter<TestDataB,TIdB1> sw;
+        sw = p.data;
     }
 };
 
@@ -230,6 +235,9 @@ static void receive( NetConfig const& cfg ) {
     boost::asio::io_service io;
 
     udp_server<VISITOR> srv{cfg,io};
+
+    boost::asio::deadline_timer timer{io,boost::posix_time::seconds(cfg.duration)};
+    timer.async_wait( [&io]( boost::system::error_code const& ) { io.stop(); });
 
     io.run();
 }
