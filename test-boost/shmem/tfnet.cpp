@@ -17,7 +17,11 @@
 #include <boost/log/expressions.hpp>
 #include <boost/asio.hpp>
 #include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
 #include <boost/variant.hpp>
+#include <boost/serialization/variant.hpp>
+
+#include <boost/bind.hpp>
 
 #include "rashm/Segment.h"
 #include "rashm/SegmentWriter.h"
@@ -104,8 +108,12 @@ public:
                         rashm::Packet<DATA,ID> pa{sr.head(),d}; // Todo: protect head by lock
 
                         std::ostringstream os;
-                        boost::archive::text_oarchive oa(os); // Todo: use bin archive
-                        oa << pa;
+
+                        {
+                        	boost::archive::text_oarchive oa(os); // Todo: use bin archive
+                        	all_packet_variant_t v{pa};
+                        	oa << v;
+                        }
 
                         std::string buf{os.str()};
                         sock.send_to( boost::asio::buffer(buf), ep );
@@ -156,6 +164,75 @@ struct SenderFactory {
     }
 };
 
+template<class VISITOR>
+class udp_server
+{
+public:
+  udp_server(NetConfig const& cfg, boost::asio::io_service& io_service)
+    : socket_(io_service, boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), cfg.port))
+  {
+    start_receive();
+  }
+
+private:
+  void start_receive()
+  {
+    socket_.async_receive_from(
+        boost::asio::buffer(recv_buffer_), remote_endpoint_,
+        boost::bind(&udp_server::handle_receive, this,
+          boost::asio::placeholders::error,
+          boost::asio::placeholders::bytes_transferred));
+  }
+
+  void handle_receive(const boost::system::error_code& error,
+      std::size_t size)
+  {
+    if (!error || error == boost::asio::error::message_size)
+    {
+        typedef rashm::apply_all_data_ids<data_vector_t, rashm::packet_functor_t>::type all_packets_t;
+
+        typedef boost::make_variant_over<all_packets_t>::type all_packet_variant_t;
+
+        std::string const in(&(recv_buffer_[0]), size );
+
+        std::istringstream is(in);
+        boost::archive::text_iarchive ia(is);
+        all_packet_variant_t p2;
+        ia >> p2;
+        boost::apply_visitor(VISITOR(), p2);
+
+        start_receive();
+    }
+  }
+
+  boost::asio::ip::udp::socket socket_;
+  boost::asio::ip::udp::endpoint remote_endpoint_;
+  boost::array<char, 10000> recv_buffer_; // Todo: fix buffer size
+};
+
+struct MappingVisitor {
+
+	template<typename P>
+	void operator()( const P& ) const;
+
+    template<typename ID>
+    void operator()( rashm::Packet<TestDataA,ID> const& p ) const {
+        BOOST_LOG_TRIVIAL(debug) << "Got TestDataA";
+    }
+    template<typename ID>
+    void operator()( rashm::Packet<TestDataB,ID> const& p ) const {
+        BOOST_LOG_TRIVIAL(debug) << "Got TestDataB";
+    }
+};
+
+template<typename VISITOR>
+static void receive( NetConfig const& cfg ) {
+    boost::asio::io_service io;
+
+    udp_server<VISITOR> srv{cfg,io};
+
+    io.run();
+}
 
 int main(int argc, char** argv) {
 
@@ -175,7 +252,7 @@ int main(int argc, char** argv) {
                                       po::value<std::string>(&(cfg.address))->default_value("127.0.0.1"),
                                       "ip address")("sender,s",
                                       po::value<std::string>(&compName), "start sender by name")("wall",
-             "start all Senders")("quiet,q", "Show only errors");
+             "start all Senders")("recv,r", "start receiver")("quiet,q", "Show only errors");
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -227,6 +304,12 @@ int main(int argc, char** argv) {
 
         map.at(compName)->start();
         map.at(compName)->join();
+        return 0;
+    }
+
+    if (vm.count("recv")) {
+
+        receive<MappingVisitor>(cfg);
         return 0;
     }
 
