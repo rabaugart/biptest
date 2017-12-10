@@ -10,10 +10,6 @@
 #include "rashm/default_id.h"
 
 struct TestDataB {
-
-    //TestDataB() : l1(0), l2(0), l3(3) {
-    //}
-
     bool operator==(TestDataB const &) const;
     long l1;
     long l2;

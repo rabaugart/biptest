@@ -9,6 +9,7 @@
 #define SHMEM_RASHM_SEGMENT_H_
 
 #include <memory>
+#include <type_traits>
 
 #include <boost/interprocess/sync/interprocess_sharable_mutex.hpp>
 #include <boost/interprocess/sync/interprocess_condition_any.hpp>
@@ -38,6 +39,8 @@ namespace rashm {
  */
 template<typename DATA, typename ID>
 struct Frame {
+
+    static_assert( std::is_pod<DATA>::value, "POD expected for rashm");
 
     typedef DATA data_t;
     typedef ID id_t;
