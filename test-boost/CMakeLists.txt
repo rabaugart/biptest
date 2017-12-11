@@ -68,4 +68,4 @@ add_subdirectory( tprocess )
 add_subdirectory( shmem )
 
 #add_custom_target( one tproc --svn ${CMAKE_SOURCE_DIR} )
-add_custom_target( one tcomp -w testdb.tidb1 -d 1 )
+add_custom_target( one tcomp -w testdb.tidb1 -d 3 )
