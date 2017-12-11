@@ -87,7 +87,6 @@ protected:
                         , 0, 0, DataIdTraits<DATA,ID>::fixedAddress()
 #endif
                         ));
-        void * addr = reg.get_address();
         frame = static_cast<frame_t*>(reg.get_address());
     }
 

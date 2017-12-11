@@ -101,7 +101,7 @@ public:
                         typedef boost::make_variant_over<all_packets_t>::type all_packet_variant_t;
 
                         DATA d = sr.timed_wait_for(timeout);
-                        BOOST_LOG_TRIVIAL(debug) << "read " << sr.headerTime()
+                        BOOST_LOG_TRIVIAL(debug) << "read " << sr.headerTime() << " "
                         << sr.lastAge().total_microseconds() << "us "
                         << d;
 
@@ -272,8 +272,9 @@ int main(int argc, char** argv) {
             "Period in milliseconds")("address,a",
             po::value<std::string>(&(cfg.address))->default_value("127.0.0.1"),
             "ip address")("sender,s", po::value<std::string>(&compName),
-            "start sender by name")("sall", "start all senders")("rall", "receive all messages")("recv,r",
-            "start mapping receiver")("quiet,q", "show only errors");
+            "start sender by name")("sall", "start all senders")("rall",
+            "receive all messages")("recv,r", "start mapping receiver")(
+            "quiet,q", "show only errors");
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -297,7 +298,7 @@ int main(int argc, char** argv) {
     }
 
     if (vm.count("sall")) {
-        BOOST_LOG_TRIVIAL(info) << "Starting all senders";
+        BOOST_LOG_TRIVIAL(info)<< "Starting all senders";
         typedef SenderFactory fac_t;
 
         rashm::CompMap<fac_t> const map = rashm::makeMap<data_vector_t, fac_t>(
@@ -325,7 +326,7 @@ int main(int argc, char** argv) {
     }
 
     if (vm.count("recv")) {
-        BOOST_LOG_TRIVIAL(info) << "Receiving all senders";
+        BOOST_LOG_TRIVIAL(info)<< "Receiving all senders";
 
         receive<MappingVisitor>(cfg);
         return 0;

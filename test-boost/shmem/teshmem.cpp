@@ -30,14 +30,14 @@ int main(int argc, char **argv) {
 
     {
         reader_t r;
-        test_t const td = r.get();
+        r.get();
 
         if (!r.writerIsPresent()) {
             std::cout << "No writer present" << std::endl;
         }
 
         reader_t r2;
-        test_t const td2 = r2.get();
+        r2.get();
     }
 
     {

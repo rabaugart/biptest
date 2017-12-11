@@ -89,7 +89,7 @@ public:
 
                     try {
                         DATA d = sr.timed_wait_for(timeout);
-                        BOOST_LOG_TRIVIAL(debug) << "read " << sr.headerTime()
+                        BOOST_LOG_TRIVIAL(debug) << "read " << sr.headerTime() << " "
                                 << sr.lastAge().total_microseconds() << "us "
                                 << d;
                         std::ostringstream os;
