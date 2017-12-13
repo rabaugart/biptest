@@ -107,16 +107,12 @@ public:
                     }
 
                 }
-            } catch (boost::interprocess::interprocess_exception const & e) {
-                if (e.get_error_code()
-                        == boost::interprocess::not_found_error) {
-                    BOOST_LOG_TRIVIAL(info) << "no segment";
-                    std::this_thread::sleep_for(
-                            std::chrono::milliseconds(1000));
-                    text = "no segment";
-                } else {
-                    throw;
-                }
+            } catch (rashm::no_segment_error const & e) {
+
+                BOOST_LOG_TRIVIAL(info) << "no segment";
+                std::this_thread::sleep_for(
+                        std::chrono::milliseconds(1000));
+                text = "no segment";
             }
         }
     }

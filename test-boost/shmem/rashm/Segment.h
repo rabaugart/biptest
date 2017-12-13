@@ -28,8 +28,16 @@
 
 namespace rashm {
 
-struct shm_error : public std::runtime_error {
-    shm_error( char const * const msg ) : std::runtime_error(msg) {}
+struct shm_error: public std::runtime_error {
+    shm_error(std::string const& msg) :
+            std::runtime_error(msg) {
+    }
+};
+
+struct no_segment_error: public shm_error {
+    no_segment_error(std::string const & name) :
+            shm_error(name + " no segment") {
+    }
 };
 
 /**
@@ -75,26 +83,38 @@ struct Frame {
 };
 
 template<typename DATA, typename ID>
-class Segment : private boost::noncopyable {
+class Segment: private boost::noncopyable {
 protected:
     typedef Frame<DATA, ID> frame_t;
 
     Segment(boost::interprocess::open_only_t) :
-            name(frame_t::name()), shm(boost::interprocess::open_only,
-                    name.c_str(), boost::interprocess::read_write), frame(
-                    nullptr) {
-        shm.truncate(sizeof(frame_t));
-        reg = std::move(
-                boost::interprocess::mapped_region(shm,
-                        boost::interprocess::read_write
+            name(frame_t::name()), shm(), frame(nullptr) {
+        try {
+            // shm is initialized in the body in order
+            // to be able to throw the no_segment error
+            shm = std::move(
+                    boost::interprocess::shared_memory_object(
+                            boost::interprocess::open_only, name.c_str(),
+                            boost::interprocess::read_write));
+            shm.truncate(sizeof(frame_t));
+            reg = std::move(
+                    boost::interprocess::mapped_region(shm,
+                            boost::interprocess::read_write
 #if defined(FIXED_MAPPING_ADDRESS)
-                        , 0, 0, DataIdTraits<DATA,ID>::fixedAddress()
+                            , 0, 0, DataIdTraits<DATA, ID>::fixedAddress()
 #endif
-                        ));
-        frame = static_cast<frame_t*>(reg.get_address());
+                            ));
+            frame = static_cast<frame_t*>(reg.get_address());
+        } catch (boost::interprocess::interprocess_exception const & e) {
+            if (e.get_error_code() == boost::interprocess::not_found_error) {
+                throw no_segment_error(name);
+            } else {
+                throw;
+            }
+        }
     }
 
-    Segment& operator = ( Segment&& s ) {
+    Segment& operator =(Segment&& s) {
         shm = std::move(s.shm);
         frame = s.frame;
         reg = std::move(s.reg);
@@ -114,7 +134,7 @@ protected:
                     boost::interprocess::mapped_region(shm,
                             boost::interprocess::read_write
 #if defined(FIXED_MAPPING_ADDRESS)
-                            , 0, 0, DataIdTraits<DATA,ID>::fixedAddress()
+                            , 0, 0, DataIdTraits<DATA, ID>::fixedAddress()
 #endif
                             ));
             void * addr = reg.get_address();
@@ -132,7 +152,7 @@ protected:
                     boost::interprocess::mapped_region(shm,
                             boost::interprocess::read_write
 #if defined(FIXED_MAPPING_ADDRESS)
-                            , 0, 0, DataIdTraits<DATA,ID>::fixedAddress()
+                            , 0, 0, DataIdTraits<DATA, ID>::fixedAddress()
 #endif
                             ));
 
