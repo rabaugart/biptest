@@ -57,7 +57,7 @@ public:
     }
 
     virtual void start() {
-        BOOST_LOG_TRIVIAL(info) << "starting writer " << rashm::DataIdTraits<DATA, ID>::name();
+        BOOST_LOG_TRIVIAL(info)<< "starting writer " << rashm::DataIdTraits<DATA, ID>::name();
 
         th = std::move(std::thread(std::ref(*this)));
     }
@@ -69,12 +69,12 @@ public:
 
         BOOST_LOG_TRIVIAL(info) << "address " << sw.address()
 #if defined(FIXED_MAPPING_ADDRESS)
-                << "/" << rashm::DataIdTraits<DATA, ID>::fixedAddress()
+        << "/" << rashm::DataIdTraits<DATA, ID>::fixedAddress()
 #endif
-                ;
+        ;
 
         boost::chrono::time_point<boost::chrono::system_clock> start =
-                boost::chrono::system_clock::now();
+        boost::chrono::system_clock::now();
 
         while (boost::chrono::system_clock::now() - start
                 < boost::chrono::seconds(cfg.duration)) {
@@ -128,7 +128,7 @@ public:
     }
 
     virtual void start() {
-        BOOST_LOG_TRIVIAL(info) << "starting reader " << rashm::DataIdTraits<DATA, ID>::name();
+        BOOST_LOG_TRIVIAL(info)<< "starting reader " << rashm::DataIdTraits<DATA, ID>::name();
 
         th = std::move(std::thread(std::ref(*this)));
     }
@@ -136,7 +136,7 @@ public:
     void operator()() {
 
         boost::chrono::time_point<boost::chrono::system_clock> const start =
-                boost::chrono::system_clock::now();
+        boost::chrono::system_clock::now();
 
         while (boost::chrono::system_clock::now() - start
                 < boost::chrono::seconds(cfg.duration)) {
@@ -154,12 +154,12 @@ public:
                     try {
                         DATA d = sr.timed_wait_for(timeout);
                         BOOST_LOG_TRIVIAL(debug) << sr.segmentName() << " read " << sr.headerTime() << " "
-                                << sr.lastAge().total_microseconds() << "us "
-                                << d;
-                    } catch (std::runtime_error const & e) {
+                        << sr.lastAge().total_microseconds() << "us "
+                        << d;
+                    } catch ( rashm::timeout_error const & e) {
                         BOOST_LOG_TRIVIAL(info) << sr.segmentName() << " timeout (last "
-                                << sr.lastReceptionTime() << "/"
-                                << sr.headerTime() << ")";
+                        << sr.lastReceptionTime() << "/"
+                        << sr.headerTime() << ")";
                     }
 
                 }
@@ -216,10 +216,10 @@ int main(int argc, char** argv) {
             "timeout in milliseconds")("period,p",
             po::value<size_t>(&(cfg.period))->default_value(500),
             "Period in milliseconds")("writer,w",
-                                      po::value<std::string>(&compName), "start writer by name")("wall",
-             "start all writers")(
-            "reader,r", po::value<std::string>(&compName),
-            "start reader by name")("clear,c", "remove all segments")("quiet,q", "Show only errors");
+            po::value<std::string>(&compName), "start writer by name")("wall",
+            "start all writers")("reader,r", po::value<std::string>(&compName),
+            "start reader by name")("clear,c", "remove all segments")("quiet,q",
+            "Show only errors");
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -239,10 +239,8 @@ int main(int argc, char** argv) {
 
     //boost::log::add_console_log(std::cout,boost::log::keywords::format = "[%TimeStamp%]: %Message%");
     if (vm.count("quiet")) {
-        boost::log::core::get()->set_filter
-           (
-               boost::log::trivial::severity > boost::log::trivial::info
-           );
+        boost::log::core::get()->set_filter(
+                boost::log::trivial::severity > boost::log::trivial::info);
     }
 
     if (vm.count("clear")) {
@@ -257,7 +255,7 @@ int main(int argc, char** argv) {
     }
 
     if (vm.count("wall")) {
-        BOOST_LOG_TRIVIAL(info) << "Starting all";
+        BOOST_LOG_TRIVIAL(info)<< "Starting all";
         typedef WriterFactory fac_t;
 
         rashm::CompMap<fac_t> const map = rashm::makeMap<data_vector_t, fac_t>(

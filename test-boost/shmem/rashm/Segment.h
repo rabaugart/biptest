@@ -28,6 +28,10 @@
 
 namespace rashm {
 
+struct shm_error : public std::runtime_error {
+    shm_error( char const * const msg ) : std::runtime_error(msg) {}
+};
+
 /**
  * The frame stored in shared memory
  *

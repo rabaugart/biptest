@@ -16,6 +16,10 @@
 
 namespace rashm {
 
+struct timeout_error : public shm_error {
+    timeout_error() : shm_error("Reader timeout") {}
+};
+
 template<typename DATA, typename ID = DefaultId>
 class SegmentReader: public Segment<DATA, ID> {
 
@@ -53,7 +57,7 @@ public:
             age = lastRecvTime-lastHead.timestamp;
             return base_t::frame->data;
         }
-        throw std::runtime_error("Timeout");
+        throw timeout_error();
     }
 
     ~SegmentReader() {

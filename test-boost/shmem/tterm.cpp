@@ -30,7 +30,9 @@ struct CompConfig {
 
 class CompBase {
 public:
-    CompBase() : running(false) {}
+    CompBase() :
+            running(false) {
+    }
 
     virtual ~CompBase() {
     }
@@ -68,7 +70,7 @@ public:
     }
 
     virtual void start() {
-        BOOST_LOG_TRIVIAL(info) << "starting reader " << rashm::DataIdTraits<DATA, ID>::name();
+        BOOST_LOG_TRIVIAL(info)<< "starting reader " << rashm::DataIdTraits<DATA, ID>::name();
 
         th = std::move(std::thread(std::ref(*this)));
         running = true;
@@ -90,17 +92,17 @@ public:
                     try {
                         DATA d = sr.timed_wait_for(timeout);
                         BOOST_LOG_TRIVIAL(debug) << "read " << sr.headerTime() << " "
-                                << sr.lastAge().total_microseconds() << "us "
-                                << d;
+                        << sr.lastAge().total_microseconds() << "us "
+                        << d;
                         std::ostringstream os;
                         os << d << " (" << sr.lastAge().total_microseconds() << "us)";
                         text = os.str();
-                    } catch (std::runtime_error const & e) {
+                    } catch ( rashm::timeout_error const & e) {
                         BOOST_LOG_TRIVIAL(info) << "timeout (last "
-                                << sr.headerTime() << ")";
+                        << sr.headerTime() << ")";
                         std::ostringstream os;
                         os << "timeout (last "
-                           << sr.headerTime() << ")";
+                        << sr.headerTime() << ")";
                         text = os.str();
                     }
 
@@ -144,40 +146,40 @@ struct ReaderFactory {
     }
 };
 
-int main( int argc, char** argv ) {
+int main(int argc, char** argv) {
     {
         CompConfig cfg;
         cfg.timeout = 1000;
         rashm::Console con;
 
-        boost::log::core::get()->set_filter
-           (
-               boost::log::trivial::severity > boost::log::trivial::info
-           );
+        boost::log::core::get()->set_filter(
+                boost::log::trivial::severity > boost::log::trivial::info);
 
         {
             typedef ReaderFactory fac_t;
 
-            rashm::CompMap<fac_t> const map = rashm::makeMap<data_vector_t, fac_t>(
-                        cfg);
+            rashm::CompMap<fac_t> const map = rashm::makeMap<data_vector_t,
+                    fac_t>(cfg);
 
-            for ( auto& i : map ) {
+            for (auto& i : map) {
                 i.second->start();
             }
 
             do {
                 int row = 3;
-                for ( auto const& i : map ) {
-                    con.show( row++, 2, (boost::format("%15s : %-70s" ) % i.first % i.second->getText()).str() );
+                for (auto const& i : map) {
+                    con.show(row++, 2,
+                            (boost::format("%15s : %-70s") % i.first
+                                    % i.second->getText()).str());
                 }
-            } while ( !con.key() );
+            } while (!con.key());
 
-            con.show( 1, 2, "Stopping");
+            con.show(1, 2, "Stopping");
 
-            for ( auto& i : map ) {
+            for (auto& i : map) {
                 i.second->stop();
             }
-            for ( auto& i : map ) {
+            for (auto& i : map) {
                 i.second->join();
             }
         }

@@ -119,10 +119,10 @@ public:
                         std::string buf {os.str()};
                         sock.send_to( boost::asio::buffer(buf), ep );
 
-                    } catch (std::runtime_error const & e) { // Todo: create timeout exception
+                    } catch (rashm::timeout_error const & e) {
                         BOOST_LOG_TRIVIAL(info) << "timeout (last "
                         << sr.lastReceptionTime() << "/"
-                        << sr.headerTime() << ")" << e.what();
+                        << sr.headerTime() << ")";
                     }
 
                 }
