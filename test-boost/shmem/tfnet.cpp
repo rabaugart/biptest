@@ -15,6 +15,7 @@
 #include <boost/program_options/options_description.hpp>
 #include <boost/log/trivial.hpp>
 #include <boost/log/expressions.hpp>
+#include <boost/log/utility/setup/console.hpp>
 #include <boost/asio.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -292,6 +293,7 @@ int main(int argc, char** argv) {
         return 1;
     }
 
+    //boost::log::add_console_log(std::cout,boost::log::keywords::format = "[%TimeStamp%]: %Message%");
     if (vm.count("quiet")) {
         boost::log::core::get()->set_filter(
                 boost::log::trivial::severity > boost::log::trivial::info);
