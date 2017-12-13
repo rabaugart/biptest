@@ -46,3 +46,7 @@ add_executable( tfnet tfnet.cpp )
 target_link_libraries( tfnet lrashm lratest boost_chrono boost_serialization boost_date_time boost_system
     boost_program_options boost_log boost_thread )
 
+add_executable( tdoppler tdoppler.cpp )
+target_link_libraries( tdoppler lrashm lratest boost_chrono boost_serialization boost_date_time boost_system
+    boost_program_options boost_log boost_thread )
+
