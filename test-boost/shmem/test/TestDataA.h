@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include <boost/mpl/vector.hpp>
+#include <boost/optional.hpp>
 
 #include <rashm/index_vector.h>
 
@@ -13,6 +14,7 @@ struct TestDataA {
     bool operator==(TestDataA const &) const;
     double a;
     int b;
+    boost::optional<double> opd;
 };
 
 struct TIdA {

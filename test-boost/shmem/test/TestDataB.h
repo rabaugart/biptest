@@ -2,6 +2,7 @@
 #define TEST_DATA_B_HEADER_817893793
 
 #include <iostream>
+#include <array>
 
 #include <boost/mpl/vector.hpp>
 
@@ -14,6 +15,7 @@ struct TestDataB {
     long l1;
     long l2;
     long l3;
+    std::array<double,3> ard;
 };
 
 struct TIdB1 {

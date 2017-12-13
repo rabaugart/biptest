@@ -7,7 +7,12 @@
 #include "TestGenerator.h"
 
 std::ostream& operator <<(std::ostream& os, const TestDataA& d) {
-    os << "TA a:" << d.a << " b:" << d.b;
+    os << "a:" << d.a << " b:" << d.b << " o:";
+    if (d.opd) {
+        os << *d.opd;
+    } else {
+        os << "--";
+    }
     return os;
 }
 
@@ -16,13 +21,15 @@ bool TestDataA::operator==(TestDataA const & d) const {
 }
 
 template<>
-TestGenerator<TestDataA>::TestGenerator() : current{ 5.6, 99 } {
+TestGenerator<TestDataA>::TestGenerator() : current{ e.rand<double>(), 99 } {
 
 }
 
 template<>
 TestDataA TestGenerator<TestDataA>::next() {
+    current.a = e.rand<double>();
     current.b++;
+    current.opd = e.randopt<double>();
     return current ;
 }
 

@@ -79,7 +79,7 @@ public:
         while (boost::chrono::system_clock::now() - start
                 < boost::chrono::seconds(cfg.duration)) {
             sw = gen.current;
-            BOOST_LOG_TRIVIAL(debug) << sw.headerTime() << " written " << gen.next();
+            BOOST_LOG_TRIVIAL(debug) << sw.headerTime() << " " << sw.segmentName() << " written " << gen.next();
             std::this_thread::sleep_for(std::chrono::milliseconds(cfg.period));
         }
 
@@ -153,11 +153,11 @@ public:
 
                     try {
                         DATA d = sr.timed_wait_for(timeout);
-                        BOOST_LOG_TRIVIAL(debug) << "read " << sr.headerTime() << " "
+                        BOOST_LOG_TRIVIAL(debug) << sr.segmentName() << " read " << sr.headerTime() << " "
                                 << sr.lastAge().total_microseconds() << "us "
                                 << d;
                     } catch (std::runtime_error const & e) {
-                        BOOST_LOG_TRIVIAL(info) << "timeout (last "
+                        BOOST_LOG_TRIVIAL(info) << sr.segmentName() << " timeout (last "
                                 << sr.lastReceptionTime() << "/"
                                 << sr.headerTime() << ")";
                     }
@@ -166,7 +166,7 @@ public:
             } catch (boost::interprocess::interprocess_exception const & e) {
                 if (e.get_error_code()
                         == boost::interprocess::not_found_error) {
-                    BOOST_LOG_TRIVIAL(info) << "no segment";
+                    BOOST_LOG_TRIVIAL(info) << rashm::SegmentReader<DATA, ID>::segmentName() << " no segment";
                     std::this_thread::sleep_for(
                             std::chrono::milliseconds(1000));
                 } else {

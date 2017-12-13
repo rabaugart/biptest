@@ -168,7 +168,7 @@ int main( int argc, char** argv ) {
             do {
                 int row = 3;
                 for ( auto const& i : map ) {
-                    con.show( row++, 2, (boost::format("%15s : %-50s" ) % i.first % i.second->getText()).str() );
+                    con.show( row++, 2, (boost::format("%15s : %-70s" ) % i.first % i.second->getText()).str() );
                 }
             } while ( !con.key() );
 

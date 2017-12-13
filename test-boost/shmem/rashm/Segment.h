@@ -40,7 +40,7 @@ namespace rashm {
 template<typename DATA, typename ID>
 struct Frame {
 
-    static_assert( std::is_pod<DATA>::value, "POD expected for rashm");
+    //static_assert( std::is_pod<DATA>::value, "POD expected for rashm");
 
     typedef DATA data_t;
     typedef ID id_t;
