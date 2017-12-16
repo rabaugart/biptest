@@ -26,7 +26,7 @@ endif()
 add_library( lrashm STATIC rashm/Segment.cpp rashm/Header.cpp )
 
 add_library( lratest STATIC  test/TestDataA.cpp test/TestDataB.cpp 
-    test/MsgCollector.cpp test/ComProc.cpp test/SubProc.cpp test/TestGenerator.cpp )
+    test/MsgCollector.cpp test/ComProc.cpp test/SubProc.cpp test/TestGenerator.cpp test/unitconfig.cpp )
 add_executable( teshmem teshmem.cpp )
 target_link_libraries( teshmem lrashm lratest )
 
@@ -49,4 +49,10 @@ target_link_libraries( tfnet lrashm lratest boost_chrono boost_serialization boo
 add_executable( tdoppler tdoppler.cpp )
 target_link_libraries( tdoppler lrashm lratest boost_chrono boost_serialization boost_date_time boost_system
     boost_program_options boost_log boost_thread )
+
+add_executable( unitproc test/unitproc.cpp )
+target_link_libraries( unitproc lratest lrashm boost_serialization boost_chrono boost_system )
+
+add_executable( unitrunner test/unitrunner.cpp )
+target_link_libraries( unitrunner lratest lrashm boost_serialization boost_chrono boost_system )
 
