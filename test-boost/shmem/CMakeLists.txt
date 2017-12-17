@@ -54,5 +54,6 @@ add_executable( unitproc test/unitproc.cpp )
 target_link_libraries( unitproc lratest lrashm boost_serialization boost_chrono boost_system )
 
 add_executable( unitrunner test/unitrunner.cpp )
-target_link_libraries( unitrunner lratest lrashm boost_serialization boost_chrono boost_system )
+target_link_libraries( unitrunner lratest lrashm boost_serialization boost_chrono
+    boost_system )
 

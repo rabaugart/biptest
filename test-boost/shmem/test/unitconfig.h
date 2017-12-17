@@ -9,7 +9,13 @@
 #define SHMEM_TEST_UNITCONFIG_H_
 
 #include <string>
+#include <vector>
 
+#include <boost/process.hpp>
+
+namespace utest {
+
+/// Configuration of subprocesses in unittests
 struct unit_config {
     unit_config();
 
@@ -20,7 +26,7 @@ struct unit_config {
     std::string comp_name;
     size_t niter;
 
-    /// Maximum duration of the tests in seconds
+    /// Maximum duration of the tests in ms
     size_t duration;
 
     /// Timeout in timed_wait in ms
@@ -30,4 +36,37 @@ struct unit_config {
     size_t period;
 };
 
+struct process {
+
+    static std::string const runner;
+    static std::string const runnerpath;
+
+    process( std::string const& com, unit_config const& cfg, std::string const& id );
+
+    bool wait();
+
+    const std::string command;
+    const unit_config config;
+    const std::string id;
+
+    boost::process::child ch;
+};
+
+struct process_vec : public std::vector<process> {
+
+    virtual ~process_vec() {}
+
+    void add( std::string const& com, unit_config const& cfg, std::string const& id="nn" );
+
+    /**
+     * Check the result of all processes
+     *
+     * Returns true if every process exited without error
+     */
+    bool waitall();
+
+    std::string message;
+};
+
+}
 #endif /* SHMEM_TEST_UNITCONFIG_H_ */

@@ -21,6 +21,8 @@
 #include "TestGenerator.h"
 #include "all_data_types.h"
 
+using utest::unit_config;
+
 class TestBase {
 public:
     virtual ~TestBase() {
@@ -80,7 +82,7 @@ public:
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
         while (boost::chrono::system_clock::now() - start
-                < boost::chrono::seconds(cfg.duration)
+                < boost::chrono::milliseconds(cfg.duration)
                 && (cfg.niter == 0 || result.n_loop < cfg.niter)) {
             sw = gen.current;
             std::this_thread::sleep_for(std::chrono::microseconds(cfg.period));
@@ -145,7 +147,7 @@ public:
                 boost::chrono::system_clock::now();
 
         while (boost::chrono::system_clock::now() - start
-                < boost::chrono::seconds(cfg.duration)
+                < boost::chrono::milliseconds(cfg.duration)
                 && (cfg.niter == 0 || result.n_loop < cfg.niter)) {
             try {
                 rashm::SegmentReader<DATA, ID> sr;
@@ -153,7 +155,7 @@ public:
                 boost::posix_time::microseconds timeout(cfg.timeout * 1000);
 
                 while (boost::chrono::system_clock::now() - start
-                        < boost::chrono::seconds(cfg.duration)
+                        < boost::chrono::milliseconds(cfg.duration)
                         && (cfg.niter == 0 || result.n_loop < cfg.niter)) {
 
                     try {

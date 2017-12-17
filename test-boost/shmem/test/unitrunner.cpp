@@ -21,30 +21,22 @@ namespace bp = boost::process;
 std::string const runner { "unitproc" };
 std::string const runnerpath { "shmem/" + runner };
 
-BOOST_AUTO_TEST_CASE( writer1_reader2 )
-{
-    unit_config cfg;
+BOOST_AUTO_TEST_CASE( writer1_reader2 ) {
+    utest::unit_config cfg;
     cfg.comp_name = "testda.default";
-    cfg.duration = 2;
-    cfg.niter = 5000;
-    cfg.period = 100;
+    cfg.niter = 2000;
+    cfg.period = 1000;
+    cfg.duration = (cfg.niter * cfg.period * 2) / 1000 + 2000;
+    cfg.timeout = (3 * cfg.period) / 1000 + 2;
 
-    bp::child cr(runnerpath,bp::args={"rs",cfg.toString(),"r1"});
-    BOOST_TEST_MESSAGE( "Reader 1 started " << cr.id() );
+    utest::process_vec pv;
 
-    bp::child cr2(runnerpath,bp::args={"rs",cfg.toString(),"r2"});
-    BOOST_TEST_MESSAGE( "Reader 2 started " << cr.id() );
+    pv.add( "rs", cfg, "r1" );
+    pv.add( "rs", cfg, "r2" );
+    pv.add( "as", cfg);
 
-    // Give the readers some time for startup
-    std::this_thread::sleep_for( std::chrono::milliseconds(50) );
+    bool const res{pv.waitall()};
+    BOOST_CHECK_MESSAGE(res,pv.message);
 
-    bp::child cw(runnerpath,bp::args={"as",cfg.toString()});
-
-    cw.wait(); //wait for the process to exit
-    BOOST_CHECK_EQUAL(cw.exit_code(), 0);
-    cr.wait();
-    BOOST_CHECK_EQUAL(cr.exit_code(), 0);
-    cr2.wait();
-    BOOST_CHECK_EQUAL(cr2.exit_code(), 0);
 }
 
