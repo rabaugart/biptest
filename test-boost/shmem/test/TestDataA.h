@@ -2,6 +2,7 @@
 #define TEST_DATA_A_HEADER_817893793
 
 #include <iostream>
+#include <type_traits>
 
 #include <boost/mpl/vector.hpp>
 #include <boost/optional.hpp>
@@ -17,11 +18,13 @@ struct TestDataA {
     boost::optional<double> opd;
 };
 
+/// Id for TestDataA
 struct TIdA {
 };
 
 namespace rashm {
 
+/// The vector of all Ids of TestDataA
 template<>
 struct index_vector_t<TestDataA> {
     typedef boost::mpl::vector<DefaultId, TIdA>::type type;

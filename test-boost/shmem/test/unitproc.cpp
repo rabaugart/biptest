@@ -1,5 +1,7 @@
-/*
- * unitproc.cpp
+/**
+ * A subprocess of unitrunner
+ *
+ * The main expects a particular set of command line args. It should not be called manually
  *
  *  Created on: 15.12.2017
  *      Author: netz
@@ -23,6 +25,7 @@
 
 using utest::unit_config;
 
+/// The base for readers and writers keeps the test result
 class TestBase {
 public:
     virtual ~TestBase() {
@@ -31,8 +34,8 @@ public:
     virtual void join() = 0;
     virtual void removeSegment() = 0;
 
-    struct test_result_t {
-        test_result_t() :
+    struct test_result {
+        test_result() :
                 n_loop(0), n_timeouts(0), n_no_segment(0), n_counter_errors(0), counter_error_pos(
                         std::numeric_limits<size_t>::max()), first_counter(
                         std::numeric_limits<size_t>::max()), last_counter(
@@ -47,12 +50,12 @@ public:
         size_t last_counter;
     };
 
-    test_result_t result;
+    test_result result;
 };
 
-//
-// Writer
-//
+/**
+ * The Writer periodically updates the segment using a TestGenerator
+ */
 template<typename DATA, typename ID>
 class Writer: public TestBase {
 public:
@@ -213,6 +216,7 @@ int main(int argc, char** argv) {
     if (argc < 3)
         return 1;
 
+    // The command line args
     std::string const command = argv[1];
     unit_config cfg = unit_config::fromString(argv[2]);
     std::string const id = argc >= 4 ? argv[3] : "nn";
@@ -221,6 +225,11 @@ int main(int argc, char** argv) {
             << std::endl;
 
     if (command == "as") {
+
+        //
+        // Instantiating the writer
+        //
+
         typedef WriterFactory fac_t;
 
         rashm::CompMap<fac_t> const map = rashm::makeMap<data_vector_t, fac_t>(
@@ -233,6 +242,10 @@ int main(int argc, char** argv) {
                 << std::endl;
         return comp->result.n_loop == cfg.niter ? 0 : 1;
     } else if (command == "rs") {
+        //
+        // Instantiating the reader
+        //
+
         typedef ReaderFactory fac_t;
 
         rashm::CompMap<fac_t> const map = rashm::makeMap<data_vector_t, fac_t>(
@@ -250,6 +263,7 @@ int main(int argc, char** argv) {
         return comp->result.n_loop == cfg.niter ? 0 : 1;
     }
 
+    // Wrong arguments
     return 1;
 }
 

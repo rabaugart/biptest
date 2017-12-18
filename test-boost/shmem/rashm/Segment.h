@@ -82,11 +82,21 @@ struct Frame {
     condition_t condition;
 };
 
+/**
+ * Base class managing the shared mem segment and the mapped region
+ *
+ * It has only protected ctors and can only be used via SegmentReader or SegmentWriter
+ */
 template<typename DATA, typename ID>
 class Segment: private boost::noncopyable {
 protected:
     typedef Frame<DATA, ID> frame_t;
 
+    /**
+     * Constructing only when the segment already exists
+     *
+     * @throws no_segment_error, if the segment is not available
+     */
     Segment(boost::interprocess::open_only_t) :
             name(frame_t::name()), shm(), frame(nullptr) {
         try {
@@ -114,12 +124,9 @@ protected:
         }
     }
 
-    Segment& operator =(Segment&& s) {
-        shm = std::move(s.shm);
-        frame = s.frame;
-        reg = std::move(s.reg);
-    }
-
+    /**
+     * The default ctor creates the segment if required and assigns the mapped_region
+     */
     Segment() :
             name(frame_t::name()), frame(nullptr) {
         try {
@@ -139,11 +146,13 @@ protected:
                             ));
             void * addr = reg.get_address();
 
-            //Construct the shared structure in memory
+            // Construct the shared structure in the mapped region
             frame = new (addr) frame_t;
 
         } catch (boost::interprocess::interprocess_exception& ex) {
+            // Todo: check the error code
             // Creation failed, so try to open an existing one, without construction
+            // just assigning the pointer to the mapped region
             shm = std::move(
                     boost::interprocess::shared_memory_object(
                             boost::interprocess::open_only, name.c_str(),
@@ -163,6 +172,12 @@ protected:
     virtual ~Segment() {
     }
 
+    Segment& operator =(Segment&& s) {
+        shm = std::move(s.shm);
+        frame = s.frame;
+        reg = std::move(s.reg);
+    }
+
 public:
     bool writerIsPresent() const {
         return frame->head.writerIsPresent;
@@ -172,6 +187,7 @@ public:
         return frame_t::name();
     }
 
+    /// Removes the segment in the OS
     static void removeSegment() {
         boost::interprocess::shared_memory_object::remove(
                 segmentName().c_str());
@@ -189,6 +205,7 @@ public:
         return frame->head.counter;
     }
 
+    /// Just for debugging purposes, the pointer should not be used
     const void* address() const {
         return reg.get_address();
     }

@@ -36,6 +36,7 @@ struct unit_config {
     size_t period;
 };
 
+/// An adapter for a child process with predefined command line arguments
 struct process {
 
     static std::string const runner;
@@ -52,6 +53,7 @@ struct process {
     boost::process::child ch;
 };
 
+/// A vector of child processes
 struct process_vec : public std::vector<process> {
 
     virtual ~process_vec() {}
