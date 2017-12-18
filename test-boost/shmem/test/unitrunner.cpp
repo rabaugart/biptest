@@ -11,17 +11,20 @@
 
 #include <boost/process.hpp>
 
+#include "rashm/rashm_utils.h"
+
+#include "all_data_types.h"
 #include "unitconfig.h"
 
-#define BOOST_TEST_MODULE example
+#define BOOST_TEST_MODULE utest
 #include <boost/test/included/unit_test.hpp>
 
 namespace bp = boost::process;
 
-std::string const runner { "unitproc" };
-std::string const runnerpath { "shmem/" + runner };
-
 BOOST_AUTO_TEST_CASE( writer1_reader2 ) {
+
+    rashm::create_all_segments<data_vector_t>();
+
     utest::unit_config cfg;
     cfg.comp_name = "testda.default";
     cfg.niter = 2000;
@@ -38,5 +41,6 @@ BOOST_AUTO_TEST_CASE( writer1_reader2 ) {
     bool const res{pv.waitall()};
     BOOST_CHECK_MESSAGE(res,pv.message);
 
+    rashm::remove_all_segments<data_vector_t>();
 }
 
