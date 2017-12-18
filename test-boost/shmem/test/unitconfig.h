@@ -34,13 +34,15 @@ struct unit_config {
 
     /// Period duration in us
     size_t period;
+
+    /// Path to the binary directory
+    std::string bin_path;
 };
 
 /// An adapter for a child process with predefined command line arguments
 struct process {
 
     static std::string const runner;
-    static std::string const runnerpath;
 
     process( std::string const& com, unit_config const& cfg, std::string const& id );
 

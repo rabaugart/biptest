@@ -28,14 +28,15 @@ struct Base {
 template<typename SDATA, typename ID>
 struct Impl: public Base {
 
-    Impl( Base::config const & ) {}
+    Impl(Base::config const &) {
+    }
 
     void create() {
-        SegmentReader<SDATA,ID> sr;
+        SegmentReader<SDATA, ID> sr;
     }
 
     void remove() {
-        Segment<SDATA,ID>::removeSegment();
+        Segment<SDATA, ID>::removeSegment();
     }
 };
 
@@ -66,8 +67,8 @@ CompMap<ImplFactory> make_map() {
  */
 template<typename DATA_VEC>
 void create_all_segments() {
-    auto const map{util_details::make_map<DATA_VEC>()};
-    for ( auto& i : map ) {
+    auto const map { util_details::make_map<DATA_VEC>() };
+    for (auto& i : map) {
         i.second->create();
     }
 }
@@ -77,8 +78,8 @@ void create_all_segments() {
  */
 template<typename DATA_VEC>
 void remove_all_segments() {
-    auto const map{util_details::make_map<DATA_VEC>()};
-    for ( auto& i : map ) {
+    auto const map { util_details::make_map<DATA_VEC>() };
+    for (auto& i : map) {
         i.second->remove();
     }
 }

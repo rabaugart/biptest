@@ -9,6 +9,7 @@
 #include <sstream>
 
 #include <boost/format.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 
@@ -25,6 +26,7 @@ void serialize(Archive & ar, utest::unit_config & d,
     ar & d.duration;
     ar & d.timeout;
     ar & d.period;
+    ar & d.bin_path;
 }
 
 } // namespace serialization
@@ -55,13 +57,13 @@ unit_config unit_config::fromString(std::string const& cfgstr) {
 }
 
 std::string const process::runner { "unitproc" };
-std::string const process::runnerpath { "shmem/" + process::runner };
 
 namespace bp = boost::process;
+namespace bfs = boost::filesystem;
 
 process::process(std::string const& com, unit_config const& cfg,
         std::string const& id_) :
-        command(com), config(cfg), id(id_), ch(process::runnerpath, bp::args= {command,cfg.toString(),id}) {
+        command(com), config(cfg), id(id_), ch(bfs::path(cfg.bin_path) / process::runner, bp::args= {command,cfg.toString(),id}) {
         }
 
 void process_vec::add(std::string const& com, unit_config const& cfg,
