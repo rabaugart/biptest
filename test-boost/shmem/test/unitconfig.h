@@ -56,6 +56,7 @@ struct process_vec : public std::vector<process> {
 
     virtual ~process_vec() {}
 
+    /// Add a new child process and start it immediately
     void add( std::string const& com, unit_config const& cfg, std::string const& id="nn" );
 
     /**
