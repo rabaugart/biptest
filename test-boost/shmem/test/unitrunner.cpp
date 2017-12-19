@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_CASE( writer1_reader2 ) {
 
     utest::unit_config cfg;
     cfg.comp_name = "testda.default";
-    cfg.bin_path = p.native();
+    cfg.bin_path = p.generic_string();
     cfg.niter = 2000;
     cfg.period = 1000;
     cfg.duration = (cfg.niter * cfg.period * 2) / 1000 + 2000;
