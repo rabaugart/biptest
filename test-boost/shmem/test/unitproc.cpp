@@ -22,6 +22,7 @@
 #include "unitconfig.h"
 #include "TestGenerator.h"
 #include "all_data_types.h"
+#include "UnitTestData.h"
 
 using utest::unit_config;
 
@@ -197,6 +198,7 @@ struct ReaderFactory {
     }
 };
 
+
 int main(int argc, char** argv) {
 
     if (argc < 3)
@@ -218,7 +220,7 @@ int main(int argc, char** argv) {
 
         typedef WriterFactory fac_t;
 
-        rashm::CompMap<fac_t> const map = rashm::makeMap<data_vector_t, fac_t>(
+        rashm::CompMap<fac_t> const map = rashm::makeMap<test_data_vector_t, fac_t>(
                 cfg);
 
         auto comp = map.at(cfg.comp_name);
@@ -235,7 +237,7 @@ int main(int argc, char** argv) {
 
         typedef ReaderFactory fac_t;
 
-        rashm::CompMap<fac_t> const map = rashm::makeMap<data_vector_t, fac_t>(
+        rashm::CompMap<fac_t> const map = rashm::makeMap<test_data_vector_t, fac_t>(
                 cfg);
 
         auto comp = map.at(cfg.comp_name);

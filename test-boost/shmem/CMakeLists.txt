@@ -26,7 +26,8 @@ endif()
 add_library( lrashm STATIC rashm/Segment.cpp rashm/Header.cpp )
 
 add_library( lratest STATIC  test/TestDataA.cpp test/TestDataB.cpp 
-    test/MsgCollector.cpp test/ComProc.cpp test/SubProc.cpp test/TestGenerator.cpp test/unitconfig.cpp )
+    test/MsgCollector.cpp test/ComProc.cpp test/SubProc.cpp test/TestGenerator.cpp 
+    test/unitconfig.cpp test/UnitTestData.cpp )
 add_executable( teshmem teshmem.cpp )
 target_link_libraries( teshmem lrashm lratest )
 
