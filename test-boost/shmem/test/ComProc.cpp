@@ -5,6 +5,8 @@
  *      Author: netz
  */
 
+#include <boost/algorithm/string/regex.hpp>
+
 #include <test/ComProc.h>
 
 namespace rtest {

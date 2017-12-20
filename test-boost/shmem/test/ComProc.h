@@ -13,7 +13,6 @@
 #include <boost/asio.hpp>
 #include <boost/process.hpp>
 #include <boost/regex.hpp>
-#include <boost/algorithm/string/regex.hpp>
 
 #include "MsgCollector.h"
 
@@ -30,7 +29,8 @@ struct ComProc {
     std::future<std::string> data;
     boost::process::child proc;
     const std::string name;
-    const boost::regex rx;};
+    const boost::regex rx;
+};
 
 } /* namespace rtest */
 

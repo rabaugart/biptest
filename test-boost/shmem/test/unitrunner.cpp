@@ -37,8 +37,8 @@ BOOST_AUTO_TEST_CASE( writer1_reader2 ) {
     utest::unit_config cfg;
     cfg.comp_name = "testda.default";
     cfg.bin_path = p.generic_string();
-    cfg.niter = 2000;
-    cfg.period = 1000;
+    cfg.niter = 5000;
+    cfg.period = 100;
     cfg.duration = (cfg.niter * cfg.period * 2) / 1000 + 2000;
     cfg.timeout = (3 * cfg.period) / 1000 + 2;
 
@@ -50,6 +50,12 @@ BOOST_AUTO_TEST_CASE( writer1_reader2 ) {
 
     bool const res { pv.waitall() };
     BOOST_CHECK_MESSAGE(res, pv.message);
+    for ( auto const& pi : pv ) {
+        for ( auto const& li : pi.output ) {
+            BOOST_TEST_MESSAGE(li);
+        }
+        BOOST_TEST_MESSAGE( "Result " << pi.id << " " << pi.result );
+    }
 
     rashm::remove_all_segments<data_vector_t>();
 }

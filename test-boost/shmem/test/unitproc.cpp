@@ -34,23 +34,7 @@ public:
     virtual void join() = 0;
     virtual void removeSegment() = 0;
 
-    struct test_result {
-        test_result() :
-                n_loop(0), n_timeouts(0), n_no_segment(0), n_counter_errors(0), counter_error_pos(
-                        std::numeric_limits<size_t>::max()), first_counter(
-                        std::numeric_limits<size_t>::max()), last_counter(
-                        std::numeric_limits<size_t>::max()) {
-        }
-        size_t n_loop;
-        size_t n_timeouts;
-        size_t n_no_segment;
-        size_t n_counter_errors;
-        size_t counter_error_pos;
-        size_t first_counter;
-        size_t last_counter;
-    };
-
-    test_result result;
+    utest::test_result result;
 };
 
 /**
@@ -62,6 +46,7 @@ public:
 
     Writer(unit_config cfg_) :
             cfg(cfg_) {
+        result.name = "writer";
     }
 
     virtual ~Writer() {
@@ -130,6 +115,7 @@ public:
 
     Reader(unit_config cfg_) :
             cfg(cfg_) {
+        result.name = "reader";
     }
 
     virtual ~Reader() {
@@ -238,8 +224,9 @@ int main(int argc, char** argv) {
         auto comp = map.at(cfg.comp_name);
         comp->start();
         comp->join();
-        std::cout << "Result loops " << command << " " << comp->result.n_loop
-                << std::endl;
+        std::cout << "Final " << id << " " << command << " "
+                << comp->result << std::endl;
+        std::cout << comp->result.toString();
         return comp->result.n_loop == cfg.niter ? 0 : 1;
     } else if (command == "rs") {
         //
@@ -254,12 +241,9 @@ int main(int argc, char** argv) {
         auto comp = map.at(cfg.comp_name);
         map.at(cfg.comp_name)->start();
         map.at(cfg.comp_name)->join();
-        std::cout << "Result loops " << id << " " << command << " "
-                << comp->result.n_loop << " " << comp->result.first_counter
-                << "/" << comp->result.last_counter << " to "
-                << comp->result.n_timeouts << "/" << comp->result.n_no_segment
-                << "/" << comp->result.n_counter_errors << "/"
-                << comp->result.counter_error_pos << std::endl;
+        std::cout << "Final " << id << " " << command << " "
+                << comp->result << std::endl;
+        std::cout << comp->result.toString();
         return comp->result.n_loop == cfg.niter ? 0 : 1;
     }
 

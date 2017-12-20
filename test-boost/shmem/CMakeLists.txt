@@ -51,9 +51,9 @@ target_link_libraries( tdoppler lrashm lratest boost_chrono boost_serialization 
     boost_program_options boost_log boost_thread )
 
 add_executable( unitproc test/unitproc.cpp )
-target_link_libraries( unitproc lratest lrashm boost_serialization boost_chrono boost_filesystem boost_system )
+target_link_libraries( unitproc lratest lrashm boost_serialization boost_chrono boost_regex boost_filesystem boost_system )
 
 add_executable( unitrunner test/unitrunner.cpp )
 target_link_libraries( unitrunner lratest lrashm boost_serialization boost_chrono
-    boost_filesystem boost_system )
+    boost_filesystem boost_regex boost_system )
 
