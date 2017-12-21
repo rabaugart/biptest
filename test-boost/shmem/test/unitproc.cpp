@@ -212,7 +212,7 @@ int main(int argc, char** argv) {
     std::cout << "arg " << command << " " << id << " " << cfg.niter
             << std::endl;
 
-    if (command == "as") {
+    if (command == utest::COM::WRITER) {
 
         //
         // Instantiating the writer
@@ -230,7 +230,7 @@ int main(int argc, char** argv) {
                 << comp->result << std::endl;
         std::cout << comp->result.toString();
         return comp->result.n_loop == cfg.niter ? 0 : 1;
-    } else if (command == "rs") {
+    } else if (command == utest::COM::READER) {
         //
         // Instantiating the reader
         //

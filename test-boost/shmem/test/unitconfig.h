@@ -10,6 +10,7 @@
 
 #include <string>
 #include <vector>
+#include <functional>
 
 #include <boost/process.hpp>
 #include <boost/asio.hpp>
@@ -98,9 +99,15 @@ struct process_vec: public std::vector<process> {
     virtual ~process_vec() {
     }
 
+    typedef std::function<std::string(size_t)> name_func;
+
+    void add(std::string const& com, unit_config const& cfg);
+
+    void add(std::string const& com, unit_config const& cfg, name_func f);
+
     /// Add a new child process and start it immediately
     void add(std::string const& com, unit_config const& cfg,
-            std::string const& id = "nn");
+            std::string const& id);
 
     /**
      * Check the result of all processes
@@ -113,5 +120,9 @@ struct process_vec: public std::vector<process> {
     std::string message;
 };
 
+struct COM {
+    static constexpr char const* READER="rs";
+    static constexpr char const* WRITER="as";
+};
 }
 #endif /* SHMEM_TEST_UNITCONFIG_H_ */

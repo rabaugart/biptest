@@ -89,9 +89,10 @@ test_result test_result::fromString(std::string const& cfgstr) {
 }
 
 std::ostream& operator <<(std::ostream& os, test_result const& tr) {
-    os << tr.name << " " << tr.n_loop << " " << tr.first_counter << "/" << tr.last_counter
-            << " to " << tr.n_timeouts << "/" << tr.n_no_segment << "/"
-            << tr.n_counter_errors << "/" << tr.counter_error_pos;
+    os << tr.name << " " << tr.n_loop << " " << tr.first_counter << "/"
+            << tr.last_counter << " to " << tr.n_timeouts << "/"
+            << tr.n_no_segment << "/" << tr.n_counter_errors << "/"
+            << tr.counter_error_pos;
     return os;
 }
 
@@ -133,6 +134,15 @@ bool process::wait() {
         result = test_result::fromString(output[output.size() - 1]);
     }
     return ret;
+}
+
+void process_vec::add(std::string const& com, unit_config const& cfg) {
+    add(com, cfg, (boost::format("%s-%03d") % com % size()).str());
+}
+
+void process_vec::add(std::string const& com, unit_config const& cfg,
+        name_func f) {
+    add(com, cfg, f(size()));
 }
 
 void process_vec::add(std::string const& com, unit_config const& cfg,

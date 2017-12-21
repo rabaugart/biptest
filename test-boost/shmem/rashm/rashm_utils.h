@@ -9,6 +9,8 @@
 #define SHMEM_RASHM_RASHM_UTILS_H_
 
 #include <memory>
+#include <string>
+#include <vector>
 
 #include "SegmentReader.h"
 #include "CompMap.h"
@@ -82,6 +84,19 @@ void remove_all_segments() {
     for (auto& i : map) {
         i.second->remove();
     }
+}
+
+/**
+ * Removes all shared mem segments from the OS
+ */
+template<typename DATA_VEC>
+std::vector<std::string> all_segment_names() {
+    std::vector<std::string> ret;
+    auto const map { util_details::make_map<DATA_VEC>() };
+    for (auto& i : map) {
+        ret.push_back(i.first);
+    }
+    return ret;
 }
 
 }
