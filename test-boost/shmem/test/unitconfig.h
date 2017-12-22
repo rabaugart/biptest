@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 #include <functional>
+#include <numeric>
 
 #include <boost/process.hpp>
 #include <boost/asio.hpp>
@@ -37,16 +38,22 @@ struct unit_config {
     /// Period duration in us
     size_t period;
 
+    /// Writer startup delay before first write in us (default 0)
+    size_t w_startup_delay;
+
+    /// Writer shutdown delay after last write in us (default 0)
+    size_t w_shutdown_delay;
+
     /// Path to the binary directory
     std::string bin_path;
 };
 
 struct test_result {
+    static constexpr size_t INVALID = std::numeric_limits<size_t>::max();
     test_result() :
             name { "nn" }, n_loop(0), n_timeouts(0), n_no_segment(0), n_counter_errors(
                     0), counter_error_pos(std::numeric_limits<size_t>::max()), first_counter(
-                    std::numeric_limits<size_t>::max()), last_counter(
-                    std::numeric_limits<size_t>::max()) {
+                    INVALID), last_counter(INVALID) {
     }
 
     std::string toString() const;
@@ -121,8 +128,8 @@ struct process_vec: public std::vector<process> {
 };
 
 struct COM {
-    static constexpr char const* READER="rs";
-    static constexpr char const* WRITER="as";
+    static constexpr char const* READER = "rs";
+    static constexpr char const* WRITER = "as";
 };
 }
 #endif /* SHMEM_TEST_UNITCONFIG_H_ */

@@ -68,7 +68,8 @@ public:
         boost::chrono::time_point<boost::chrono::system_clock> start =
                 boost::chrono::system_clock::now();
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        std::this_thread::sleep_for(
+                std::chrono::microseconds(cfg.w_startup_delay));
 
         while (boost::chrono::system_clock::now() - start
                 < boost::chrono::milliseconds(cfg.duration)
@@ -79,6 +80,9 @@ public:
                 result.first_counter = sw.head().counter;
             result.n_loop++;
         }
+        std::this_thread::sleep_for(
+                std::chrono::microseconds(cfg.w_shutdown_delay));
+
         result.last_counter = sw.head().counter;
     }
 
@@ -198,7 +202,6 @@ struct ReaderFactory {
     }
 };
 
-
 int main(int argc, char** argv) {
 
     if (argc < 3)
@@ -220,14 +223,14 @@ int main(int argc, char** argv) {
 
         typedef WriterFactory fac_t;
 
-        rashm::CompMap<fac_t> const map = rashm::makeMap<test_data_vector_t, fac_t>(
-                cfg);
+        rashm::CompMap<fac_t> const map = rashm::makeMap<test_data_vector_t,
+                fac_t>(cfg);
 
         auto comp = map.at(cfg.comp_name);
         comp->start();
         comp->join();
-        std::cout << "Final " << id << " " << command << " "
-                << comp->result << std::endl;
+        std::cout << "Final " << id << " " << command << " " << comp->result
+                << std::endl;
         std::cout << comp->result.toString();
         return comp->result.n_loop == cfg.niter ? 0 : 1;
     } else if (command == utest::COM::READER) {
@@ -237,14 +240,14 @@ int main(int argc, char** argv) {
 
         typedef ReaderFactory fac_t;
 
-        rashm::CompMap<fac_t> const map = rashm::makeMap<test_data_vector_t, fac_t>(
-                cfg);
+        rashm::CompMap<fac_t> const map = rashm::makeMap<test_data_vector_t,
+                fac_t>(cfg);
 
         auto comp = map.at(cfg.comp_name);
         map.at(cfg.comp_name)->start();
         map.at(cfg.comp_name)->join();
-        std::cout << "Final " << id << " " << command << " "
-                << comp->result << std::endl;
+        std::cout << "Final " << id << " " << command << " " << comp->result
+                << std::endl;
         std::cout << comp->result.toString();
         return comp->result.n_loop == cfg.niter ? 0 : 1;
     }

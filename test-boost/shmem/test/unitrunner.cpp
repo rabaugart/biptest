@@ -43,6 +43,8 @@ BOOST_AUTO_TEST_CASE( writer1_reader2 ) {
     cfg.bin_path = p.generic_string();
     cfg.niter = 2000;
     cfg.period = 1000;
+    cfg.w_startup_delay = 100;
+    cfg.w_shutdown_delay = 500;
     cfg.duration = (cfg.niter * cfg.period * 2) / 1000 + 2000;
     cfg.timeout = (3 * cfg.period) / 1000 + 2;
 
@@ -57,7 +59,7 @@ BOOST_AUTO_TEST_CASE( writer1_reader2 ) {
     BOOST_CHECK_MESSAGE(res, pv.message);
     for (auto const& pi : pv) {
         for (auto const& li : pi.output) {
-            BOOST_TEST_MESSAGE(li);
+            //BOOST_TEST_MESSAGE(li);
         }
         BOOST_TEST_MESSAGE("Result " << pi.id << " " << pi.result);
     }

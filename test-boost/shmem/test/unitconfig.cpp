@@ -28,6 +28,8 @@ void serialize(Archive & ar, utest::unit_config & d,
     ar & d.duration;
     ar & d.timeout;
     ar & d.period;
+    ar & d.w_startup_delay;
+    ar & d.w_shutdown_delay;
     ar & d.bin_path;
 }
 
@@ -49,7 +51,8 @@ void serialize(Archive & ar, utest::test_result & d,
 namespace utest {
 
 unit_config::unit_config() :
-        niter(100), duration(5000), timeout(1000), period(50000) {
+        niter(100), duration(5000), timeout(1000), period(50000), w_startup_delay(
+                0), w_shutdown_delay(0) {
 }
 
 std::string unit_config::toString() const {
@@ -91,8 +94,11 @@ test_result test_result::fromString(std::string const& cfgstr) {
 std::ostream& operator <<(std::ostream& os, test_result const& tr) {
     os << tr.name << " " << tr.n_loop << " " << tr.first_counter << "/"
             << tr.last_counter << " to " << tr.n_timeouts << "/"
-            << tr.n_no_segment << "/" << tr.n_counter_errors << "/"
-            << tr.counter_error_pos;
+            << tr.n_no_segment << "/" << tr.n_counter_errors << "/";
+    if (tr.counter_error_pos == tr.INVALID)
+        os << "--";
+    else
+        os << tr.counter_error_pos;
     return os;
 }
 
