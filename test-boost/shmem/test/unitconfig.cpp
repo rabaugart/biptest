@@ -41,6 +41,7 @@ void serialize(Archive & ar, utest::test_result & d,
     ar & d.n_timeouts;
     ar & d.n_no_segment;
     ar & d.n_counter_errors;
+    ar & d.counter_error_pos;
     ar & d.first_counter;
     ar & d.last_counter;
 }
@@ -92,9 +93,9 @@ test_result test_result::fromString(std::string const& cfgstr) {
 }
 
 std::ostream& operator <<(std::ostream& os, test_result const& tr) {
-    os << tr.name << " " << tr.n_loop << " " << tr.first_counter << "/"
-            << tr.last_counter << " to " << tr.n_timeouts << "/"
-            << tr.n_no_segment << "/" << tr.n_counter_errors << "/";
+    os << tr.name << " " << tr.n_loop << " " << std::setw(4) << tr.first_counter
+            << "/" << tr.last_counter << " to " << std::setw(4) << tr.n_timeouts
+            << "/" << tr.n_no_segment << "/" << tr.n_counter_errors << "/";
     if (tr.counter_error_pos == tr.INVALID)
         os << "--";
     else

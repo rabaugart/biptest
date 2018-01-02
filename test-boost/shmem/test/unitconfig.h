@@ -52,7 +52,7 @@ struct test_result {
     static constexpr size_t INVALID = std::numeric_limits<size_t>::max();
     test_result() :
             name { "nn" }, n_loop(0), n_timeouts(0), n_no_segment(0), n_counter_errors(
-                    0), counter_error_pos(std::numeric_limits<size_t>::max()), first_counter(
+                    0), counter_error_pos(INVALID), first_counter(
                     INVALID), last_counter(INVALID) {
     }
 
