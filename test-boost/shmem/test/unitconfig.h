@@ -48,6 +48,8 @@ struct unit_config {
     std::string bin_path;
 };
 
+std::ostream& operator << ( std::ostream&, unit_config const &);
+
 struct test_result {
     static constexpr size_t INVALID = std::numeric_limits<size_t>::max();
     test_result() :

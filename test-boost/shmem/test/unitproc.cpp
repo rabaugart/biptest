@@ -165,12 +165,12 @@ public:
                         }
                         current_counter = result.last_counter;
                         result.n_loop++;
-                    } catch (rashm::timeout_error const & e) {
+                    } catch (rashm::timeout_error const &) {
                         result.n_timeouts++;
                     }
 
                 }
-            } catch (rashm::no_segment_error const & e) {
+            } catch (rashm::no_segment_error const &) {
                 result.n_no_segment++;
                 std::this_thread::sleep_for(std::chrono::milliseconds(1000));
             }

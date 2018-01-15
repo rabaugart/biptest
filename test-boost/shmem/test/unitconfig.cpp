@@ -74,6 +74,11 @@ unit_config unit_config::fromString(std::string const& cfgstr) {
     return ret;
 }
 
+std::ostream& operator <<(std::ostream& os, unit_config const & c) {
+    os << boost::format("%s ni:%-4d per:%6uus") % c.comp_name % c.niter % c.period;
+    return os;
+}
+
 std::string test_result::toString() const {
     std::ostringstream os;
     boost::archive::text_oarchive oa(os);
@@ -111,7 +116,7 @@ namespace bfs = boost::filesystem;
 process::process(std::string const& com, unit_config const& cfg,
         std::string const& id_, boost::asio::io_service& ios) :
         command(com), config(cfg), id(id_), ch(
-                bfs::path(cfg.bin_path) / process::runner, bp::args= {command,cfg.toString(),id},bp::std_in.close(), bp::std_out > data,
+                bp::search_path(process::runner, { cfg.bin_path }), bp::args= {command,cfg.toString(),id},bp::std_in.close(), bp::std_out > data,
         bp::std_err > bp::null, ios) {
         }
 
