@@ -33,9 +33,9 @@ if ( NOT ${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Windows" )
   add_executable( tdshmem tdshmem.cpp )
 endif()
 
-add_library( lrashm STATIC rashm/Segment.cpp rashm/Header.cpp )
+add_library( lrashm STATIC rashm/Segment.cpp rashm/Header.cpp rashm/Monitor.cpp )
 
-add_library( lratest STATIC  test/TestDataA.cpp test/TestDataB.cpp 
+add_library( lratest STATIC  test/TestDataA.cpp test/TestDataAMonitor.cpp test/TestDataB.cpp 
     test/MsgCollector.cpp test/ComProc.cpp test/SubProc.cpp test/TestGenerator.cpp 
     test/unitconfig.cpp test/UnitTestData.cpp )
 add_executable( teshmem teshmem.cpp )
@@ -61,6 +61,10 @@ add_executable( tdoppler tdoppler.cpp )
 target_link_libraries( tdoppler lrashm lratest boost_chrono boost_serialization boost_date_time boost_system
     boost_program_options boost_log boost_thread )
 
+add_executable( tmon tmon.cpp )
+target_link_libraries( tmon lrashm lratest boost_chrono boost_serialization boost_date_time boost_system
+    boost_program_options boost_log boost_thread )
+    
 add_executable( unitproc test/unitproc.cpp )
 target_link_libraries( unitproc lratest lrashm boost_serialization boost_chrono boost_regex boost_filesystem boost_system )
 
