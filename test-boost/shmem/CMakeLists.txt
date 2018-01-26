@@ -10,6 +10,16 @@ if ( ${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Darwin" )
   link_libraries( -lncurses )
 endif()
 
+#
+# Check the boost libraries required
+#
+foreach( check_target boost_chrono boost_date_time boost_filesystem boost_log boost_regex
+    boost_thread boost_serialization boost_system )
+  if ( NOT TARGET ${check_target} )
+    message( FATAL_ERROR "rashm requires target ${check_target}" )
+  endif()
+endforeach()
+
 add_executable( tashmem tashmem.cpp shmem/shmem.cpp test/TestDataA.cpp )
 target_link_libraries( tashmem lratest )
 
