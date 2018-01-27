@@ -31,8 +31,12 @@ struct Printer {
         }
     };
 
-    void operator()(monitor_t::signal_value_t const &v ) {
-        std::cout << "Got " << ad->descr.label << " " << boost::apply_visitor(ToString(),v.value) << std::endl;
+    void operator()(monitor_t::value_frame_t const &v ) {
+        if (v.valid) {
+            std::cout << "Got " << ad->descr.label << " " << boost::apply_visitor(ToString(),v.value) << std::endl;
+        } else {
+            std::cout << "Got " << ad->descr.label << " invalid" << std::endl;
+        }
     }
 
     std::shared_ptr<field_adapter_t> ad;

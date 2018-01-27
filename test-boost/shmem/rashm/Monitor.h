@@ -21,16 +21,16 @@ struct FieldAdapter {
 public:
     typedef SIGNAL_VALUES signal_values;
 
-    struct Value {
+    struct ValueFrame {
 
         template<typename T>
-        Value(T const& v) : value(v), valid(true) {}
-        Value() : valid(false) {}
+        ValueFrame(T const& v) : value(v), valid(true) {}
+        ValueFrame() : valid(false) {}
         signal_values value;
         bool valid;
     };
 
-    boost::signals2::signal<void( Value const& )> sigValue;
+    boost::signals2::signal<void( ValueFrame const& )> sigValue;
 
     virtual void fire() = 0;
 
@@ -62,7 +62,7 @@ public:
     }
 
     typedef FieldAdapter<SIGNAL_VALUES> adapter_t;
-    typedef typename adapter_t::Value signal_value_t;
+    typedef typename adapter_t::ValueFrame value_frame_t;
     typedef typename adapter_t::FieldDescriptor descriptor_t;
 
 protected:
@@ -70,7 +70,7 @@ protected:
 
     class MyAdapter: public adapter_t {
     public:
-        typedef std::function<signal_value_t(SDATA const&)> access_fun;
+        typedef std::function<value_frame_t(SDATA const&)> access_fun;
 
         MyAdapter(descriptor_t const & d, SDATA const& data_, access_fun f) :
             adapter_t(d), data(data_), fun(f) {
@@ -78,13 +78,13 @@ protected:
         }
 
         void fire() {
-            signal_value_t newValue = fun(data);
+            value_frame_t newValue = fun(data);
             adapter_t::sigValue(newValue);
         }
 
     protected:
         SDATA const& data;
-        signal_value_t lastValue;
+        value_frame_t lastValue;
         access_fun fun;
     };
 

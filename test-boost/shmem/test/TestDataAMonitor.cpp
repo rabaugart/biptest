@@ -22,7 +22,7 @@ std::shared_ptr<FieldAdapter<utest::signal_values>> Monitor<TestDataA,utest::sig
         auto ad = std::make_shared<MyAdapter>(
                 descriptor_t{ "FeldA", "Wert von Feld a" },
                 currentData, [format]( TestDataA const& d ) {
-                    signal_value_t v{d.a};
+                    value_frame_t v{d.a};
                     return v;});
         adapters.push_back(ad);
         return ad;
@@ -32,7 +32,7 @@ std::shared_ptr<FieldAdapter<utest::signal_values>> Monitor<TestDataA,utest::sig
         auto ad = std::make_shared<MyAdapter>(
                 descriptor_t { "FeldB", "Wert von Feld b" },
                 currentData, [format]( TestDataA const& d ) {
-                    signal_value_t v{d.b};
+                    value_frame_t v{d.b};
                     return v;});
         adapters.push_back(ad);
         return ad;
