@@ -9,6 +9,10 @@
 
 namespace rashm {
 
+MonitorAdapter::MonitorAdapter(FieldDescriptor const &d) : descr(d) {
+
+}
+
 template<>
 void MonitorAdapter::emit( std::string s ) {
     sigString(s);

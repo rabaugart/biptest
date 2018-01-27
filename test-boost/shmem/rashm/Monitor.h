@@ -24,13 +24,19 @@ public:
 
     virtual void fire() = 0;
 
-protected:
-    MonitorAdapter() {
+    struct FieldDescriptor {
+        std::string label;
+        std::string description;
+    };
 
-    }
+    FieldDescriptor const descr;
+
+protected:
+
+    MonitorAdapter(FieldDescriptor const& label);
 
     template<typename T>
-    void emit( T );
+    void emit(T);
 
 };
 
@@ -38,11 +44,12 @@ template<typename SDATA>
 class Monitor {
 public:
 
-    std::shared_ptr<MonitorAdapter> makeAdapter( std::string const & key, std::string const & format );
+    std::shared_ptr<MonitorAdapter> makeAdapter(std::string const & key,
+            std::string const & format);
 
-    void operator = ( SDATA const & d ) {
+    void operator =(SDATA const & d) {
         currentData = d;
-        for ( auto& i : adapters ) {
+        for (auto& i : adapters) {
             i->fire();
         }
     }
@@ -50,17 +57,19 @@ public:
 protected:
 
     template<typename VALUE>
-    class MyAdapter : public MonitorAdapter {
+    class MyAdapter: public MonitorAdapter {
     public:
         typedef std::function<VALUE(SDATA const&)> access_fun;
 
-        MyAdapter( SDATA const& data_, access_fun f ) : data(data_), fun(f) {
+        MyAdapter(FieldDescriptor const & d, SDATA const& data_,
+                access_fun f) :
+                MonitorAdapter(d), data(data_), fun(f) {
 
         }
 
         void fire() {
             VALUE newValue = fun(data);
-            emit( newValue );
+            emit(newValue);
         }
 
     protected:

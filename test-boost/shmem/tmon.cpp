@@ -11,19 +11,24 @@
 #include "test/TestDataA.h"
 
 struct Printer {
-    void operator()( std::string const & s ) {
-        std::cout << "Got " << s << std::endl;
+
+    Printer( std::shared_ptr<rashm::MonitorAdapter> ad_ ) : ad(ad_) {
+        ad->sigString.connect(*this);
     }
+
+    void operator()( std::string const & s ) {
+        std::cout << "Got " << ad->descr.label << " " << s << std::endl;
+    }
+
+    std::shared_ptr<rashm::MonitorAdapter> ad;
 };
+
 int main() {
 
     rashm::Monitor<TestDataA> mon;
 
-    auto ad = mon.makeAdapter("a","%5.3f");
-    auto ad2 = mon.makeAdapter("b","Valb %3d");
-    Printer pr;
-    ad->sigString.connect(pr);
-    ad2->sigString.connect(pr);
+    Printer pr1{mon.makeAdapter("a","%5.3f")};
+    Printer pr2{mon.makeAdapter("b","%3d")};
 
     TestDataA d;
 
