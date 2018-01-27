@@ -12,23 +12,24 @@
 
 struct Printer {
 
-    Printer( std::shared_ptr<rashm::MonitorAdapter> ad_ ) : ad(ad_) {
+    Printer(std::shared_ptr<rashm::FieldAdapter> ad_) :
+            ad(ad_) {
         ad->sigString.connect(*this);
     }
 
-    void operator()( std::string const & s ) {
+    void operator()(std::string const & s) {
         std::cout << "Got " << ad->descr.label << " " << s << std::endl;
     }
 
-    std::shared_ptr<rashm::MonitorAdapter> ad;
+    std::shared_ptr<rashm::FieldAdapter> ad;
 };
 
 int main() {
 
     rashm::Monitor<TestDataA> mon;
 
-    Printer pr1{mon.makeAdapter("a","%5.3f")};
-    Printer pr2{mon.makeAdapter("b","%3d")};
+    Printer pr1 { mon.makeAdapter("a", "%5.3f") };
+    Printer pr2 { mon.makeAdapter("b", "%3d") };
 
     TestDataA d;
 
@@ -43,5 +44,4 @@ int main() {
     std::cout << "tmon ok" << std::endl;
     return 0;
 }
-
 

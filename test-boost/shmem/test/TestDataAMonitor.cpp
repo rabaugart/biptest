@@ -14,20 +14,22 @@
 namespace rashm {
 
 template<>
-std::shared_ptr<MonitorAdapter> Monitor<TestDataA>::makeAdapter(
+std::shared_ptr<FieldAdapter> Monitor<TestDataA>::makeAdapter(
         std::string const & key, std::string const & format) {
 
     if (key == "a") {
-        auto ad = std::make_shared<MyAdapter<std::string>>(MonitorAdapter::FieldDescriptor{"FeldA","Wert von Feld a"},currentData,
-                [format]( TestDataA const& d ) {
+        auto ad = std::make_shared<MyAdapter<std::string>>(
+                FieldAdapter::FieldDescriptor { "FeldA", "Wert von Feld a" },
+                currentData, [format]( TestDataA const& d ) {
                     return (boost::format(format) % d.a).str();});
         adapters.push_back(ad);
         return ad;
     }
 
     if (key == "b") {
-        auto ad = std::make_shared<MyAdapter<std::string>>(MonitorAdapter::FieldDescriptor{"FeldB","Wert von Feld b"},currentData,
-                [format]( TestDataA const& d ) {
+        auto ad = std::make_shared<MyAdapter<std::string>>(
+                FieldAdapter::FieldDescriptor { "FeldB", "Wert von Feld b" },
+                currentData, [format]( TestDataA const& d ) {
                     return (boost::format(format) % d.b).str();});
         adapters.push_back(ad);
         return ad;

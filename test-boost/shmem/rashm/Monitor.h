@@ -16,7 +16,7 @@
 
 namespace rashm {
 
-struct MonitorAdapter {
+struct FieldAdapter {
 public:
     boost::signals2::signal<void(double)> sigDouble;
     boost::signals2::signal<void(std::string const&)> sigString;
@@ -33,7 +33,7 @@ public:
 
 protected:
 
-    MonitorAdapter(FieldDescriptor const& label);
+    FieldAdapter(FieldDescriptor const& label);
 
     template<typename T>
     void emit(T);
@@ -44,7 +44,7 @@ template<typename SDATA>
 class Monitor {
 public:
 
-    std::shared_ptr<MonitorAdapter> makeAdapter(std::string const & key,
+    std::shared_ptr<FieldAdapter> makeAdapter(std::string const & key,
             std::string const & format);
 
     void operator =(SDATA const & d) {
@@ -57,13 +57,12 @@ public:
 protected:
 
     template<typename VALUE>
-    class MyAdapter: public MonitorAdapter {
+    class MyAdapter: public FieldAdapter {
     public:
         typedef std::function<VALUE(SDATA const&)> access_fun;
 
-        MyAdapter(FieldDescriptor const & d, SDATA const& data_,
-                access_fun f) :
-                MonitorAdapter(d), data(data_), fun(f) {
+        MyAdapter(FieldDescriptor const & d, SDATA const& data_, access_fun f) :
+                FieldAdapter(d), data(data_), fun(f) {
 
         }
 
@@ -79,7 +78,7 @@ protected:
     };
 
     SDATA currentData;
-    std::vector<std::shared_ptr<MonitorAdapter>> adapters;
+    std::vector<std::shared_ptr<FieldAdapter>> adapters;
 };
 
 }
