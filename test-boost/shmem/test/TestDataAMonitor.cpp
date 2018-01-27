@@ -10,27 +10,30 @@
 #include "rashm/Monitor.h"
 
 #include "TestDataA.h"
+#include "TestTypes.h"
 
 namespace rashm {
 
 template<>
-std::shared_ptr<FieldAdapter> Monitor<TestDataA>::makeAdapter(
+std::shared_ptr<FieldAdapter<utest::signal_values>> Monitor<TestDataA,utest::signal_values>::makeAdapter(
         std::string const & key, std::string const & format) {
 
     if (key == "a") {
-        auto ad = std::make_shared<MyAdapter<std::string>>(
-                FieldAdapter::FieldDescriptor { "FeldA", "Wert von Feld a" },
+        auto ad = std::make_shared<MyAdapter>(
+                descriptor_t{ "FeldA", "Wert von Feld a" },
                 currentData, [format]( TestDataA const& d ) {
-                    return (boost::format(format) % d.a).str();});
+                    signal_value_t v{d.a};
+                    return v;});
         adapters.push_back(ad);
         return ad;
     }
 
     if (key == "b") {
-        auto ad = std::make_shared<MyAdapter<std::string>>(
-                FieldAdapter::FieldDescriptor { "FeldB", "Wert von Feld b" },
+        auto ad = std::make_shared<MyAdapter>(
+                descriptor_t { "FeldB", "Wert von Feld b" },
                 currentData, [format]( TestDataA const& d ) {
-                    return (boost::format(format) % d.b).str();});
+                    signal_value_t v{d.b};
+                    return v;});
         adapters.push_back(ad);
         return ad;
     }

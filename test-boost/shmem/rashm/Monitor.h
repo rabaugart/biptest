@@ -16,11 +16,21 @@
 
 namespace rashm {
 
+template<typename SIGNAL_VALUES>
 struct FieldAdapter {
 public:
-    boost::signals2::signal<void(double)> sigDouble;
-    boost::signals2::signal<void(std::string const&)> sigString;
-    boost::signals2::signal<void(bool)> sigBool;
+    typedef SIGNAL_VALUES signal_values;
+
+    struct Value {
+
+        template<typename T>
+        Value(T const& v) : value(v), valid(true) {}
+        Value() : valid(false) {}
+        signal_values value;
+        bool valid;
+    };
+
+    boost::signals2::signal<void( Value const& )> sigValue;
 
     virtual void fire() = 0;
 
@@ -33,18 +43,15 @@ public:
 
 protected:
 
-    FieldAdapter(FieldDescriptor const& label);
-
-    template<typename T>
-    void emit(T);
+    FieldAdapter(FieldDescriptor const& d) : descr(d) {}
 
 };
 
-template<typename SDATA>
+template<typename SDATA,typename SIGNAL_VALUES>
 class Monitor {
 public:
 
-    std::shared_ptr<FieldAdapter> makeAdapter(std::string const & key,
+    std::shared_ptr<FieldAdapter<SIGNAL_VALUES>> makeAdapter(std::string const & key,
             std::string const & format);
 
     void operator =(SDATA const & d) {
@@ -54,31 +61,35 @@ public:
         }
     }
 
+    typedef FieldAdapter<SIGNAL_VALUES> adapter_t;
+    typedef typename adapter_t::Value signal_value_t;
+    typedef typename adapter_t::FieldDescriptor descriptor_t;
+
 protected:
 
-    template<typename VALUE>
-    class MyAdapter: public FieldAdapter {
-    public:
-        typedef std::function<VALUE(SDATA const&)> access_fun;
 
-        MyAdapter(FieldDescriptor const & d, SDATA const& data_, access_fun f) :
-                FieldAdapter(d), data(data_), fun(f) {
+    class MyAdapter: public adapter_t {
+    public:
+        typedef std::function<signal_value_t(SDATA const&)> access_fun;
+
+        MyAdapter(descriptor_t const & d, SDATA const& data_, access_fun f) :
+            adapter_t(d), data(data_), fun(f) {
 
         }
 
         void fire() {
-            VALUE newValue = fun(data);
-            emit(newValue);
+            signal_value_t newValue = fun(data);
+            adapter_t::sigValue(newValue);
         }
 
     protected:
         SDATA const& data;
-        VALUE lastValue;
+        signal_value_t lastValue;
         access_fun fun;
     };
 
     SDATA currentData;
-    std::vector<std::shared_ptr<FieldAdapter>> adapters;
+    std::vector<std::shared_ptr<FieldAdapter<SIGNAL_VALUES>>> adapters;
 };
 
 }

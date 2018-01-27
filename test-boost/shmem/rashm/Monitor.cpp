@@ -9,14 +9,5 @@
 
 namespace rashm {
 
-FieldAdapter::FieldAdapter(FieldDescriptor const &d) :
-        descr(d) {
-
-}
-
-template<>
-void FieldAdapter::emit(std::string s) {
-    sigString(s);
-}
 
 }
