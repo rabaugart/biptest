@@ -15,6 +15,9 @@ namespace rashm {
 template<typename SDATA, typename SIGNAL_VALUES>
 class FieldAdapterFactory;
 
+/**
+ * Sends a signal with a ValueFrame, when the source is updated
+ */
 template<typename SIGNAL_VALUES>
 struct FieldAdapter {
 public:

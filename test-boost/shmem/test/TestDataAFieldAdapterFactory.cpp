@@ -16,23 +16,12 @@ namespace rashm {
 template<>
 void FieldAdapterFactory<TestDataA, utest::signal_values>::init() {
 
-    factoryMap["a"] = [this]( std::string const& format ) {
-        auto ad = std::make_shared<MyAdapter>(
-                descriptor_t {"FeldA", "Wert von Feld a", format},
-                currentData, [format]( VData const& d ) {
-                    value_frame_t v {d.data.a,d.valid};
-                    return v;});
-        return ad;
-    };
-
-    factoryMap["b"] = [this]( std::string const& format ) {
-        auto ad = std::make_shared<MyAdapter>(
-                descriptor_t {"FeldB", "Wert von Feld b", format},
-                currentData, [format]( VData const& d ) {
-                    value_frame_t v {d.data.b,d.valid};
-                    return v;});
-        return ad;
-    };
+    registerFactoryFun("a", "FeldA", "Wert von Feld a (double)", []( VData const& d ) {
+        value_frame_t v {d.data.a,d.valid};
+        return v;});
+    registerFactoryFun("b", "FeldB", "Wert von Feld b (int)", []( VData const& d ) {
+        value_frame_t v {d.data.b,d.valid};
+        return v;});
 
 }
 

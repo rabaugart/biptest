@@ -34,9 +34,17 @@ public:
         fire();
     }
 
+    /**
+     * Constructs a field adapter by key
+     */
     std::shared_ptr<FieldAdapter<SIGNAL_VALUES>> makeAdapter(
             std::string const & key, std::string const & format) {
-        auto ad = factoryMap[key](format);
+        auto const& regval = factoryMap[key];
+        typedef typename adapter_t::FieldDescriptor descriptor_t;
+        auto ad = std::make_shared<MyAdapter>(
+                descriptor_t { regval.descriptor.label,
+                        regval.descriptor.description, format }, currentData,
+                regval.fun);
         adapters.push_back(ad);
         return ad;
     }
@@ -52,8 +60,18 @@ public:
     typedef typename adapter_t::ValueFrame value_frame_t;
     typedef typename adapter_t::FieldDescriptor descriptor_t;
 
+    void listFields( std::ostream& os ) {
+        for ( auto const& i : factoryMap ) {
+            os << i.first << ": " << i.second.descriptor.label << "/" << i.second.descriptor.description << "\n";
+
+        }
+    }
+
 protected:
 
+    /**
+     * Trigger all adapters to fire the signal
+     */
     void fire() {
         for (auto& i : adapters) {
             i->fire();
@@ -68,9 +86,10 @@ protected:
         bool valid;
     };
 
+    typedef std::function<value_frame_t(VData const&)> access_fun;
+
     class MyAdapter: public adapter_t {
     public:
-        typedef std::function<value_frame_t(VData const&)> access_fun;
 
         MyAdapter(descriptor_t const & d, VData const& data_, access_fun f) :
                 adapter_t(d), data(data_), fun(f) {
@@ -91,9 +110,18 @@ protected:
     VData currentData;
     bool valid;
 
-    typedef std::function<adapter_ptr_t(std::string const& format)> adapter_factory_fun;
+    struct RegistryValue {
+        typename adapter_t::FieldDescriptor descriptor;
+        access_fun fun;
+    };
 
-    std::map<std::string, adapter_factory_fun> factoryMap;
+    void registerFactoryFun(std::string const & key, std::string const & label,
+            std::string const& description, access_fun fun) {
+        RegistryValue val { { label, description, "" }, fun };
+        factoryMap[key] = val;
+    }
+
+    std::map<std::string, RegistryValue> factoryMap;
 
     std::vector<adapter_ptr_t> adapters;
 };

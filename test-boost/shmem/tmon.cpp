@@ -61,6 +61,8 @@ int main() {
 
     monitor_t mon;
 
+    mon.listFields( std::cout );
+
     Printer pr1 { mon.makeAdapter("a", "%7.3f") };
     Printer pr2 { mon.makeAdapter("b", "%7d") };
 
