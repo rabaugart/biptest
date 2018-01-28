@@ -6,8 +6,7 @@
  */
 
 #include <boost/format.hpp>
-
-#include "rashm/Monitor.h"
+#include <rashm/FieldAdapterFactory.h>
 
 #include "TestDataA.h"
 #include "TestTypes.h"
@@ -15,22 +14,22 @@
 namespace rashm {
 
 template<>
-void Monitor<TestDataA,utest::signal_values>::init() {
+void FieldAdapterFactory<TestDataA, utest::signal_values>::init() {
 
     factoryMap["a"] = [this]( std::string const& format ) {
         auto ad = std::make_shared<MyAdapter>(
-                descriptor_t{ "FeldA", "Wert von Feld a", format },
+                descriptor_t {"FeldA", "Wert von Feld a", format},
                 currentData, [format]( TestDataA const& d ) {
-                    value_frame_t v{d.a};
+                    value_frame_t v {d.a};
                     return v;});
         return ad;
     };
 
     factoryMap["b"] = [this]( std::string const& format ) {
         auto ad = std::make_shared<MyAdapter>(
-                descriptor_t{ "FeldB", "Wert von Feld b", format },
+                descriptor_t {"FeldB", "Wert von Feld b", format},
                 currentData, [format]( TestDataA const& d ) {
-                    value_frame_t v{d.b};
+                    value_frame_t v {d.b};
                     return v;});
         return ad;
     };
@@ -38,9 +37,9 @@ void Monitor<TestDataA,utest::signal_values>::init() {
 #if 0
     if (key == "b") {
         auto ad = std::make_shared<MyAdapter>(
-                descriptor_t { "FeldB", "Wert von Feld b", format },
+                descriptor_t {"FeldB", "Wert von Feld b", format},
                 currentData, [format]( TestDataA const& d ) {
-                    value_frame_t v{d.b};
+                    value_frame_t v {d.b};
                     return v;});
         adapters.push_back(ad);
         return ad;

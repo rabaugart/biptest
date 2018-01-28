@@ -9,12 +9,12 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
+#include <rashm/FieldAdapterFactory.h>
 
-#include "rashm/Monitor.h"
 #include "test/TestDataA.h"
 #include "test/TestTypes.h"
 
-typedef rashm::Monitor<TestDataA, utest::signal_values> monitor_t;
+typedef rashm::FieldAdapterFactory<TestDataA, utest::signal_values> monitor_t;
 
 struct Printer {
 
