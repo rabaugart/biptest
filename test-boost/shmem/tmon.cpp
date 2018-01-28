@@ -8,32 +8,47 @@
 #include <iostream>
 
 #include <boost/lexical_cast.hpp>
+#include <boost/format.hpp>
 
 #include "rashm/Monitor.h"
 #include "test/TestDataA.h"
 #include "test/TestTypes.h"
 
-typedef rashm::Monitor<TestDataA,utest::signal_values> monitor_t;
+typedef rashm::Monitor<TestDataA, utest::signal_values> monitor_t;
 
 struct Printer {
 
     typedef monitor_t::adapter_t field_adapter_t;
+    typedef std::shared_ptr<field_adapter_t> adapter_ptr;
 
     Printer(std::shared_ptr<field_adapter_t> ad_) :
             ad(ad_) {
         ad->sigValue.connect(*this);
     }
 
-    struct ToString : public boost::static_visitor<std::string> {
-        template<typename T>
-        std::string operator()( T const& v  ) const {
-            return boost::lexical_cast<std::string>(v);
+    struct ToString: public boost::static_visitor<std::string> {
+
+        ToString(adapter_ptr ad_) :
+                ad(ad_) {
         }
+
+        template<typename T>
+        std::string operator()(T const& v) const {
+            if (ad->descr.format == " ") {
+                return boost::lexical_cast<std::string>(v);
+            } else {
+                return (boost::format(ad->descr.format) % v).str();
+            }
+        }
+
+        adapter_ptr ad;
     };
 
-    void operator()(monitor_t::value_frame_t const &v ) {
+    void operator()(monitor_t::value_frame_t const &v) {
         if (v.valid) {
-            std::cout << "Got " << ad->descr.label << " " << boost::apply_visitor(ToString(),v.value) << std::endl;
+            std::cout << "Got " << ad->descr.label << " "
+                    << boost::apply_visitor(ToString { ad }, v.value)
+                    << std::endl;
         } else {
             std::cout << "Got " << ad->descr.label << " invalid" << std::endl;
         }
@@ -46,8 +61,8 @@ int main() {
 
     monitor_t mon;
 
-    Printer pr1 { mon.makeAdapter("a", "%5.3f") };
-    Printer pr2 { mon.makeAdapter("b", "%3d") };
+    Printer pr1 { mon.makeAdapter("a", "%7.3f") };
+    Printer pr2 { mon.makeAdapter("b", "%7d") };
 
     TestDataA d;
 

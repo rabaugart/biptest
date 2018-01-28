@@ -20,7 +20,7 @@ std::shared_ptr<FieldAdapter<utest::signal_values>> Monitor<TestDataA,utest::sig
 
     if (key == "a") {
         auto ad = std::make_shared<MyAdapter>(
-                descriptor_t{ "FeldA", "Wert von Feld a" },
+                descriptor_t{ "FeldA", "Wert von Feld a", format },
                 currentData, [format]( TestDataA const& d ) {
                     value_frame_t v{d.a};
                     return v;});
@@ -30,7 +30,7 @@ std::shared_ptr<FieldAdapter<utest::signal_values>> Monitor<TestDataA,utest::sig
 
     if (key == "b") {
         auto ad = std::make_shared<MyAdapter>(
-                descriptor_t { "FeldB", "Wert von Feld b" },
+                descriptor_t { "FeldB", "Wert von Feld b", format },
                 currentData, [format]( TestDataA const& d ) {
                     value_frame_t v{d.b};
                     return v;});

@@ -37,6 +37,7 @@ public:
     struct FieldDescriptor {
         std::string label;
         std::string description;
+        std::string format;
     };
 
     FieldDescriptor const descr;
