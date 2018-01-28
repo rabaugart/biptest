@@ -15,19 +15,27 @@
 namespace rashm {
 
 template<>
-std::shared_ptr<FieldAdapter<utest::signal_values>> Monitor<TestDataA,utest::signal_values>::makeAdapter(
-        std::string const & key, std::string const & format) {
+void Monitor<TestDataA,utest::signal_values>::init() {
 
-    if (key == "a") {
+    factoryMap["a"] = [this]( std::string const& format ) {
         auto ad = std::make_shared<MyAdapter>(
                 descriptor_t{ "FeldA", "Wert von Feld a", format },
                 currentData, [format]( TestDataA const& d ) {
                     value_frame_t v{d.a};
                     return v;});
-        adapters.push_back(ad);
         return ad;
-    }
+    };
 
+    factoryMap["b"] = [this]( std::string const& format ) {
+        auto ad = std::make_shared<MyAdapter>(
+                descriptor_t{ "FeldB", "Wert von Feld b", format },
+                currentData, [format]( TestDataA const& d ) {
+                    value_frame_t v{d.b};
+                    return v;});
+        return ad;
+    };
+
+#if 0
     if (key == "b") {
         auto ad = std::make_shared<MyAdapter>(
                 descriptor_t { "FeldB", "Wert von Feld b", format },
@@ -37,8 +45,7 @@ std::shared_ptr<FieldAdapter<utest::signal_values>> Monitor<TestDataA,utest::sig
         adapters.push_back(ad);
         return ad;
     }
-
-    throw std::runtime_error("Invalid key " + key);
+#endif
 }
 
 }

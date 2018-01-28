@@ -11,6 +11,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <map>
 
 #include <boost/signals2.hpp>
 
@@ -52,8 +53,18 @@ template<typename SDATA,typename SIGNAL_VALUES>
 class Monitor {
 public:
 
+    Monitor() {
+        init();
+    }
+
+    void init();
+
     std::shared_ptr<FieldAdapter<SIGNAL_VALUES>> makeAdapter(std::string const & key,
-            std::string const & format);
+            std::string const & format) {
+        auto ad = factoryMap[key](format);
+        adapters.push_back(ad);
+        return ad;
+    }
 
     void operator =(SDATA const & d) {
         currentData = d;
@@ -90,6 +101,11 @@ protected:
     };
 
     SDATA currentData;
+
+    typedef std::function<std::shared_ptr<FieldAdapter<SIGNAL_VALUES>>(std::string const& format)> adapter_factory_fun;
+
+    std::map<std::string,adapter_factory_fun> factoryMap;
+
     std::vector<std::shared_ptr<FieldAdapter<SIGNAL_VALUES>>> adapters;
 };
 
