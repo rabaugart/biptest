@@ -19,8 +19,8 @@ void FieldAdapterFactory<TestDataA, utest::signal_values>::init() {
     factoryMap["a"] = [this]( std::string const& format ) {
         auto ad = std::make_shared<MyAdapter>(
                 descriptor_t {"FeldA", "Wert von Feld a", format},
-                currentData, [format]( TestDataA const& d ) {
-                    value_frame_t v {d.a};
+                currentData, [format]( VData const& d ) {
+                    value_frame_t v {d.data.a,d.valid};
                     return v;});
         return ad;
     };
@@ -28,8 +28,8 @@ void FieldAdapterFactory<TestDataA, utest::signal_values>::init() {
     factoryMap["b"] = [this]( std::string const& format ) {
         auto ad = std::make_shared<MyAdapter>(
                 descriptor_t {"FeldB", "Wert von Feld b", format},
-                currentData, [format]( TestDataA const& d ) {
-                    value_frame_t v {d.b};
+                currentData, [format]( VData const& d ) {
+                    value_frame_t v {d.data.b,d.valid};
                     return v;});
         return ad;
     };

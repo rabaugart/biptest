@@ -74,6 +74,11 @@ int main() {
     d.b = 77;
     mon = d;
 
+    mon.setValid(false);
+
+    d.b = -55;
+    mon = d;
+
     std::cout << "tmon ok" << std::endl;
     return 0;
 }

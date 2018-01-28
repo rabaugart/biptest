@@ -25,8 +25,8 @@ public:
     struct ValueFrame {
 
         template<typename T>
-        ValueFrame(T const& v) :
-                value(v), valid(true) {
+        ValueFrame(T const& v, bool val) :
+                value(v), valid(val) {
         }
         ValueFrame() :
                 valid(false) {
@@ -65,6 +65,11 @@ public:
 
     void init();
 
+    void setValid( bool b ) {
+        currentData.valid = b;
+        fire();
+    }
+
     std::shared_ptr<FieldAdapter<SIGNAL_VALUES>> makeAdapter(
             std::string const & key, std::string const & format) {
         auto ad = factoryMap[key](format);
@@ -73,10 +78,9 @@ public:
     }
 
     void operator =(SDATA const & d) {
-        currentData = d;
-        for (auto& i : adapters) {
-            i->fire();
-        }
+        currentData.data = d;
+        currentData.valid = true;
+        fire();
     }
 
     typedef FieldAdapter<SIGNAL_VALUES> adapter_t;
@@ -85,11 +89,23 @@ public:
 
 protected:
 
+    void fire() {
+        for (auto& i : adapters) {
+            i->fire();
+        }
+    }
+
+    struct VData {
+        VData() : valid(false) {}
+        SDATA data;
+        bool valid;
+    };
+
     class MyAdapter: public adapter_t {
     public:
-        typedef std::function<value_frame_t(SDATA const&)> access_fun;
+        typedef std::function<value_frame_t(VData const&)> access_fun;
 
-        MyAdapter(descriptor_t const & d, SDATA const& data_, access_fun f) :
+        MyAdapter(descriptor_t const & d, VData const& data_, access_fun f) :
                 adapter_t(d), data(data_), fun(f) {
 
         }
@@ -100,12 +116,13 @@ protected:
         }
 
     protected:
-        SDATA const& data;
+        VData const& data;
         value_frame_t lastValue;
         access_fun fun;
     };
 
-    SDATA currentData;
+    VData currentData;
+    bool valid;
 
     typedef std::function<
             std::shared_ptr<FieldAdapter<SIGNAL_VALUES>>(
