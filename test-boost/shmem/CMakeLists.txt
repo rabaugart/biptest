@@ -33,7 +33,7 @@ if ( NOT ${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Windows" )
   add_executable( tdshmem tdshmem.cpp )
 endif()
 
-add_library( lrashm STATIC rashm/Segment.cpp rashm/Header.cpp rashm/Monitor.cpp )
+add_library( lrashm STATIC rashm/Segment.cpp rashm/Header.cpp )
 
 add_library( lratest STATIC  test/TestDataA.cpp test/TestDataAMonitor.cpp test/TestDataB.cpp 
     test/MsgCollector.cpp test/ComProc.cpp test/SubProc.cpp test/TestGenerator.cpp 
