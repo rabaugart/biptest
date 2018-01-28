@@ -8,6 +8,8 @@
 #ifndef SHMEM_RASHM_FIELDADAPTER_H_
 #define SHMEM_RASHM_FIELDADAPTER_H_
 
+#include <string>
+
 namespace rashm {
 
 template<typename SDATA, typename SIGNAL_VALUES>

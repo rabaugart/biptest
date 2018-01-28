@@ -34,17 +34,6 @@ void FieldAdapterFactory<TestDataA, utest::signal_values>::init() {
         return ad;
     };
 
-#if 0
-    if (key == "b") {
-        auto ad = std::make_shared<MyAdapter>(
-                descriptor_t {"FeldB", "Wert von Feld b", format},
-                currentData, [format]( TestDataA const& d ) {
-                    value_frame_t v {d.b};
-                    return v;});
-        adapters.push_back(ad);
-        return ad;
-    }
-#endif
 }
 
 }

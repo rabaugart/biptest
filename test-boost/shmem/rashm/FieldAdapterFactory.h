@@ -48,6 +48,7 @@ public:
     }
 
     typedef FieldAdapter<SIGNAL_VALUES> adapter_t;
+    typedef std::shared_ptr<adapter_t> adapter_ptr_t;
     typedef typename adapter_t::ValueFrame value_frame_t;
     typedef typename adapter_t::FieldDescriptor descriptor_t;
 
@@ -90,13 +91,11 @@ protected:
     VData currentData;
     bool valid;
 
-    typedef std::function<
-            std::shared_ptr<FieldAdapter<SIGNAL_VALUES>>(
-                    std::string const& format)> adapter_factory_fun;
+    typedef std::function<adapter_ptr_t(std::string const& format)> adapter_factory_fun;
 
     std::map<std::string, adapter_factory_fun> factoryMap;
 
-    std::vector<std::shared_ptr<FieldAdapter<SIGNAL_VALUES>>>adapters;
+    std::vector<adapter_ptr_t> adapters;
 };
 
 }

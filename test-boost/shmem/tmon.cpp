@@ -9,8 +9,9 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
-#include <rashm/FieldAdapterFactory.h>
-#include <test/test_signal_values.h>
+
+#include "rashm/FieldAdapterFactory.h"
+#include "test/test_signal_values.h"
 
 #include "test/TestDataA.h"
 
@@ -18,10 +19,9 @@ typedef rashm::FieldAdapterFactory<TestDataA, utest::signal_values> monitor_t;
 
 struct Printer {
 
-    typedef monitor_t::adapter_t field_adapter_t;
-    typedef std::shared_ptr<field_adapter_t> adapter_ptr;
+    typedef monitor_t::adapter_ptr_t adapter_ptr;
 
-    Printer(std::shared_ptr<field_adapter_t> ad_) :
+    Printer(adapter_ptr ad_) :
             ad(ad_) {
         ad->sigValue.connect(*this);
     }
@@ -54,7 +54,7 @@ struct Printer {
         }
     }
 
-    std::shared_ptr<field_adapter_t> ad;
+    adapter_ptr ad;
 };
 
 int main() {
@@ -76,6 +76,7 @@ int main() {
 
     mon.setValid(false);
 
+    d.a = 4.56;
     d.b = -55;
     mon = d;
 
