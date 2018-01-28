@@ -15,45 +15,9 @@
 
 #include <boost/signals2.hpp>
 
+#include "FieldAdapter.h"
+
 namespace rashm {
-
-template<typename SIGNAL_VALUES>
-struct FieldAdapter {
-public:
-    typedef SIGNAL_VALUES signal_values;
-
-    struct ValueFrame {
-
-        template<typename T>
-        ValueFrame(T const& v, bool val) :
-                value(v), valid(val) {
-        }
-        ValueFrame() :
-                valid(false) {
-        }
-        signal_values value;
-        bool valid;
-    };
-
-    boost::signals2::signal<void(ValueFrame const&)> sigValue;
-
-    virtual void fire() = 0;
-
-    struct FieldDescriptor {
-        std::string label;
-        std::string description;
-        std::string format;
-    };
-
-    FieldDescriptor const descr;
-
-protected:
-
-    FieldAdapter(FieldDescriptor const& d) :
-            descr(d) {
-    }
-
-};
 
 template<typename SDATA, typename SIGNAL_VALUES>
 class FieldAdapterFactory {
@@ -65,7 +29,7 @@ public:
 
     void init();
 
-    void setValid( bool b ) {
+    void setValid(bool b) {
         currentData.valid = b;
         fire();
     }
@@ -96,7 +60,9 @@ protected:
     }
 
     struct VData {
-        VData() : valid(false) {}
+        VData() :
+                valid(false) {
+        }
         SDATA data;
         bool valid;
     };

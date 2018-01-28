@@ -34,7 +34,7 @@ struct Printer {
 
         template<typename T>
         std::string operator()(T const& v) const {
-            if (ad->descr.format == " ") {
+            if (ad->descr.format == "") {
                 return boost::lexical_cast<std::string>(v);
             } else {
                 return (boost::format(ad->descr.format) % v).str();
