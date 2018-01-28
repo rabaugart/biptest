@@ -76,12 +76,12 @@ protected:
 
         }
 
+    protected:
         void fire() {
             value_frame_t newValue = fun(data);
             adapter_t::sigValue(newValue);
         }
 
-    protected:
         VData const& data;
         value_frame_t lastValue;
         access_fun fun;

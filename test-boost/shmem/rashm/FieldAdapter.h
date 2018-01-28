@@ -10,6 +10,9 @@
 
 namespace rashm {
 
+template<typename SDATA, typename SIGNAL_VALUES>
+class FieldAdapterFactory;
+
 template<typename SIGNAL_VALUES>
 struct FieldAdapter {
 public:
@@ -30,8 +33,6 @@ public:
 
     boost::signals2::signal<void(ValueFrame const&)> sigValue;
 
-    virtual void fire() = 0;
-
     struct FieldDescriptor {
         std::string label;
         std::string description;
@@ -42,9 +43,14 @@ public:
 
 protected:
 
+    template<typename T,typename S>
+    friend class FieldAdapterFactory;
+
     FieldAdapter(FieldDescriptor const& d) :
             descr(d) {
     }
+
+    virtual void fire() = 0;
 
 };
 
