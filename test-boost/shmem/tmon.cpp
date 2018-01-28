@@ -10,9 +10,9 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
 #include <rashm/FieldAdapterFactory.h>
+#include <test/test_signal_values.h>
 
 #include "test/TestDataA.h"
-#include "test/TestTypes.h"
 
 typedef rashm::FieldAdapterFactory<TestDataA, utest::signal_values> monitor_t;
 

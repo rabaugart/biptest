@@ -7,9 +7,9 @@
 
 #include <boost/format.hpp>
 #include <rashm/FieldAdapterFactory.h>
+#include <test/test_signal_values.h>
 
 #include "TestDataA.h"
-#include "TestTypes.h"
 
 namespace rashm {
 

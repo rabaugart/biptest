@@ -5,8 +5,8 @@
  *      Author: netz
  */
 
-#ifndef SHMEM_TEST_TESTTYPES_H_
-#define SHMEM_TEST_TESTTYPES_H_
+#ifndef SHMEM_TEST_TEST_SIGNAL_VALUES_H_
+#define SHMEM_TEST_TEST_SIGNAL_VALUES_H_
 
 #include <string>
 
@@ -20,4 +20,4 @@ typedef boost::variant<double,bool,int,std::string> signal_values;
 
 
 
-#endif /* SHMEM_TEST_TESTTYPES_H_ */
+#endif /* SHMEM_TEST_TEST_SIGNAL_VALUES_H_ */
