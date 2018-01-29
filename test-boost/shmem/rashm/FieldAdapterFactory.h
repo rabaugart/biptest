@@ -42,7 +42,7 @@ public:
         auto const& regval = factoryMap[key];
         typedef typename adapter_t::FieldDescriptor descriptor_t;
         auto ad = std::make_shared<MyAdapter>(
-                descriptor_t { regval.descriptor.label,
+                descriptor_t { key, regval.descriptor.label,
                         regval.descriptor.description, format }, currentData,
                 regval.fun);
         adapters.push_back(ad);
@@ -86,7 +86,7 @@ protected:
         bool valid;
     };
 
-    typedef std::function<value_frame_t(VData const&)> access_fun;
+    typedef std::function<void(VData const&, value_frame_t& )> access_fun;
 
     class MyAdapter: public adapter_t {
     public:
@@ -98,7 +98,11 @@ protected:
 
     protected:
         void fire() {
-            value_frame_t newValue = fun(data);
+            value_frame_t newValue;
+            newValue.valid = data.valid;
+            newValue.key = adapter_t::descr.key;
+            newValue.format = adapter_t::descr.format;
+            fun(data, newValue);
             adapter_t::sigValue(newValue);
         }
 
@@ -117,7 +121,7 @@ protected:
 
     void registerFactoryFun(std::string const & key, std::string const & label,
             std::string const& description, access_fun fun) {
-        RegistryValue val { { label, description, "" }, fun };
+        RegistryValue val { { key, label, description }, fun };
         factoryMap[key] = val;
     }
 

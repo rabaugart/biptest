@@ -33,12 +33,15 @@ public:
                 valid(false) {
         }
         signal_values value;
+        std::string key;
+        std::string format;
         bool valid;
     };
 
     boost::signals2::signal<void(ValueFrame const&)> sigValue;
 
     struct FieldDescriptor {
+        std::string key;
         std::string label;
         std::string description;
         std::string format;
