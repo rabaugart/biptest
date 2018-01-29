@@ -28,6 +28,10 @@ struct Packet {
     static std::string name() {
         return Frame<DATA, ID>::name();
     }
+
+    bool operator==( Packet<DATA,ID> const & other ) const {
+    	return head == other.head && data == other.data;
+    }
 };
 
 struct packet_functor_t {

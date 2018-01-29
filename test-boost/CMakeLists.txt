@@ -71,7 +71,7 @@ set_target_properties( boost_unit_test_framework PROPERTIES IMPORTED_LOCATION ${
 add_subdirectory( tprocess )
 add_subdirectory( shmem )
 
-#add_custom_target( one tproc --svn ${CMAKE_SOURCE_DIR} )
+#add_custom_target( one txcomp -w testdb.tidb1 -d 3 )
 add_custom_target( one tmon )
 add_custom_target( utest unitrunner --log_level=message DEPENDS unitproc )
 
