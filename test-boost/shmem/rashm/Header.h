@@ -22,28 +22,34 @@ timestamp_t now();
  */
 struct Header {
 
-    Header();
+	Header();
 
-    void update(bool valid = true);
+	void update(bool valid = true);
 
-    //! The timestamp of the last write operation
-    timestamp_t timestamp;
+	//! The timestamp of the last write operation
+	timestamp_t timestamp;
 
-    //! The number of write operations
-    size_t counter;
+	//! The number of write operations
+	size_t counter;
 
-    //! A writer is connected to the shared memory segment
-    bool writerIsPresent;
+	//! A writer is connected to the shared memory segment
+	bool writerIsPresent;
 
-    //! The data is valid
-    bool isValid;
+	//! The data is valid
+	bool isValid;
+
+	bool operator==(Header const& other) const {
+		return timestamp == other.timestamp && counter == other.counter
+				&& writerIsPresent == other.writerIsPresent
+				&& isValid == other.isValid;
+	}
 };
 
 template<class Archive>
 void serialize(Archive & ar, Header & d, const unsigned int version) {
-    ar & d.timestamp;
-    ar & d.counter;
-    ar & d.isValid;
+	ar & d.timestamp;
+	ar & d.counter;
+	ar & d.isValid;
 }
 
 }
