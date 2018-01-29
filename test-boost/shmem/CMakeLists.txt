@@ -43,5 +43,5 @@ target_link_libraries( unitproc lratest lrashm boost_serialization boost_chrono 
 
 add_executable( unitrunner test/unitrunner.cpp )
 target_link_libraries( unitrunner lratest lrashm boost_serialization boost_chrono
-    boost_filesystem boost_regex boost_system )
+    boost_filesystem boost_regex boost_system boost_date_time )
 
