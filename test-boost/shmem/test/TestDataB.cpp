@@ -6,7 +6,6 @@
 
 #include "TestDataB.h"
 #include "rashm/rashm_traits.h"
-#include "shmem/shmem_traits.h"
 
 #include "TestGenerator.h"
 
@@ -55,10 +54,4 @@ template<>
 const std::string DataTraits<TIdB2>::SHM_NAME { "tidb2" };
 }
 
-namespace rshm {
-
-template<>
-const ipstring DataTraits<TestDataB>::SHM_NAME { "abc" };
-
-} // end namespace rshm
 
