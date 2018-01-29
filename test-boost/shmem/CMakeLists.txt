@@ -20,7 +20,6 @@ foreach( check_target boost_chrono boost_date_time boost_filesystem boost_log bo
   endif()
 endforeach()
 
-
 add_library( lrashm STATIC rashm/Segment.cpp rashm/Header.cpp )
 
 add_library( lratest STATIC  test/TestDataA.cpp test/TestDataAFieldAdapterFactory.cpp test/TestDataB.cpp 
@@ -54,4 +53,6 @@ target_link_libraries( unitproc lratest lrashm boost_serialization boost_chrono 
 add_executable( unitrunner test/unitrunner.cpp )
 target_link_libraries( unitrunner lratest lrashm boost_serialization boost_chrono
     boost_filesystem boost_regex boost_system boost_date_time )
+
+add_subdirectory( ssc )
 
