@@ -135,7 +135,7 @@ int main(int argc, char** argv) {
     desc.add_options()("help,h", "produce help message")("duration,d",
             po::value<size_t>(&(cfg.duration))->default_value(5),
             "duration in seconds")("timeout,t",
-            po::value<size_t>(&(cfg.timeout))->default_value(2000),
+            po::value<size_t>(&(cfg.timeout))->default_value(3000),
             "timeout in milliseconds")("period,p",
             po::value<size_t>(&(cfg.period))->default_value(500),
             "Period in milliseconds")("writer,w",
