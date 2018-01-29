@@ -20,18 +20,6 @@ foreach( check_target boost_chrono boost_date_time boost_filesystem boost_log bo
   endif()
 endforeach()
 
-add_executable( tashmem tashmem.cpp shmem/shmem.cpp test/TestDataA.cpp )
-target_link_libraries( tashmem lratest )
-
-add_executable( tbshmem tbshmem.cpp shmem/shmem.cpp )
-target_link_libraries( tbshmem lratest boost_thread boost_system boost_chrono boost_regex )
-
-add_executable( tcshmem tcshmem.cpp )
-target_link_libraries( tcshmem lratest boost_thread boost_system boost_chrono boost_regex )
-
-if ( NOT ${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Windows" )
-  add_executable( tdshmem tdshmem.cpp )
-endif()
 
 add_library( lrashm STATIC rashm/Segment.cpp rashm/Header.cpp )
 
