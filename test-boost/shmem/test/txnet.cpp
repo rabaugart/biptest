@@ -209,7 +209,7 @@ private:
     boost::array<char, 10000> recv_buffer_; // Todo: fix buffer size
 };
 
-struct MappingVisitor {
+struct MappingVisitor : public boost::static_visitor<void> {
 
     template<typename P>
     void operator()(P const& p) const;
@@ -229,7 +229,7 @@ struct MappingVisitor {
     }
 };
 
-struct IdentityVisitor {
+struct IdentityVisitor : public boost::static_visitor<void> {
 
     template<typename P>
     void operator()(P const& p) const;
