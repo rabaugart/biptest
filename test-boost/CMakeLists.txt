@@ -12,7 +12,7 @@ cmake_minimum_required(VERSION 3.2)
 if ( IS_DIRECTORY "$ENV{HOME}/dev/devlibs/boost_1_64_0" )
   message( "Mac oder neues Linux" )
   set( CMAKE_CXX_STANDARD 14 )
-  add_compile_options( -Wall )
+  add_compile_options( -Wall -std=c++14 )
   set( BOOST_ROOT "$ENV{HOME}/dev/devlibs/boost_1_64_0" )
 elseif ( IS_DIRECTORY "$ENV{HOME}/Sub_SW_S54S51/trunk/ext/boost_1_55_0" )
   message( "Altes Linux" )
@@ -70,8 +70,9 @@ set_target_properties( boost_unit_test_framework PROPERTIES IMPORTED_LOCATION ${
 
 add_subdirectory( tprocess )
 add_subdirectory( shmem )
+add_subdirectory( tfuture )
 
 #add_custom_target( one txcomp -w testdb.tidb1 -d 3 )
-add_custom_target( one txmon )
+add_custom_target( one tfuture )
 add_custom_target( utest unitrunner --log_level=message DEPENDS unitproc )
 
