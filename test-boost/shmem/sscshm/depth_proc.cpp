@@ -4,6 +4,7 @@
  *  Created on: 29.01.2018
  *      Author: netz
  */
+#include <csignal>
 
 #include <boost/chrono.hpp>
 
@@ -15,6 +16,11 @@
 using ran::ssc::NdmcData;
 using ran::ssc::DepthData;
 
+static bool RUNNING = true;
+void signalHandler(int) {
+	RUNNING = false;
+}
+
 int main(int argc, char** argv) {
 
     rashm::SegmentReader<NdmcData> reader;
@@ -24,7 +30,9 @@ int main(int argc, char** argv) {
     rashm::SegmentWriter<DepthData> writer;
     DepthData out;
 
-    while (true) {
+	signal(SIGINT, signalHandler);
+
+    while (RUNNING) {
         try {
             NdmcData in = reader.timed_wait_for(timeout);
 
@@ -38,8 +46,8 @@ int main(int argc, char** argv) {
             std::cout << "Read: " << in << " Written " << out << std::endl;
 
         } catch (rashm::timeout_error const &) {
-            std::cout << "Timeout, written " << out << std::endl;
             out.actualDepth = boost::none;
+            std::cout << "Timeout, written " << out << std::endl;
             writer = out;
         }
     }

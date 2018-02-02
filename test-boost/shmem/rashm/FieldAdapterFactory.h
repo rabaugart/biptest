@@ -39,7 +39,7 @@ public:
      */
     std::shared_ptr<FieldAdapter<SIGNAL_VALUES>> makeAdapter(
             std::string const & key, std::string const & format) {
-        auto const& regval = factoryMap[key];
+        auto const& regval = factoryMap.at(key);
         typedef typename adapter_t::FieldDescriptor descriptor_t;
         auto ad = std::make_shared<MyAdapter>(
                 descriptor_t { key, regval.descriptor.label,

@@ -13,6 +13,7 @@
 
 #include <boost/mpl/vector.hpp>
 #include <boost/optional.hpp>
+#include <boost/serialization/optional.hpp>
 
 #include <rashm/index_vector.h>
 

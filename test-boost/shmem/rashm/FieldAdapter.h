@@ -9,6 +9,7 @@
 #define SHMEM_RASHM_FIELDADAPTER_H_
 
 #include <string>
+#include <boost/signals2.hpp>
 
 namespace rashm {
 
