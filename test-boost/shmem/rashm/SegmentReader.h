@@ -37,21 +37,21 @@ public:
     }
 
     data_t get() {
-        auto l { sharable_lock() };
+        scoped_lock lck{ base_t::frame->mutex };
         return base_t::frame->data;
     }
 
     data_t wait() {
-        auto l { sharable_lock() };
-        base_t::frame->condition.wait(l);
+        scoped_lock lck{ base_t::frame->mutex };
+        base_t::frame->condition.wait(lck.lock);
         return base_t::frame->data;
     }
 
     data_t timed_wait_for(boost::posix_time::microseconds ms) {
         const boost::posix_time::ptime end = boost::date_time::microsec_clock<
                 boost::posix_time::ptime>::universal_time() + ms;
-        auto lck { sharable_lock() };
-        if (base_t::frame->condition.timed_wait(lck, end)) {
+        scoped_lock lck{ base_t::frame->mutex };
+        if (base_t::frame->condition.timed_wait(lck.lock, end)) {
             lastHead = base_t::frame->head;
             lastRecvTime = now();
             age = lastRecvTime-lastHead.timestamp;
@@ -77,11 +77,19 @@ public:
 
 protected:
 
+    typedef typename base_t::frame_t::mutex_t mutex_t;
     typedef boost::interprocess::sharable_lock<typename base_t::frame_t::mutex_t> sharable_lock_t;
 
-    sharable_lock_t sharable_lock() {
-        return sharable_lock_t(base_t::frame->mutex);
-    }
+    struct scoped_lock {
+
+        scoped_lock( mutex_t& m ) : lock(m) {}
+
+        ~scoped_lock() {
+            lock.unlock();
+        }
+
+        sharable_lock_t lock;
+    };
 
     Header lastHead;
     timestamp_t lastRecvTime;
