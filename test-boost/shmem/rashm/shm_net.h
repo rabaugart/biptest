@@ -8,6 +8,22 @@
 #ifndef SHMEM_RASHM_SHM_NET_H_
 #define SHMEM_RASHM_SHM_NET_H_
 
+#include <boost/log/trivial.hpp>
+#include <boost/chrono.hpp>
+#include <boost/asio.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/variant.hpp>
+#include <boost/serialization/variant.hpp>
+#include <boost/bind.hpp>
+
+#include "rashm/Segment.h"
+#include "rashm/SegmentWriter.h"
+#include "rashm/SegmentReader.h"
+#include "rashm/CompMap.h"
+#include "rashm/data_functors.h"
+#include "rashm/Packet.h"
+
 namespace rashm {
 
 struct NetConfig {

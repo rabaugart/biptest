@@ -17,27 +17,14 @@
 #include <thread>
 #include <sstream>
 
+#include "rashm/shm_net.h"
+
 #include <boost/program_options.hpp>
-#include <boost/chrono.hpp>
 #include <boost/program_options/options_description.hpp>
 #include <boost/log/trivial.hpp>
 #include <boost/log/expressions.hpp>
 #include <boost/log/utility/setup/console.hpp>
-#include <boost/asio.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/variant.hpp>
-#include <boost/serialization/variant.hpp>
 
-#include <boost/bind.hpp>
-
-#include "rashm/Segment.h"
-#include "rashm/SegmentWriter.h"
-#include "rashm/SegmentReader.h"
-#include "rashm/CompMap.h"
-#include "rashm/data_functors.h"
-#include "rashm/Packet.h"
-#include "rashm/shm_net.h"
 
 #include "all_ssc_data_types.h"
 
