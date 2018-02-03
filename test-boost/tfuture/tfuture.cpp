@@ -12,7 +12,7 @@
 #include <thread>
 
 int f(int i) {
-    std::this_thread::sleep_for( std::chrono::milliseconds{500} );
+    std::this_thread::sleep_for( std::chrono::milliseconds{5000} );
     if (i==0)
         throw std::runtime_error("Blöder Fehler");
     return 5;

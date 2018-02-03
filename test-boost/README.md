@@ -14,4 +14,12 @@ Notizen
    [Variante](https://stackoverflow.com/questions/6895758/inter-process-condition-variables-in-windows) mit Semaphoren zur   Emulation von Conditions zwischen Prozessen.
  * Console-[API](https://docs.microsoft.com/en-us/windows/console/console-functions) und 
    Control-[Sequenzen](https://docs.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences) für Windows
+ * Clearing the [Screen](https://docs.microsoft.com/en-us/windows/console/clearing-the-screen)
  * ncurses-[Tutorial](http://www.tldp.org/HOWTO/NCURSES-Programming-HOWTO/index.html)
+
+Hinweise zu Signalen unter Windows
+
+ * [ExitProcess](https://msdn.microsoft.com/library/windows/desktop/ms682658)
+ * [TerminateProcess](https://msdn.microsoft.com/de-de/library/windows/desktop/ms686714)
+ * [Registering](https://docs.microsoft.com/en-us/windows/console/registering-a-control-handler-function) a Control Handler Function
+ * Control-Close-[Signal](https://docs.microsoft.com/en-us/windows/console/ctrl-close-signal)
