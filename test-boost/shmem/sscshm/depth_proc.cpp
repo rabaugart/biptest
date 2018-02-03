@@ -32,8 +32,11 @@ int main(int argc, char** argv) {
 
 	signal(SIGINT, signalHandler);
 
+	size_t counter = 0;
+
     while (RUNNING) {
         try {
+            out.orderedDepth = (counter++%10 > 4) ? 50 : 100;
             NdmcData in = reader.timed_wait_for(timeout);
 
             if ( in.depth && *in.depth > 0 ) {
@@ -41,6 +44,7 @@ int main(int argc, char** argv) {
             } else {
                 out.actualDepth = boost::none;
             }
+
 
             writer = out;
             std::cout << "Read: " << in << " Written " << out << std::endl;

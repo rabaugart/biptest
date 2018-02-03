@@ -25,6 +25,7 @@ namespace ssc {
 struct NdmcData {
     bool operator==(NdmcData const &) const;
     boost::optional<double> depth;
+    boost::optional<double> dbk;
 };
 
 std::ostream& operator <<(std::ostream& os, const NdmcData& d);
@@ -47,7 +48,7 @@ namespace serialization {
 
 template<class Archive>
 void serialize(Archive & ar, ran::ssc::NdmcData & d, const unsigned int version) {
-    ar & d.depth;
+    ar & d.depth & d.dbk;
 }
 
 } // namespace serialization

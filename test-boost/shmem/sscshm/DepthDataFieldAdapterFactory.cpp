@@ -18,12 +18,20 @@ namespace rashm {
 template<>
 void FieldAdapterFactory<ran::ssc::DepthData, ran::ssc::signal_values>::init() {
 
-    registerFactoryFun("actual", "Actual depth", "Actual depth (double)", []( VData const& d, value_frame_t& f ) {
+    registerFactoryFun("actual", "Actual depth [m]", "Actual depth (double)", []( VData const& d, value_frame_t& f ) {
     	if ( d.data.actualDepth ) {
     		f.value = *d.data.actualDepth;
     	} else {
     		f.valid = false;
     	}
+    });
+
+    registerFactoryFun("ordered", "Ordered depth [m]", "Ordered depth (double)", []( VData const& d, value_frame_t& f ) {
+        if ( d.data.orderedDepth ) {
+            f.value = *d.data.orderedDepth;
+        } else {
+            f.valid = false;
+        }
     });
 
 }

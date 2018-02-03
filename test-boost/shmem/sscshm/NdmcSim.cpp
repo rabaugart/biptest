@@ -22,6 +22,7 @@ int main(int argc, char** argv) {
     while (true) {
 
         data.depth = std::sin(i/20.0*2.0*3.194)*20+18;
+        data.dbk = 500-*data.depth;
 
         writer = data;
         i = (i+1) % 20;
