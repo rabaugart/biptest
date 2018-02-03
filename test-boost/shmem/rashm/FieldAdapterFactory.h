@@ -63,8 +63,15 @@ public:
     void listFields( std::ostream& os ) {
         for ( auto const& i : factoryMap ) {
             os << i.first << ": " << i.second.descriptor.label << "/" << i.second.descriptor.description << "\n";
-
         }
+    }
+
+    std::vector<descriptor_t> fieldDescriptors() const {
+        std::vector<descriptor_t> ret;
+        for ( auto const& i : factoryMap ) {
+            ret.push_back(i.second.descriptor);
+        }
+        return ret;
     }
 
 protected:

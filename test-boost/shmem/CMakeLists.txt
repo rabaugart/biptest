@@ -55,4 +55,6 @@ target_link_libraries( unitrunner lratest lrashm boost_serialization boost_log b
     boost_filesystem boost_regex boost_system boost_date_time )
 
 add_subdirectory( sscshm )
-
+if ( ${Qt5_FOUND} )
+    add_subdirectory( gmonitor )
+endif()

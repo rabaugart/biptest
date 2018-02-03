@@ -14,6 +14,7 @@ if ( IS_DIRECTORY "$ENV{HOME}/dev/devlibs/boost_1_64_0" )
   set( CMAKE_CXX_STANDARD 14 )
   add_compile_options( -Wall -std=c++14 )
   set( BOOST_ROOT "$ENV{HOME}/dev/devlibs/boost_1_64_0" )
+  set( Qt_PREFIX_DIR "$ENV{HOME}/dev/Qt/5.8/5.8/clang_64/lib/cmake/Qt5" )
 elseif ( IS_DIRECTORY "$ENV{HOME}/Sub_SW_S54S51/trunk/ext/boost_1_55_0" )
   message( "Altes Linux" )
   add_compile_options( -std=c++0x )
@@ -71,6 +72,21 @@ set_target_properties( boost_date_time PROPERTIES IMPORTED_LOCATION ${Boost_DATE
 add_library( boost_unit_test_framework STATIC IMPORTED )
 set_target_properties( boost_unit_test_framework PROPERTIES IMPORTED_LOCATION ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY_RELEASE} )
 
+#
+# QT
+#
+set( CMAKE_PREFIX_PATH "Qt_PREFIX_DIR" )
+
+find_package( Qt5 COMPONENTS Widgets REQUIRED )
+if ( ${Qt5_FOUND} )
+message( "Qt found ${Qt5_INCLUDE_DIRECTORIES}" )
+else()
+message( "Qt not found" )
+endif()
+
+#
+# Subdirectories
+#
 add_subdirectory( tprocess )
 add_subdirectory( shmem )
 add_subdirectory( tfuture )

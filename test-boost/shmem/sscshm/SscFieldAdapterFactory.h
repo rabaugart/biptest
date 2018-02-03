@@ -11,6 +11,7 @@
 #include <string>
 #include <memory>
 #include <iostream>
+#include <vector>
 
 #include "rashm/FieldAdapter.h"
 #include "ssc_signal_values.h"
@@ -21,27 +22,33 @@ namespace ssc {
 class SscFieldAdapterFactory {
 public:
 
-	typedef rashm::FieldAdapter<signal_values> adapter_t;
-	typedef std::shared_ptr<adapter_t> adapter_ptr;
-	typedef typename adapter_t::ValueFrame signal_frame_t;
+    typedef rashm::FieldAdapter<signal_values> adapter_t;
+    typedef std::shared_ptr<adapter_t> adapter_ptr;
+    typedef typename adapter_t::ValueFrame signal_frame_t;
 
-	SscFieldAdapterFactory();
-	virtual ~SscFieldAdapterFactory();
+    SscFieldAdapterFactory();
+    virtual ~SscFieldAdapterFactory();
 
-	/// Create an adapter with 'segment:key:format'
-	adapter_ptr makeAdapter( std::string const& segkey );
+    /// Create an adapter with 'segment:key:format'
+    adapter_ptr makeAdapter(std::string const& segkey);
 
-	adapter_ptr makeAdapter( std::string const& segment, std::string const& key, std::string const& format="" );
+    adapter_ptr makeAdapter(std::string const& segment, std::string const& key,
+            std::string const& format = "");
 
-	void showFields( std::ostream& os );
+    void showFields(std::ostream& os);
 
-	void stop();
+    std::vector<std::string> segmentNames() const;
+
+    std::vector<adapter_t::FieldDescriptor> fieldDescriptors(
+            std::string const& segmentName) const;
+
+    void stop();
 
 protected:
 
-	struct Impl;
+    struct Impl;
 
-	std::unique_ptr<Impl> pimpl;
+    std::unique_ptr<Impl> pimpl;
 };
 
 }
