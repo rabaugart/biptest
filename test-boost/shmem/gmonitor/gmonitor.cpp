@@ -25,7 +25,7 @@ public:
     typedef adapter_t::FieldDescriptor descriptor_t;
 
     GAdapterFactory() :
-            segmentListModel([this]() {
+    segmentListModel([this]() {
                 QStringList ret;
                 std::vector<std::string> segNames = segmentNames();
                 for ( auto const& i : segNames ) {
@@ -49,29 +49,79 @@ public:
 
     QStringListModel fieldModel;
 
+    std::string currentSegment;
+    std::string currentField;
+
+    GAdapterFactory::adapter_ptr current_adapter;
+
+    boost::optional<boost::signals2::connection> connection;
+
+    void operator()( GAdapterFactory::signal_frame_t const& sig );
+
     void segmentChanged(QString const&);
+    void fieldChanged(QString const&);
+
+    struct Visitor : public boost::static_visitor<void> {
+
+        Visitor(QLabel* l) : label(l) {}
+        QLabel* label;
+        template<typename T>
+        void operator()( T ) {};
+        void operator()( double d ) {
+            label->setText( QString::number(d) );
+        }
+    };
+
+    Visitor visit;
 };
 
 AdapterGroup::AdapterGroup(QWidget* parent, GAdapterFactory& f) :
-        QObject(parent), factory(f), segmentComboBox(new QComboBox(parent)), fieldComboBox(
-                new QComboBox(parent)), valueLabel(new QLabel(parent)) {
+QObject(parent), factory(f), segmentComboBox(new QComboBox(parent)), fieldComboBox(
+        new QComboBox(parent)), valueLabel(new QLabel(parent)), visit(valueLabel) {
     segmentComboBox->setModel(&factory.segmentListModel);
     fieldComboBox->setModel(&fieldModel);
     QObject::connect(segmentComboBox,
             static_cast<void (QComboBox::*)(
                     const QString &)>(&QComboBox::currentIndexChanged), this, &AdapterGroup::segmentChanged);
-    valueLabel->setText("xxx");
+    QObject::connect(fieldComboBox,
+            static_cast<void (QComboBox::*)(
+                    const QString &)>(&QComboBox::currentIndexChanged), this, &AdapterGroup::fieldChanged);
+    valueLabel->setText("");
 
 }
 
 void AdapterGroup::segmentChanged(QString const& index) {
-    std::cout << "New index " << index.toStdString() << std::endl;
-    std::vector<GAdapterFactory::descriptor_t> const descrs = factory.fieldDescriptors(index.toStdString());
-    QStringList l;
-    for ( auto const& i : descrs ) {
-        l << QString::fromStdString(i.key);
+    std::cout << "New segment index " << index.toStdString() << std::endl;
+    if ( index != "" ) {
+        currentSegment = index.toStdString();
+        std::vector<GAdapterFactory::descriptor_t> const descrs = factory.fieldDescriptors(currentSegment);
+        QStringList l;
+        for ( auto const& i : descrs ) {
+            l << QString::fromStdString(i.key);
+        }
+        fieldModel.setStringList(l);
     }
-    fieldModel.setStringList(l);
+}
+
+void AdapterGroup::fieldChanged(QString const& index) {
+    std::cout << "New field index " << index.toStdString() << std::endl;
+    if ( index != "" ) {
+        currentField = index.toStdString();
+        if (connection) {
+            connection->disconnect();
+        }
+        current_adapter = factory.makeAdapter(currentSegment,currentField);
+        connection = current_adapter->sigValue.connect(std::ref(*this));
+    }
+}
+
+void AdapterGroup::operator()( GAdapterFactory::signal_frame_t const& sig ) {
+    std::cout << "Group got sig " << sig.key << std::endl;
+    if ( sig.valid ) {
+        boost::apply_visitor(visit,sig.value);
+    } else {
+        valueLabel->setText("###");
+    }
 }
 
 class MainWindow: public QMainWindow {
