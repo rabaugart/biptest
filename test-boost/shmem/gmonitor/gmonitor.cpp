@@ -112,6 +112,12 @@ void AdapterGroup::segmentChanged(QString const& index) {
         for (auto const& i : descrs) {
             l << QString::fromStdString(i.key);
         }
+        if (connection) {
+            connection->disconnect();
+            connection=boost::none;
+        }
+        labelLabel->setText("");
+        valueLabel->setText("");
         fieldModel.setStringList(l);
     }
 }
@@ -122,6 +128,7 @@ void AdapterGroup::fieldChanged(QString const& index) {
         currentField = index.toStdString();
         if (connection) {
             connection->disconnect();
+            connection = boost::none;
         }
         current_adapter = factory.makeAdapter(currentSegment, currentField);
         labelLabel->setText( QString::fromStdString(current_adapter->descr.label) );
@@ -130,7 +137,6 @@ void AdapterGroup::fieldChanged(QString const& index) {
 }
 
 void AdapterGroup::operator()(GAdapterFactory::signal_frame_t const& sig) {
-    std::cout << "Group got sig " << sig.key << std::endl;
     if (sig.valid) {
         boost::apply_visitor(visit, sig.value);
     } else {
@@ -153,9 +159,10 @@ protected:
 MainWindow::MainWindow(QObject* parent) {
 
     QWidget* central = new QWidget(this);
-    QGridLayout* layout = new QGridLayout(this);
-    central->setLayout(layout);
+    QGridLayout* layout = new QGridLayout(central);
     setCentralWidget(central);
+    central->setLayout(layout);
+
     QLabel* title = new QLabel(this);
     title->setText("Monitor");
     title->setAlignment( Qt::AlignHCenter );
@@ -189,6 +196,7 @@ MainWindow::MainWindow(QObject* parent) {
 
 int main(int argc, char **argv) {
     QApplication app(argc, argv);
+    app.setApplicationName("GMonitor");
 
     MainWindow main(&app);
 
