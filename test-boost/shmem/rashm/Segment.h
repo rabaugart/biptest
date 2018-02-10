@@ -149,6 +149,9 @@ protected:
             // Construct the shared structure in the mapped region
             frame = new (addr) frame_t;
 
+            // Initialize the counter to zero, to make it valid
+            frame->head.counter = 0;
+
         } catch (boost::interprocess::interprocess_exception& ex) {
             // Todo: check the error code
             // Creation failed, so try to open an existing one, without construction

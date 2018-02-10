@@ -26,6 +26,8 @@ struct Header {
 
 	void update(bool valid = true);
 
+	bool isNewerAs( Header const& other );
+
 	//! The timestamp of the last write operation
 	timestamp_t timestamp;
 
