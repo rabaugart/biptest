@@ -64,9 +64,11 @@ BOOST_AUTO_TEST_CASE( writer1_reader2_medium ) {
 	bool const res { pv.waitall() };
 	BOOST_CHECK_MESSAGE(res, pv.message);
 	for (auto const& pi : pv) {
+#if 0
 		for (auto const& li : pi.output) {
-			//BOOST_TEST_MESSAGE(li);
+			BOOST_TEST_MESSAGE(li);
 		}
+#endif
 		BOOST_TEST_MESSAGE("Result " << pi.id << " " << pi.result);
 	}
 
@@ -101,9 +103,11 @@ BOOST_AUTO_TEST_CASE( writer1_reader2_fast ) {
 	bool const res { pv.waitall() };
 	BOOST_CHECK_MESSAGE(res, pv.message);
 	for (auto const& pi : pv) {
+#if 0
 		for (auto const& li : pi.output) {
-			//BOOST_TEST_MESSAGE(li);
+			BOOST_TEST_MESSAGE(li);
 		}
+#endif
 		BOOST_TEST_MESSAGE("Result " << pi.id << " " << pi.result);
 	}
 
@@ -138,9 +142,11 @@ BOOST_AUTO_TEST_CASE( writer1_reader2_slow ) {
 	bool const res { pv.waitall() };
 	BOOST_CHECK_MESSAGE(res, pv.message);
 	for (auto const& pi : pv) {
+#if 0
 		for (auto const& li : pi.output) {
-			//BOOST_TEST_MESSAGE(li);
+			BOOST_TEST_MESSAGE(li);
 		}
+#endif
 		BOOST_TEST_MESSAGE("Result " << pi.id << " " << pi.result);
 	}
 

@@ -249,7 +249,7 @@ int main(int argc, char** argv) {
         std::cout << "Final " << id << " " << command << " " << comp->result
                 << std::endl;
         std::cout << comp->result.toString();
-        return comp->result.n_loop == cfg.niter ? 0 : 1;
+        return comp->result.n_loop == cfg.niter && comp->result.n_counter_errors == 0 ? 0 : 1;
     }
 
     // Wrong arguments
