@@ -114,6 +114,7 @@ protected:
                             , 0, 0, DataIdTraits<DATA, ID>::fixedAddress()
 #endif
                             ));
+            // We opened an existing segment -> no construction is done
             frame = static_cast<frame_t*>(reg.get_address());
         } catch (boost::interprocess::interprocess_exception const & e) {
             if (e.get_error_code() == boost::interprocess::not_found_error) {
@@ -172,8 +173,7 @@ protected:
         }
     }
 
-    virtual ~Segment() {
-    }
+    virtual ~Segment() = default;
 
     Segment& operator =(Segment&& s) {
         shm = std::move(s.shm);

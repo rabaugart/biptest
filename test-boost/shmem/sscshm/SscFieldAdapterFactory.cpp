@@ -54,8 +54,11 @@ public:
         //detach();
     }
 
+    // Todo: Destructor calling stop and wait
+
     virtual ssc_adapter_ptr_t makeAdapter(std::string const& key,
             std::string const& format) {
+        // Todo: Here the reader should be started
         return factory.makeAdapter(key, format);
     }
 
@@ -70,6 +73,7 @@ public:
     }
 
     void operator()() {
+        // Todo: The reader should not be started unless an adapter is listening on it
         rashm::SegmentReader<DATA, ID> reader;
         while (running) {
             try {
@@ -106,6 +110,7 @@ struct FieldReaderFactory {
     typedef std::shared_ptr<type> value_type;
     typedef FieldReaderConfig config_type;
 
+    // Todo: We create a reader for every segment, even if it is not required
     template<typename DATA, typename ID>
     static value_type make(config_type const& cfg) {
         return std::make_shared<FieldReader<DATA, ID>>(cfg);
@@ -114,6 +119,7 @@ struct FieldReaderFactory {
 
 typedef rashm::CompMap<FieldReaderFactory> ssc_comp_map_t;
 
+// Todo: Monitor the different threads/FieldReader, use futures
 ssc_comp_map_t makeMap() {
     return rashm::makeMap<data_vector_t, FieldReaderFactory>(
             FieldReaderConfig());
