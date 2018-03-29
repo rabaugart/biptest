@@ -77,7 +77,7 @@ set_target_properties( boost_unit_test_framework PROPERTIES IMPORTED_LOCATION ${
 #
 set( CMAKE_PREFIX_PATH "Qt_PREFIX_DIR" )
 
-find_package( Qt5 COMPONENTS Widgets REQUIRED )
+find_package( Qt5 COMPONENTS Widgets OPTIONAL )
 if ( ${Qt5_FOUND} )
 message( "Qt found ${Qt5_INCLUDE_DIRECTORIES}" )
 else()
