@@ -1,19 +1,31 @@
 
 # Siehe
 # https://gcc.gnu.org/wiki/Visibility
+# https://linux.die.net/man/1/ld
+# man ld
 #
 
 set( CMAKE_POSITION_INDEPENDENT_CODE True )
 
-add_library( alib1 STATIC afunc1.cpp )
-add_library( alib2 STATIC afunc2.cpp )
+add_library( alib1 SHARED afunc1.cpp )
+add_library( alib2 SHARED afunc2.cpp )
 
 add_library( blib SHARED bfunc.cpp )
 target_link_libraries( blib PRIVATE alib2 )
-set_target_properties( blib PROPERTIES SOVERSION 2 )
+#set_target_properties( blib PROPERTIES 
+#  VERSION 2
+#  SOVERSION 2.1 
+#  INTERFACE_LINK_LIBRARIES ""
+#)
+# Tested
+#   LINK_FLAGS "-Wl,--exclude-libs linktest/libalib2.a"
+#   INTERFACE_LINK_LIBRARIES ""
 
 add_library( clib SHARED cfunc.cpp )
 target_link_libraries( clib PRIVATE alib1 )
+#set_target_properties( clib PROPERTIES 
+#  INTERFACE_LINK_LIBRARIES "alib1"
+#)
 
 add_executable( texe texemain.cpp )
 target_link_libraries( texe blib alib1 )
