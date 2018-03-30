@@ -3,8 +3,8 @@
 # https://gcc.gnu.org/wiki/Visibility
 #
 
-add_library( alib1 SHARED afunc1.cpp )
-add_library( alib2 SHARED afunc2.cpp )
+add_library( alib1 STATIC afunc1.cpp )
+add_library( alib2 STATIC afunc2.cpp )
 
 add_library( blib SHARED bfunc.cpp )
 target_link_libraries( blib PRIVATE alib2 )
