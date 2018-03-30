@@ -9,7 +9,7 @@
 #define LINKTEST_CFUNC_H_
 
 
-void cfunc();
+__attribute__ ((visibility ("default"))) void cfunc();
 
 
 #endif /* LINKTEST_CFUNC_H_ */

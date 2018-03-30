@@ -1,4 +1,8 @@
 
+# Siehe
+# https://gcc.gnu.org/wiki/Visibility
+#
+
 add_library( alib1 SHARED afunc1.cpp )
 add_library( alib2 SHARED afunc2.cpp )
 

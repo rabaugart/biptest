@@ -8,7 +8,7 @@
 #ifndef LINKTEST_BFUNC_H_
 #define LINKTEST_BFUNC_H_
 
-void bfunc();
+__attribute__ ((visibility ("default"))) void bfunc();
 
 
 
