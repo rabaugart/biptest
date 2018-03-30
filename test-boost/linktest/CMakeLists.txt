@@ -4,6 +4,15 @@
 # https://linux.die.net/man/1/ld
 # man ld
 #
+# The diamond problem
+# https://blog.habets.se/2012/05/Shared-libraries-diamond-problem.html
+#
+# Symbol versioning
+# https://guru.multimedia.cx/ld-so-gnu-linkerloader/
+#
+# General information about libraries
+# http://www.yolinux.com/TUTORIALS/LibraryArchives-StaticAndDynamic.html
+#
 
 set( CMAKE_POSITION_INDEPENDENT_CODE True )
 
