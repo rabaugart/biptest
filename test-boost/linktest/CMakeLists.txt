@@ -17,24 +17,33 @@
 set( CMAKE_POSITION_INDEPENDENT_CODE True )
 
 add_library( alib1 SHARED afunc1.cpp )
+set_target_properties( alib1 PROPERTIES 
+   SOVERSION 1
+   LINK_FLAGS "-Wl,--default-symver"
+)
+
 add_library( alib2 SHARED afunc2.cpp )
+set_target_properties( alib2 PROPERTIES 
+   SOVERSION 2
+   LINK_FLAGS "-Wl,--default-symver"
+)
 
 add_library( blib SHARED bfunc.cpp )
 target_link_libraries( blib PRIVATE alib2 )
-#set_target_properties( blib PROPERTIES 
-#  VERSION 2
-#  SOVERSION 2.1 
-#  INTERFACE_LINK_LIBRARIES ""
-#)
+set_target_properties( blib PROPERTIES 
+   SOVERSION 1
+   LINK_FLAGS "-Wl,--default-symver"
+)
 # Tested
 #   LINK_FLAGS "-Wl,--exclude-libs linktest/libalib2.a"
 #   INTERFACE_LINK_LIBRARIES ""
 
 add_library( clib SHARED cfunc.cpp )
 target_link_libraries( clib PRIVATE alib1 )
-#set_target_properties( clib PROPERTIES 
-#  INTERFACE_LINK_LIBRARIES "alib1"
-#)
+set_target_properties( clib PROPERTIES 
+   SOVERSION 2
+   LINK_FLAGS "-Wl,--default-symver"
+)
 
 add_executable( texe texemain.cpp )
 target_link_libraries( texe blib alib1 )
