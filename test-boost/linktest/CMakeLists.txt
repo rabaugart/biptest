@@ -13,37 +13,46 @@
 # General information about libraries
 # http://www.yolinux.com/TUTORIALS/LibraryArchives-StaticAndDynamic.html
 #
+# https://www.akkadia.org/drepper/dsohowto.pdf
 
 set( CMAKE_POSITION_INDEPENDENT_CODE True )
 
 add_library( alib1 SHARED afunc1.cpp )
+if ( ${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Linux" )
 set_target_properties( alib1 PROPERTIES 
    SOVERSION 1
    LINK_FLAGS "-Wl,--default-symver"
 )
+endif()
 
 add_library( alib2 SHARED afunc2.cpp )
+if ( ${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Linux" )
 set_target_properties( alib2 PROPERTIES 
    SOVERSION 2
    LINK_FLAGS "-Wl,--default-symver"
 )
+endif()
 
 add_library( blib SHARED bfunc.cpp )
 target_link_libraries( blib PRIVATE alib2 )
+if ( ${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Linux" )
 set_target_properties( blib PROPERTIES 
    SOVERSION 1
    LINK_FLAGS "-Wl,--default-symver"
 )
+endif()
 # Tested
 #   LINK_FLAGS "-Wl,--exclude-libs linktest/libalib2.a"
 #   INTERFACE_LINK_LIBRARIES ""
 
 add_library( clib SHARED cfunc.cpp )
 target_link_libraries( clib PRIVATE alib1 )
+if ( ${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Linux" )
 set_target_properties( clib PROPERTIES 
    SOVERSION 2
    LINK_FLAGS "-Wl,--default-symver"
 )
+endif()
 
 add_executable( texe texemain.cpp )
 target_link_libraries( texe blib alib1 )
