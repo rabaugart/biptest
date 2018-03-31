@@ -8,8 +8,10 @@
 #ifndef LINKTEST_BFUNC_H_
 #define LINKTEST_BFUNC_H_
 
-__attribute__ ((visibility ("default"))) void bfunc();
+#include "visconfig.h"
 
-__attribute__ ((visibility ("hidden"))) void bfunc1();
+RA_DYN_EXPORT void bfunc();
+
+RA_DYN_LOCAL void bfunc1();
 
 #endif /* LINKTEST_BFUNC_H_ */
