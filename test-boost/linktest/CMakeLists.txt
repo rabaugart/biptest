@@ -20,7 +20,6 @@ set( CMAKE_POSITION_INDEPENDENT_CODE True )
 add_library( alib1 SHARED afunc1.cpp )
 if ( ${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Linux" )
 set_target_properties( alib1 PROPERTIES 
-#   SOVERSION 1
    LINK_FLAGS "-Wl,--default-symver"
 )
 endif()
@@ -28,7 +27,6 @@ endif()
 add_library( alib2 SHARED afunc2.cpp )
 if ( ${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Linux" )
 set_target_properties( alib2 PROPERTIES 
-#   SOVERSION 2
    LINK_FLAGS "-Wl,--default-symver"
 )
 endif()
@@ -37,8 +35,7 @@ add_library( blib SHARED bfunc.cpp )
 target_link_libraries( blib PRIVATE alib2 )
 if ( ${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Linux" )
 set_target_properties( blib PROPERTIES 
-#   SOVERSION 1
-   LINK_FLAGS "-Wl,--default-symver"
+   LINK_FLAGS "-Wl,--default-imported-symver"
 )
 endif()
 # Tested
@@ -49,8 +46,7 @@ add_library( clib SHARED cfunc.cpp )
 target_link_libraries( clib PRIVATE alib1 )
 if ( ${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Linux" )
 set_target_properties( clib PROPERTIES 
-#   SOVERSION 2
-   LINK_FLAGS "-Wl,--default-symver"
+   LINK_FLAGS "-Wl,--default-imported-symver"
 )
 endif()
 
