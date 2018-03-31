@@ -7,13 +7,11 @@
 
 #include "bfunc.h"
 #include "afunc.h"
+#include "bfuncb.h"
 
 void bfunc() {
     afunc();
+    bfunc1();
 }
 
-
-void bfunc1() {
-
-}
 

@@ -31,10 +31,13 @@ set_target_properties( alib2 PROPERTIES
 )
 endif()
 
-add_library( blib SHARED bfunc.cpp )
+add_library( blib SHARED bfunc.cpp bfuncb.cpp )
 target_link_libraries( blib PRIVATE alib2 )
 if ( ${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Linux" )
 set_target_properties( blib PROPERTIES 
+   COMPILE_DEFINITIONS "RA_BLIB_DLL_EXPORTS;RA_BLIB_DLL"
+   COMPILE_FLAGS "-fvisibility=hidden"
+   INTERFACE_COMPILE_DEFINITIONS "RA_BLIB_DLL"
    LINK_FLAGS "-Wl,--default-imported-symver"
 )
 endif()
