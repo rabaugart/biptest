@@ -10,6 +10,6 @@
 
 __attribute__ ((visibility ("default"))) void bfunc();
 
-
+__attribute__ ((visibility ("hidden"))) void bfunc1();
 
 #endif /* LINKTEST_BFUNC_H_ */

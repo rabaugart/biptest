@@ -12,3 +12,8 @@ void bfunc() {
     afunc();
 }
 
+
+void bfunc1() {
+
+}
+
