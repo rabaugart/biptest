@@ -20,6 +20,11 @@ public:
     template<typename... Args>
     FutureAdapter( Args... args ) : fun(args...) {}
 
+    ~FutureAdapter()
+    {
+        stop();
+    }
+
     void start()
     {
         fut = std::move(std::async(std::launch::async,[this]() { fun(); }));
@@ -33,9 +38,9 @@ public:
 
     void stop()
     {
-        fun.stop();
         if (fut.valid())
         {
+            fun.stop();
             fut.get();
         }
     }
@@ -92,6 +97,7 @@ public:
 
     void stop()
     {
+        std::cout << "Stopping A" << std::endl;
         running = false;
     }
 
@@ -126,7 +132,7 @@ int main( int argc, char** argv ) {
 #endif
     FutureAdapter<A> fa(7);
 
-    fa.configure(10);
+    fa.configure(20);
 
     fa.start();
     fa.check();
@@ -135,6 +141,7 @@ int main( int argc, char** argv ) {
     fa.stop();
     fa.check();
 
+    std::cout << "main return" << std::endl;
     return 0;
 }
 
