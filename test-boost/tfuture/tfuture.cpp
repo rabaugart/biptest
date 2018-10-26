@@ -11,7 +11,8 @@
 #include <stdexcept>
 #include <thread>
 
-using namespace std::literals::chrono_literals;
+using namespace std::chrono_literals;
+using std::this_thread::sleep_for;
 
 template<typename T>
 class FutureAdapter
@@ -86,7 +87,7 @@ public:
         running = true;
         while(running)
         {
-            std::this_thread::sleep_for(100ms);
+            sleep_for(100ms);
             std::cout << "run " << counter++ << std::endl;
             if (counter>max_counter)
             {
@@ -108,7 +109,7 @@ protected:
 };
 
 int f(int i) {
-    std::this_thread::sleep_for( std::chrono::milliseconds{5000} );
+    sleep_for( 5000ms );
     if (i==0)
         throw std::runtime_error("Blöder Fehler");
     return 5;
@@ -136,7 +137,7 @@ int main( int argc, char** argv ) {
 
     fa.start();
     fa.check();
-    std::this_thread::sleep_for(500ms);
+    sleep_for(500ms);
     fa.check();
     fa.stop();
     fa.check();

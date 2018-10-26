@@ -90,9 +90,10 @@ endif()
 add_subdirectory( tprocess )
 add_subdirectory( shmem )
 add_subdirectory( tfuture )
+add_subdirectory( tother )
 
 #add_custom_target( one txcomp -w testdb.tidb1 -d 3 )
-add_custom_target( one tfuture )
+add_custom_target( one tother )
 add_custom_target( utest unitrunner --log_level=message DEPENDS unitproc )
 
 add_subdirectory( linktest )
