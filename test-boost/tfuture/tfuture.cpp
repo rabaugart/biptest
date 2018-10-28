@@ -10,6 +10,11 @@
 #include <iostream>
 #include <stdexcept>
 #include <thread>
+#include <utility>
+
+#define BOOST_TEST_MODULE tfuture
+
+#include <boost/test/unit_test.hpp>
 
 using namespace std::chrono_literals;
 using std::this_thread::sleep_for;
@@ -19,7 +24,7 @@ class FutureAdapter
 {
 public:
     template<typename... Args>
-    FutureAdapter( Args... args ) : fun(args...) {}
+    FutureAdapter( Args&&... args ) : fun(std::forward<Args...>(args...)) {}
 
     ~FutureAdapter()
     {
@@ -69,27 +74,33 @@ private:
     std::future<void> fut;
 };
 
+struct AData
+{
+    AData() : counter(0) {}
+    size_t counter;
+};
+
 class A
 {
 public:
-    A(size_t c_) : running(false), counter(c_),
+    A(AData& ad) : running(false), data(ad),
         max_counter(std::numeric_limits<size_t>::max())
     {
-
     }
 
     void configure( size_t max )
     {
         max_counter = max;
     }
+
     void operator()()
     {
         running = true;
         while(running)
         {
             sleep_for(100ms);
-            std::cout << "run " << counter++ << std::endl;
-            if (counter>max_counter)
+            BOOST_TEST_MESSAGE("run " << data.counter++);
+            if (data.counter>max_counter)
             {
                 throw std::runtime_error("Max error");
             }
@@ -98,13 +109,13 @@ public:
 
     void stop()
     {
-        std::cout << "Stopping A" << std::endl;
+        BOOST_TEST_MESSAGE("Stopping A");
         running = false;
     }
 
 protected:
     bool running;
-    size_t counter;
+    AData& data;
     size_t max_counter;
 };
 
@@ -115,23 +126,12 @@ int f(int i) {
     return 5;
 }
 
-int main( int argc, char** argv ) {
-#if 0
-    std::packaged_task<int(int)> p1{f};
-    std::packaged_task<int(int)> p2{f};
-
-    p1(1);
-    p2(0);
-
-    std::cout << "Started" << std::endl;
-
-    auto fu = p1.get_future();
-    auto fu2 = p2.get_future();
-
-    std::cout << fu.get() << std::endl;
-    std::cout << fu2.get() << std::endl;
-#endif
-    FutureAdapter<A> fa(7);
+BOOST_AUTO_TEST_CASE(future)
+{
+    BOOST_TEST_MESSAGE("===== future");
+    AData ad;
+    BOOST_REQUIRE(ad.counter==0);
+    FutureAdapter<A> fa(ad);
 
     fa.configure(20);
 
@@ -142,8 +142,28 @@ int main( int argc, char** argv ) {
     fa.stop();
     fa.check();
 
-    std::cout << "main return" << std::endl;
-    return 0;
+    BOOST_CHECK_EQUAL( ad.counter, 5 );
+
+    BOOST_TEST_MESSAGE("main return");
 }
 
 
+BOOST_AUTO_TEST_CASE(future_error)
+{
+    BOOST_TEST_MESSAGE("===== future_error");
+    AData ad;
+    BOOST_REQUIRE(ad.counter==0);
+    FutureAdapter<A> fa(ad);
+
+    fa.configure(3);
+
+    fa.start();
+    fa.check();
+    sleep_for(500ms);
+    BOOST_CHECK_THROW(fa.check(),std::runtime_error);
+    fa.stop();
+    fa.check();
+
+    BOOST_CHECK_EQUAL( ad.counter, 4 );
+
+}

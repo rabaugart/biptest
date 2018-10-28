@@ -93,7 +93,7 @@ add_subdirectory( tfuture )
 add_subdirectory( tother )
 
 #add_custom_target( one txcomp -w testdb.tidb1 -d 3 )
-add_custom_target( one tother --log_level=message )
+add_custom_target( one tfuture --log_level=message )
 add_custom_target( utest unitrunner --log_level=message DEPENDS unitproc )
 
 add_subdirectory( linktest )
