@@ -190,3 +190,14 @@ BOOST_AUTO_TEST_CASE(future_not_started_stop)
 
     BOOST_CHECK_NO_THROW(fa.stop());
 }
+
+BOOST_AUTO_TEST_CASE(future_nothing) {
+    BOOST_TEST_MESSAGE("===== future_nothing");
+    AData ad;
+    BOOST_REQUIRE(ad.counter == 0);
+    {
+        FutureAdapter<A> fa(ad);
+
+        BOOST_CHECK_NO_THROW(fa.stop());
+    }
+}
