@@ -67,6 +67,10 @@ public:
                 break;
             }
         }
+        else
+        {
+            throw std::runtime_error("not started");
+        }
     }
 
 private:
@@ -140,7 +144,7 @@ BOOST_AUTO_TEST_CASE(future)
     sleep_for(500ms);
     fa.check();
     fa.stop();
-    fa.check();
+    BOOST_CHECK_THROW(fa.check(),std::runtime_error);
 
     BOOST_CHECK_EQUAL( ad.counter, 5 );
 
@@ -162,8 +166,27 @@ BOOST_AUTO_TEST_CASE(future_error)
     sleep_for(500ms);
     BOOST_CHECK_THROW(fa.check(),std::runtime_error);
     fa.stop();
-    fa.check();
+    BOOST_CHECK_THROW(fa.check(),std::runtime_error);
 
     BOOST_CHECK_EQUAL( ad.counter, 4 );
+}
 
+BOOST_AUTO_TEST_CASE(future_not_started)
+{
+    BOOST_TEST_MESSAGE("===== future_not_started");
+    AData ad;
+    BOOST_REQUIRE(ad.counter==0);
+    FutureAdapter<A> fa(ad);
+
+    BOOST_CHECK_THROW(fa.check(),std::runtime_error);
+}
+
+BOOST_AUTO_TEST_CASE(future_not_started_stop)
+{
+    BOOST_TEST_MESSAGE("===== future_not_started_stop");
+    AData ad;
+    BOOST_REQUIRE(ad.counter==0);
+    FutureAdapter<A> fa(ad);
+
+    BOOST_CHECK_NO_THROW(fa.stop());
 }
