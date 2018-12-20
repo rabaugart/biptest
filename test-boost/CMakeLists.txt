@@ -77,6 +77,9 @@ set_target_properties( boost_unit_test_framework PROPERTIES IMPORTED_LOCATION ${
 #
 set( CMAKE_PREFIX_PATH "Qt_PREFIX_DIR" )
 
+# Funktioniert nicht
+#set( Qt5_ROOT "$ENV{HOME}/dev/Qt/5.8/5.8/clang_64" )
+
 find_package( Qt5 COMPONENTS Widgets OPTIONAL )
 if ( ${Qt5_FOUND} )
 message( "Qt found ${Qt5_INCLUDE_DIRECTORIES}" )
@@ -93,7 +96,7 @@ add_subdirectory( tfuture )
 add_subdirectory( tother )
 
 #add_custom_target( one txcomp -w testdb.tidb1 -d 3 )
-add_custom_target( one tfuture --log_level=message )
+add_custom_target( one tother --run_test=tunit* --log_level=message )
 add_custom_target( utest unitrunner --log_level=message DEPENDS unitproc )
 
 add_subdirectory( linktest )

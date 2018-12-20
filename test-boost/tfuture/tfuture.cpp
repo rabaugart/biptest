@@ -12,6 +12,8 @@
 #include <thread>
 #include <utility>
 
+#include "FutureAdapter.hpp"
+
 #define BOOST_TEST_MODULE tfuture
 
 #include <boost/test/unit_test.hpp>
@@ -19,64 +21,6 @@
 using namespace std::chrono_literals;
 using std::this_thread::sleep_for;
 
-template<typename T>
-class FutureAdapter
-{
-public:
-    template<typename... Args>
-    FutureAdapter( Args&&... args ) : fun(std::forward<Args...>(args...)) {}
-
-    ~FutureAdapter()
-    {
-        stop();
-    }
-
-    void start()
-    {
-        fut = std::move(std::async(std::launch::async,[this]() { fun(); }));
-    }
-
-    template<typename... Args>
-    void configure(Args... args)
-    {
-        fun.configure(args...);
-    }
-
-    void stop()
-    {
-        if (fut.valid())
-        {
-            fun.stop();
-            fut.get();
-        }
-    }
-
-    void check()
-    {
-        if (fut.valid())
-        {
-            switch(fut.wait_for(0ms))
-            {
-            case std::future_status::ready:
-                fut.get();
-                break;
-            case std::future_status::deferred:
-                throw std::runtime_error("deferred");
-                break;
-            case std::future_status::timeout:
-                break;
-            }
-        }
-        else
-        {
-            throw std::runtime_error("not started");
-        }
-    }
-
-private:
-    T fun;
-    std::future<void> fut;
-};
 
 struct AData
 {
@@ -129,6 +73,8 @@ int f(int i) {
         throw std::runtime_error("Blöder Fehler");
     return 5;
 }
+
+using rashm::FutureAdapter;
 
 BOOST_AUTO_TEST_CASE(future)
 {
