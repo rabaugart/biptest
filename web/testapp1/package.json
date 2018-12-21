@@ -1,0 +1,15 @@
+{
+  "name": "testapp1",
+  "description": "A first test",
+  "keywords": [],
+  "author": "rb",
+  "contributors": [],
+  "dependencies": {
+    "express": "*",
+    "react": "*",
+    "pug": "*"
+  },
+  "start": "node app.js",
+  "main": "app.js",
+  "version": "0.0.1"
+}
