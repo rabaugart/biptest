@@ -16,6 +16,13 @@ if ( ${CMAKE_SYSTEM} STREQUAL "Linux-5.4.0-28-generic" )
   # Options required on Ubuntu 20.04
   add_compile_options( -pthread )
   add_link_options( -pthread )
+elseif ( ${CMAKE_SYSTEM} STREQUAL "Linux-5.3.0-42-generic" )
+  message( "Ubuntu 18.04" )
+  set( CMAKE_CXX_STANDARD 17 )
+  add_compile_options( -Wall -std=c++17 )
+  # Options required on Ubuntu 20.04
+  add_compile_options( -pthread )
+  link_libraries( -pthread )
 elseif ( IS_DIRECTORY "$ENV{HOME}/dev/devlibs/boost_1_64_0xx" )
   message( "Mac oder neues Linux" )
   set( CMAKE_CXX_STANDARD 14 )
