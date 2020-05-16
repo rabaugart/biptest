@@ -32,7 +32,7 @@ elseif ( IS_DIRECTORY "C:/dev/libs/boost_1_65_1" )
   set( BOOST_ROOT "C:/dev/libs/boost_1_65_1" )
   add_definitions( -D_WIN32_WINNT=0x0602 )
 else()
-  message( "BOOST_ROOT not found ${CMAKE_SYSTEM}" )
+  message( FATAL_ERROR "BOOST_ROOT not found for ${CMAKE_SYSTEM}" )
 endif()
 
 set( Boost_USE_STATIC_LIBS ON )
