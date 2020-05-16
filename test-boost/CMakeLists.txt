@@ -16,7 +16,7 @@ if ( ${CMAKE_SYSTEM} STREQUAL "Linux-5.4.0-28-generic" )
   # Options required on Ubuntu 20.04
   add_compile_options( -pthread )
   add_link_options( -pthread )
-elseif ( ${CMAKE_SYSTEM} STREQUAL "Linux-5.3.0-42-generic" )
+elseif ( ${CMAKE_SYSTEM} MATCHES "Linux-5.3.0-[0-9]+-generic" )
   message( "Ubuntu 18.04" )
   set( CMAKE_CXX_STANDARD 17 )
   add_compile_options( -Wall -std=c++17 )
