@@ -8,8 +8,9 @@ project( test-boost )
 # Office-Umgebung hat 2.8
 cmake_minimum_required(VERSION 3.2)
 
+set( CMAKE_BUILD_TYPE Debug )
 
-if ( ${CMAKE_SYSTEM} STREQUAL "Linux-5.4.0-28-generic" )
+if ( ${CMAKE_SYSTEM} MATCHES "Linux-5.4.0-[0-9]+-generic" )
   message( "Ubuntu 20.04" )
   set( CMAKE_CXX_STANDARD 17 )
   add_compile_options( -Wall -std=c++17 )
@@ -111,7 +112,7 @@ add_subdirectory( tother )
 
 #add_custom_target( one txcomp -w testdb.tidb1 -d 3 )
 add_custom_target( run_tfuture tfuture --log_level=message )
-add_custom_target( run_tother tother --run_test=tunit* --log_level=message )
+add_custom_target( run_tother tother --run_test=iter2* --log_level=message )
 add_custom_target( utest unitrunner --log_level=message DEPENDS unitproc )
 
 add_subdirectory( linktest )

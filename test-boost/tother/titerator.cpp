@@ -145,12 +145,14 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( iter2, set_t, test_types )
             boost::make_filter_iterator(is_even, s.end()));
     BOOST_TEST_MESSAGE(st);
 
+    // This test fails for a std::set
     {
         set_t fs;
         std::copy(boost::make_filter_iterator(is_even, s.begin()),
                 boost::make_filter_iterator(is_even, s.end()),
                 std::inserter(fs, fs.begin()));
         BOOST_CHECK(fs == fch);
+        BOOST_TEST_MESSAGE( "filter_iterator: " << str(fs) << ", " << str(fch) );
     }
 
     {
@@ -158,6 +160,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( iter2, set_t, test_types )
         std::copy_if(s.begin(), s.end(),
                 std::inserter(fs, fs.begin()), is_even);
         BOOST_CHECK(fs == fch);
+        BOOST_TEST_MESSAGE( "copy_if: " << str(fs) << ", "  << str(fch) );
     }
 
     {
