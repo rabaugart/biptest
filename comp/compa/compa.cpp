@@ -2,7 +2,7 @@
 
 #include <boost/config.hpp> // for BOOST_SYMBOL_EXPORT
 
-#include "../lib/lcomp.hpp"
+#include "lcomp.hpp"
 
 namespace my_namespace {
 
