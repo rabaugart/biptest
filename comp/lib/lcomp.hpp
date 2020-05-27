@@ -2,15 +2,19 @@
 #ifndef LCOMP_H
 #define LCOMP_H
 
-#include <boost/config.hpp>
 #include <string>
+#include <memory>
+#include <boost/config.hpp>
 
-class BOOST_SYMBOL_VISIBLE my_plugin_api {
+class FactoryRegistry;
+
+class BOOST_SYMBOL_VISIBLE component_api {
 public:
    virtual std::string name() const = 0;
-   virtual float calculate(float x, float y) = 0;
 
-   virtual ~my_plugin_api() {}
+   virtual void registerComponent(FactoryRegistry& ) = 0;
+
+   virtual ~component_api() {}
 };
 
 void print(void);
