@@ -27,5 +27,10 @@ int main(int argc, char* argv[]) {
 
     plugin->registerComponent(registry);
 
+    std::cout << "Components\n";
+    for ( const auto& i : registry.descriptorList()) {
+        std::cout << "C: " << i.shortDescription() << std::endl;
+    }
+
     registry.clear();
 }
