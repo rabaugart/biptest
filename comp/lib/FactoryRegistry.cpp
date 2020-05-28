@@ -4,6 +4,7 @@
 
 #include "FactoryRegistry.hpp"
 #include "FactoryBase.hpp"
+#include "Component.hpp"
 
 struct FactoryRegistry::Impl {
 
@@ -25,6 +26,11 @@ FactoryRegistry::~FactoryRegistry()
 void FactoryRegistry::registrate( std::unique_ptr<FactoryBase>&& f )
 {
     pimpl->factoryMap.emplace( std::make_pair(f->name(), std::move(f)) );
+}
+
+std::unique_ptr<Component> FactoryRegistry::createComponent( const std::string& name, Environment& e )
+{
+    return pimpl->factoryMap.at(name)->create(e);
 }
 
 void FactoryRegistry::clear()

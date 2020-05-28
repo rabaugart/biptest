@@ -6,6 +6,10 @@
 
 class FactoryBase;
 
+class Environment;
+
+class Component;
+
 class FactoryRegistry
 {
     public:
@@ -23,6 +27,8 @@ class FactoryRegistry
         };
 
         std::vector<Descriptor> descriptorList() const;
+
+        std::unique_ptr<Component> createComponent( const std::string& name, Environment& );
 
     protected:
 
