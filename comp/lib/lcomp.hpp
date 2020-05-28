@@ -17,7 +17,5 @@ public:
    virtual ~component_api() {}
 };
 
-void print(void);
-
 #endif // LCOMP_H
 

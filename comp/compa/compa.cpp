@@ -13,7 +13,7 @@ static const std::string COMP_NAME{"mycompa"};
 
 class ThisComponent : public Component {
 public:
-    ThisComponent() {
+    ThisComponent( Environment& ) {
         std::cout << "Ctor compa" << std::endl;
     }
 };
@@ -28,8 +28,8 @@ public:
         return COMP_NAME;
     }
 
-    std::unique_ptr<Component> create(Environment&) {
-        return std::make_unique<ThisComponent>();
+    std::unique_ptr<Component> create(Environment& e) {
+        return std::make_unique<ThisComponent>(e);
     }
 };
 
@@ -63,6 +63,5 @@ this_component_api plugin;
 void load()
 {
     std::cout << "Entering compa" << std::endl;
-    print();
 }
 
