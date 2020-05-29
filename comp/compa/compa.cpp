@@ -5,8 +5,18 @@
 #include "FactoryRegistry.hpp"
 #include "FactoryBase.hpp"
 #include "lcomp.hpp"
+#include "Component.hpp"
 
-namespace my_namespace {
+namespace {
+
+static const std::string COMP_NAME{"mycompa"};
+
+class ThisComponent : public Component {
+public:
+    ThisComponent( Environment& ) {
+        std::cout << "Ctor compa" << std::endl;
+    }
+};
 
 class Factory : public FactoryBase {
 public:
@@ -15,7 +25,11 @@ public:
     }
 
     std::string name() const {
-        return "mycompa";
+        return COMP_NAME;
+    }
+
+    std::unique_ptr<Component> create(Environment& e) {
+        return std::make_unique<ThisComponent>(e);
     }
 };
 
@@ -26,7 +40,7 @@ public:
     }
 
     std::string name() const {
-        return "compa";
+        return COMP_NAME;
     }
 
     void registerComponent(FactoryRegistry& r)
@@ -49,6 +63,5 @@ this_component_api plugin;
 void load()
 {
     std::cout << "Entering compa" << std::endl;
-    print();
 }
 

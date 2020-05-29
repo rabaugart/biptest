@@ -2,6 +2,10 @@
 #define FACTORYBASE_H
 
 #include <string>
+#include <memory>
+
+class Component;
+class Environment;
 
 class FactoryBase
 {
@@ -10,6 +14,8 @@ class FactoryBase
         virtual ~FactoryBase();
 
         virtual std::string name() const = 0;
+
+        virtual std::unique_ptr<Component> create( Environment& ) = 0;
 
     protected:
 

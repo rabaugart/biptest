@@ -2,8 +2,6 @@ project(CMTest)
 
 cmake_minimum_required(VERSION 2.8)
 
-set( CMAKE_BUILD_TYPE debug )
-
 add_compile_options( -std=c++11 -Wall )
 
 add_executable( a a.cpp message.cpp )

@@ -3,6 +3,8 @@
 #include <boost/filesystem.hpp>
 #include "lcomp.hpp"
 #include "FactoryRegistry.hpp"
+#include "Environment.hpp"
+#include "Component.hpp"
 
 namespace dll = boost::dll;
 
@@ -26,6 +28,16 @@ int main(int argc, char* argv[]) {
     std::cout << "plugin->name call:  " << plugin->name() << std::endl;
 
     plugin->registerComponent(registry);
+
+    std::cout << "Components\n";
+    for ( const auto& i : registry.descriptorList()) {
+        std::cout << "C: " << i.shortDescription() << std::endl;
+    }
+
+    {
+        Environment e;
+        std::unique_ptr<Component> c = registry.createComponent("mycompa",e);
+    }
 
     registry.clear();
 }

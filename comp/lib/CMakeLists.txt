@@ -5,6 +5,8 @@ add_library( lcomp STATIC
   lcomp.cpp lcomp.hpp
   FactoryRegistry.cpp FactoryRegistry.hpp
   FactoryBase.cpp FactoryBase.hpp
+  Component.cpp Component.hpp
+  Environment.cpp Environment.hpp
   )
 
 target_include_directories(lcomp INTERFACE
