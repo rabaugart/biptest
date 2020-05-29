@@ -10,6 +10,8 @@ class Environment;
 
 class Component;
 
+class ComponentInfo;
+
 class FactoryRegistry
 {
     public:
@@ -28,9 +30,7 @@ class FactoryRegistry
 
         std::vector<Descriptor> descriptorList() const;
 
-        std::unique_ptr<Component> createComponent( const std::string& name, Environment& );
-
-    protected:
+        std::unique_ptr<Component> createComponent( const std::string& name, Environment&, ComponentInfo& );
 
     private:
 

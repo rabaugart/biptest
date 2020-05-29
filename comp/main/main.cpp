@@ -5,6 +5,7 @@
 #include "FactoryRegistry.hpp"
 #include "Environment.hpp"
 #include "Component.hpp"
+#include "ComponentInfo.hpp"
 
 namespace dll = boost::dll;
 
@@ -36,7 +37,8 @@ int main(int argc, char* argv[]) {
 
     {
         Environment e;
-        std::unique_ptr<Component> c = registry.createComponent("mycompa",e);
+        ComponentInfo ci("firstCompa");
+        std::unique_ptr<Component> c = registry.createComponent("mycompa",e,ci);
     }
 
     registry.clear();

@@ -6,6 +6,7 @@
 #include "FactoryBase.hpp"
 #include "lcomp.hpp"
 #include "Component.hpp"
+#include "ComponentInfo.hpp"
 
 namespace {
 
@@ -13,8 +14,8 @@ static const std::string COMP_NAME{"mycompa"};
 
 class ThisComponent : public Component {
 public:
-    ThisComponent( Environment& ) {
-        std::cout << "Ctor compa" << std::endl;
+    ThisComponent( Environment&, const ComponentInfo& ci ) {
+        std::cout << "Ctor compa:" << ci.toString() << std::endl;
     }
 };
 
@@ -28,8 +29,8 @@ public:
         return COMP_NAME;
     }
 
-    std::unique_ptr<Component> create(Environment& e) {
-        return std::make_unique<ThisComponent>(e);
+    std::unique_ptr<Component> create(Environment& e, const ComponentInfo& ci ) const {
+        return std::make_unique<ThisComponent>(e,ci);
     }
 };
 

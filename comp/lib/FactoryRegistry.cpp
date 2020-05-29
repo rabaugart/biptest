@@ -28,9 +28,9 @@ void FactoryRegistry::registrate( std::unique_ptr<FactoryBase>&& f )
     pimpl->factoryMap.emplace( std::make_pair(f->name(), std::move(f)) );
 }
 
-std::unique_ptr<Component> FactoryRegistry::createComponent( const std::string& name, Environment& e )
+std::unique_ptr<Component> FactoryRegistry::createComponent( const std::string& name, Environment& e, ComponentInfo& ci )
 {
-    return pimpl->factoryMap.at(name)->create(e);
+    return pimpl->factoryMap.at(name)->create(e,ci);
 }
 
 void FactoryRegistry::clear()

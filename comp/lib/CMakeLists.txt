@@ -7,6 +7,7 @@ add_library( lcomp STATIC
   FactoryBase.cpp FactoryBase.hpp
   Component.cpp Component.hpp
   Environment.cpp Environment.hpp
+  ComponentInfo.cpp ComponentInfo.hpp
   )
 
 target_include_directories(lcomp INTERFACE
