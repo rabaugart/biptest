@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <boost/config.hpp> // for BOOST_SYMBOL_EXPORT
+#include <boost/log/trivial.hpp>
 
 #include "FactoryRegistry.hpp"
 #include "FactoryBase.hpp"
@@ -14,9 +15,16 @@ static const std::string COMP_NAME{"mycompa"};
 
 class ThisComponent : public Component {
 public:
-    ThisComponent( Environment&, const ComponentInfo& ci ) {
-        std::cout << "Ctor compa:" << ci.toString() << std::endl;
+
+    ThisComponent( Environment&, const ComponentInfo& ci ) : itsComponentName(ci.componentName()) {
+        BOOST_LOG_TRIVIAL(trace) << "Ctor compa:" << ci.toString() << std::endl;
     }
+
+    ~ThisComponent() {
+        std::cout << "Dtor compa:" << itsComponentName << std::endl;
+    }
+
+    const std::string itsComponentName;
 };
 
 class Factory : public FactoryBase {

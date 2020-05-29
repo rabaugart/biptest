@@ -11,6 +11,10 @@ class ComponentInfo
 
         std::string toString() const;
 
+        const std::string componentName() const {
+            return itsName;
+        }
+
     private:
         const std::string itsName;
 };

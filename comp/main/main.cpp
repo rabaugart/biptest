@@ -1,6 +1,7 @@
 #include <iostream>
 #include <boost/dll/import.hpp> // for import_alias
 #include <boost/filesystem.hpp>
+#include <boost/log/trivial.hpp>
 #include "lcomp.hpp"
 #include "FactoryRegistry.hpp"
 #include "Environment.hpp"
@@ -37,9 +38,10 @@ int main(int argc, char* argv[]) {
 
     {
         Environment e;
-        ComponentInfo ci("firstCompa");
-        std::unique_ptr<Component> c = registry.createComponent("mycompa",e,ci);
+        std::unique_ptr<Component> c1 = registry.createComponent("mycompa",e,ComponentInfo("ca1"));
+        std::unique_ptr<Component> c2 = registry.createComponent("mycompa",e,ComponentInfo("ca2"));
     }
 
     registry.clear();
+    BOOST_LOG_TRIVIAL(trace) << "A trace severity message";
 }
