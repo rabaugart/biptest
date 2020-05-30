@@ -16,8 +16,8 @@ static const std::string COMP_NAME{"mycompa"};
 class ThisComponent : public Component {
 public:
 
-    ThisComponent( Environment&, const ComponentInfo& ci ) : itsComponentName(ci.componentName()) {
-        BOOST_LOG_TRIVIAL(trace) << "Ctor compa:" << ci.toString() << std::endl;
+    ThisComponent( const Environment&, const ComponentInfo& ci ) : Component(ci), itsComponentName(ci.componentName()) {
+        BOOST_LOG_TRIVIAL(trace) << "Ctor compa:" << ci.toString();
     }
 
     ~ThisComponent() {
@@ -37,7 +37,7 @@ public:
         return COMP_NAME;
     }
 
-    std::unique_ptr<Component> create(Environment& e, const ComponentInfo& ci ) const {
+    std::unique_ptr<Component> create(const Environment& e, const ComponentInfo& ci ) const {
         return std::make_unique<ThisComponent>(e,ci);
     }
 };

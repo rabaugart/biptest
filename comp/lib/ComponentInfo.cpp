@@ -1,6 +1,6 @@
 #include "ComponentInfo.hpp"
 
-ComponentInfo::ComponentInfo(const std::string& name) : itsName(name)
+ComponentInfo::ComponentInfo(const std::string& type, const std::string& name) : itsType(type), itsName(name)
 {
     //ctor
 }
@@ -12,5 +12,5 @@ ComponentInfo::~ComponentInfo()
 
 std::string ComponentInfo::toString() const
 {
-    return itsName;
+    return itsType+"/"+itsName;
 }

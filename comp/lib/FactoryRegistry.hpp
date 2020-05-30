@@ -30,7 +30,7 @@ class FactoryRegistry
 
         std::vector<Descriptor> descriptorList() const;
 
-        std::unique_ptr<Component> createComponent( const std::string& name, Environment&, const ComponentInfo& );
+        std::unique_ptr<Component> createComponent( const Environment&, const ComponentInfo& );
 
     private:
 

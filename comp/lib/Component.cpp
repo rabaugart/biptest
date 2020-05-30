@@ -1,5 +1,8 @@
 #include "Component.hpp"
 
-Component::Component() = default;
+Component::Component(const ComponentInfo& ci ) : itsInfo(ci)
+{
+
+}
 
 Component::~Component() = default;
