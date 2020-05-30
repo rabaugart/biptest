@@ -1,6 +1,7 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
+#include "logging.hpp"
 #include "ComponentInfo.hpp"
 
 class Component
@@ -11,7 +12,8 @@ class Component
         virtual ~Component();
 
         const ComponentInfo& info() const { return itsInfo; }
-    private:
+    protected:
+        Logger log;
         const ComponentInfo itsInfo;
 };
 

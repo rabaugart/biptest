@@ -17,11 +17,11 @@ class ThisComponent : public Component {
 public:
 
     ThisComponent( const Environment&, const ComponentInfo& ci ) : Component(ci), itsComponentName(ci.componentName()) {
-        BOOST_LOG_TRIVIAL(trace) << "Ctor compa:" << ci.toString();
+        BOOST_LOG_SEV(log, loglvl::info) << "Ctor compa:" << ci.toString();
     }
 
     ~ThisComponent() {
-        std::cout << "Dtor compa:" << itsComponentName << std::endl;
+        BOOST_LOG_SEV(log, loglvl::info) << "Dtor compa:" << itsComponentName;
     }
 
     const std::string itsComponentName;
@@ -30,7 +30,6 @@ public:
 class Factory : public FactoryBase {
 public:
     Factory() {
-        std::cout << "Factory compa created" << std::endl;
     }
 
     std::string name() const {
@@ -45,7 +44,7 @@ public:
 class this_component_api : public component_api {
 public:
     this_component_api() {
-        std::cout << "Constructing my_plugin_sum" << std::endl;
+        BOOST_LOG_TRIVIAL(info) << "Constructing my_plugin_sum";
     }
 
     std::string name() const {
@@ -58,7 +57,7 @@ public:
     }
 
     ~this_component_api() {
-        std::cout << "Destructing my_plugin_sum ;o)" << std::endl;
+        BOOST_LOG_TRIVIAL(info) << "Destructing my_plugin_sum";
     }
 };
 

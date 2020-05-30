@@ -3,12 +3,14 @@
 #include <memory>
 
 #include <boost/dll/import.hpp> // for import_alias
+#include <boost/log/trivial.hpp>
 
 #include "ComponentManager.hpp"
 #include "Component.hpp"
 #include "Environment.hpp"
 #include "FactoryRegistry.hpp"
 #include "lcomp.hpp"
+#include "logging.hpp"
 
 namespace dll = boost::dll;
 
@@ -20,6 +22,8 @@ struct ComponentManager::Impl {
         components.emplace_back(registry.createComponent(env,ci));
         return *(components.back());
     }
+
+    Logger log;
 
     const Environment env;
 
@@ -35,7 +39,7 @@ ComponentManager::ComponentManager(const Environment& e) : pimpl{std::make_uniqu
 
 ComponentManager::~ComponentManager()
 {
-    pimpl->registry.clear();
+    //pimpl->registry.clear();
 }
 
 void ComponentManager::loadPlugins()
@@ -43,7 +47,7 @@ void ComponentManager::loadPlugins()
     boost::filesystem::path lib_path("../compa");             // argv[1] contains path to directory with our plugin library
     boost::shared_ptr<component_api> plugin;            // variable to hold a pointer to plugin variable
     pimpl->pluginVector.push_back(plugin);
-    std::cout << "Loading the plugin" << std::endl;
+    BOOST_LOG_SEV(pimpl->log, loglvl::info) << "Loading the plugin";
 
     plugin = dll::import<component_api>(          // type of imported symbol is located between `<` and `>`
         lib_path / "compa",                     // path to the library and library name
@@ -51,13 +55,13 @@ void ComponentManager::loadPlugins()
         dll::load_mode::append_decorations              // makes `libmy_plugin_sum.so` or `my_plugin_sum.dll` from `my_plugin_sum`
     );
 
-    std::cout << "plugin->name call:  " << plugin->name() << std::endl;
+    BOOST_LOG_SEV(pimpl->log, loglvl::debug)<< "plugin->name call:  " << plugin->name() << std::endl;
 
     plugin->registerComponent(pimpl->registry);
 
-    std::cout << "Components\n";
+    BOOST_LOG_SEV(pimpl->log, loglvl::debug) << "Components\n";
     for ( const auto& i : pimpl->registry.descriptorList()) {
-        std::cout << "C: " << i.shortDescription() << std::endl;
+        BOOST_LOG_SEV(pimpl->log, loglvl::info) << "C: " << i.shortDescription() << std::endl;
     }
 }
 
