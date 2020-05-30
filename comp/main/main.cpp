@@ -18,6 +18,8 @@ int main(int argc, char* argv[]) {
 
     Logger log("main");
 
+    BOOST_LOG_SEV(log,loglvl::info) << "Startup";
+
     Environment e = makeEnvironment(argc,argv);
 
     ComponentManager cm(e);

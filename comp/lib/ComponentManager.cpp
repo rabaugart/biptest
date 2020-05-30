@@ -54,13 +54,13 @@ void ComponentManager::loadPlugins()
         dll::load_mode::append_decorations              // makes `libmy_plugin_sum.so` or `my_plugin_sum.dll` from `my_plugin_sum`
     );
 
-    BOOST_LOG_SEV(pimpl->log, loglvl::debug)<< "plugin->name call:  " << plugin->name() << std::endl;
+    BOOST_LOG_SEV(pimpl->log, loglvl::debug)<< "plugin->name call:  " << plugin->name();
 
     plugin->registerComponent(pimpl->registry);
 
-    BOOST_LOG_SEV(pimpl->log, loglvl::debug) << "Components\n";
+    BOOST_LOG_SEV(pimpl->log, loglvl::debug) << "Components:";
     for ( const auto& i : pimpl->registry.descriptorList()) {
-        BOOST_LOG_SEV(pimpl->log, loglvl::info) << "C: " << i.shortDescription() << std::endl;
+        BOOST_LOG_SEV(pimpl->log, loglvl::info) << "C: " << i.shortDescription();
     }
 }
 

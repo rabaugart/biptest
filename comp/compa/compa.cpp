@@ -70,8 +70,4 @@ this_component_api plugin;
 
 } // namespace my_namespace
 
-void xxload()
-{
-    std::cout << "Entering compa" << std::endl;
-}
 
