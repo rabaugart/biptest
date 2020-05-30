@@ -3,7 +3,6 @@
 #include <memory>
 
 #include <boost/dll/import.hpp> // for import_alias
-#include <boost/log/trivial.hpp>
 
 #include "ComponentManager.hpp"
 #include "Component.hpp"
@@ -15,7 +14,7 @@
 namespace dll = boost::dll;
 
 struct ComponentManager::Impl {
-    Impl(const Environment& e) : env(e) {}
+    Impl(const Environment& e) : log("compmgr"),env(e) {}
 
     Component& createComponent( const ComponentInfo& ci )
     {

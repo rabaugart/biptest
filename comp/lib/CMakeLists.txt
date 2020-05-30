@@ -9,6 +9,7 @@ add_library( lcomp STATIC
   Environment.cpp Environment.hpp
   ComponentInfo.cpp ComponentInfo.hpp
   ComponentManager.cpp ComponentManager.hpp
+  logging.hpp logging.cpp
   )
 
 target_include_directories(lcomp INTERFACE

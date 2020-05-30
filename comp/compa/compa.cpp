@@ -43,8 +43,8 @@ public:
 
 class this_component_api : public component_api {
 public:
-    this_component_api() {
-        BOOST_LOG_TRIVIAL(info) << "Constructing my_plugin_sum";
+    this_component_api() : log(COMP_NAME,"plugin") {
+        BOOST_LOG_SEV(log, loglvl::info) << "Constructing my_plugin_sum";
     }
 
     std::string name() const {
@@ -57,8 +57,10 @@ public:
     }
 
     ~this_component_api() {
-        BOOST_LOG_TRIVIAL(info) << "Destructing my_plugin_sum";
+        BOOST_LOG_SEV(log, loglvl::info) << "Destructing my_plugin_sum";
     }
+
+    Logger log;
 };
 
 // Exporting `my_namespace::plugin` variable with alias name `plugin`
@@ -68,7 +70,7 @@ this_component_api plugin;
 
 } // namespace my_namespace
 
-void load()
+void xxload()
 {
     std::cout << "Entering compa" << std::endl;
 }
