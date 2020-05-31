@@ -31,6 +31,13 @@ int main(int argc, char* argv[]) {
         BOOST_LOG_SEV(log,loglvl::info) << "Created component: " << ca1.info().toString();
         const auto& ca2 = cm.createComponent(ComponentInfo(mycomp,"ca2"));
         BOOST_LOG_SEV(log,loglvl::info) << "Created component: " << ca2.info().toString();
+        const auto& ca3 = cm.findComponentByName("ca1");
+        BOOST_LOG_SEV(log,loglvl::info) << "Found component: " << ca3.info().toString();
+        try {
+            const auto& ca4 = cm.findComponentByName("xxyuv");
+        } catch ( const std::out_of_range& e ) {
+            BOOST_LOG_SEV(log,loglvl::info) << "Got expected exception: " << e.what();
+        }
     }
 
     BOOST_LOG_SEV(log,loglvl::info) << "Finished";

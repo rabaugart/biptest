@@ -16,6 +16,7 @@ class ComponentManager
         void loadPlugins();
 
         Component& createComponent( const ComponentInfo& );
+        Component& findComponentByName( const std::string& name ) const;
 
     private:
         struct Impl;

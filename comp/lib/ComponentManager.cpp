@@ -1,4 +1,4 @@
-#include <vector>
+#include <map>
 #include <iostream>
 #include <memory>
 
@@ -18,8 +18,8 @@ struct ComponentManager::Impl {
 
     Component& createComponent( const ComponentInfo& ci )
     {
-        components.emplace_back(registry.createComponent(env,ci));
-        return *(components.back());
+        components.emplace(std::make_pair(ci.componentName(),registry.createComponent(env,ci)));
+        return *(components.at(ci.componentName()));
     }
 
     Logger log;
@@ -28,7 +28,7 @@ struct ComponentManager::Impl {
 
     FactoryRegistry registry;
     std::vector<boost::shared_ptr<component_api>> pluginVector;
-    std::vector<std::unique_ptr<Component>> components;
+    std::map<std::string,std::unique_ptr<Component>> components;
 };
 
 ComponentManager::ComponentManager(const Environment& e) : pimpl{std::make_unique<Impl>(e)}
@@ -67,4 +67,9 @@ void ComponentManager::loadPlugins()
 Component& ComponentManager::createComponent( const ComponentInfo& ci )
 {
     return pimpl->createComponent(ci);
+}
+
+Component& ComponentManager::findComponentByName( const std::string& name ) const
+{
+    return *(pimpl->components.at(name));
 }
