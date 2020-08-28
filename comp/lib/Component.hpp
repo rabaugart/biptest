@@ -1,16 +1,20 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
+#include "logging.hpp"
+#include "ComponentInfo.hpp"
 
 class Component
 {
     public:
-        Component();
+
+        Component(const ComponentInfo& ci);
         virtual ~Component();
 
+        const ComponentInfo& info() const { return itsInfo; }
     protected:
-
-    private:
+        Logger log;
+        const ComponentInfo itsInfo;
 };
 
 #endif // COMPONENT_H

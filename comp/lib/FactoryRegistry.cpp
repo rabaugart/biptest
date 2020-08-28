@@ -1,10 +1,12 @@
 #include <map>
+#include <memory>
 
 #include <boost/format.hpp>
 
 #include "FactoryRegistry.hpp"
 #include "FactoryBase.hpp"
 #include "Component.hpp"
+#include "ComponentInfo.hpp"
 
 struct FactoryRegistry::Impl {
 
@@ -28,9 +30,9 @@ void FactoryRegistry::registrate( std::unique_ptr<FactoryBase>&& f )
     pimpl->factoryMap.emplace( std::make_pair(f->name(), std::move(f)) );
 }
 
-std::unique_ptr<Component> FactoryRegistry::createComponent( const std::string& name, Environment& e )
+std::unique_ptr<Component> FactoryRegistry::createComponent( const Environment& e, const ComponentInfo& ci )
 {
-    return pimpl->factoryMap.at(name)->create(e);
+    return pimpl->factoryMap.at(ci.componentType())->create(e,ci);
 }
 
 void FactoryRegistry::clear()

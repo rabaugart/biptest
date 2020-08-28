@@ -1,43 +1,37 @@
-#include <iostream>
-#include <boost/dll/import.hpp> // for import_alias
-#include <boost/filesystem.hpp>
-#include "lcomp.hpp"
-#include "FactoryRegistry.hpp"
-#include "Environment.hpp"
-#include "Component.hpp"
 
-namespace dll = boost::dll;
+#include "Environment.hpp"
+#include "ComponentInfo.hpp"
+#include "ComponentManager.hpp"
+#include "Component.hpp"
+#include "logging.hpp"
+
+namespace {
+    static Environment makeEnvironment( int argc, char* argv[] )
+    {
+        return Environment();
+    }
+}
 
 int main(int argc, char* argv[]) {
 
-    std::vector<boost::shared_ptr<component_api>> pluginVector;
+    init_logging();
 
-    FactoryRegistry registry;
+    Logger log("main");
 
-    boost::filesystem::path lib_path("../compa");             // argv[1] contains path to directory with our plugin library
-    boost::shared_ptr<component_api> plugin;            // variable to hold a pointer to plugin variable
-    pluginVector.push_back(plugin);
-    std::cout << "Loading the plugin" << std::endl;
+    BOOST_LOG_SEV(log,loglvl::info) << "Startup";
 
-    plugin = dll::import<component_api>(          // type of imported symbol is located between `<` and `>`
-        lib_path / "compa",                     // path to the library and library name
-        "plugin",                                       // name of the symbol to import
-        dll::load_mode::append_decorations              // makes `libmy_plugin_sum.so` or `my_plugin_sum.dll` from `my_plugin_sum`
-    );
+    Environment e = makeEnvironment(argc,argv);
 
-    std::cout << "plugin->name call:  " << plugin->name() << std::endl;
-
-    plugin->registerComponent(registry);
-
-    std::cout << "Components\n";
-    for ( const auto& i : registry.descriptorList()) {
-        std::cout << "C: " << i.shortDescription() << std::endl;
-    }
+    ComponentManager cm(e);
+    cm.loadPlugins();
 
     {
-        Environment e;
-        std::unique_ptr<Component> c = registry.createComponent("mycompa",e);
+        const std::string mycomp="mycompa";
+        const auto& ca1 = cm.createComponent(ComponentInfo(mycomp,"ca1"));
+        BOOST_LOG_SEV(log,loglvl::info) << "Created component: " << ca1.info().toString();
+        const auto& ca2 = cm.createComponent(ComponentInfo(mycomp,"ca2"));
+        BOOST_LOG_SEV(log,loglvl::info) << "Created component: " << ca2.info().toString();
     }
 
-    registry.clear();
+    BOOST_LOG_SEV(log,loglvl::info) << "Finished";
 }

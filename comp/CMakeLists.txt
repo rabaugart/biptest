@@ -8,7 +8,9 @@ set( CMAKE_BUILD_TYPE debug )
 
 set( CXX_STANDARD 14 )
 
-find_package( Boost COMPONENTS filesystem )
+find_package( Boost COMPONENTS filesystem log )
+
+add_definitions( -DBOOST_LOG_DYN_LINK )
 
 add_subdirectory( main )
 add_subdirectory( compa )

@@ -6,6 +6,7 @@
 
 class Component;
 class Environment;
+class ComponentInfo;
 
 class FactoryBase
 {
@@ -15,7 +16,7 @@ class FactoryBase
 
         virtual std::string name() const = 0;
 
-        virtual std::unique_ptr<Component> create( Environment& ) = 0;
+        virtual std::unique_ptr<Component> create( const Environment&, const ComponentInfo& ) const = 0;
 
     protected:
 
