@@ -17,6 +17,14 @@ if ( ${CMAKE_SYSTEM} MATCHES "Linux-5.4.0-[0-9]+-generic" )
   # Options required on Ubuntu 20.04
   add_compile_options( -pthread )
   add_link_options( -pthread )
+elseif ( IS_DIRECTORY "$ENV{HOME}/dev/libs/boost_1_74_0" )
+  message( "Situx mit boost-1.74" )
+  set( CMAKE_CXX_STANDARD 14 )
+  add_compile_options( -Wall -std=c++14 -pthread )
+  link_libraries( -pthread )
+  set( BOOST_ROOT "$ENV{HOME}/dev/libs/boost_1_74_0" )
+  #set( Qt_PREFIX_DIR "$ENV{HOME}/dev/Qt/5.8/5.8/clang_64/lib/cmake/Qt5" )
+elseif ( IS_DIRECTORY "$ENV{HOME}/Sub_SW_S54S51/trunk/ext/boost_1_55_0" )
 elseif ( ${CMAKE_SYSTEM} MATCHES "Linux-5.3.0-[0-9]+-generic" )
   message( "Ubuntu 18.04" )
   set( CMAKE_CXX_STANDARD 17 )
@@ -46,7 +54,8 @@ endif()
 set( Boost_USE_STATIC_LIBS ON )
 
 find_package(Boost COMPONENTS program_options system filesystem
-    thread chrono regex serialization date_time log log_setup unit_test_framework )
+    thread chrono regex serialization date_time log log_setup
+    math_tr1 unit_test_framework )
 
 message( STATUS "Boost ${Boost_PROGRAM_OPTIONS_LIBRARY}" )
 
@@ -62,6 +71,9 @@ set_target_properties( boost_system PROPERTIES IMPORTED_LOCATION ${Boost_SYSTEM_
 
 add_library( boost_filesystem STATIC IMPORTED )
 set_target_properties( boost_filesystem PROPERTIES IMPORTED_LOCATION ${Boost_FILESYSTEM_LIBRARY_RELEASE} )
+
+add_library( boost_math_tr1 STATIC IMPORTED )
+set_target_properties( boost_math_tr1 PROPERTIES IMPORTED_LOCATION ${Boost_MATH_TR1_LIBRARY_RELEASE} )
 
 add_library( boost_log STATIC IMPORTED )
 set_target_properties( boost_log PROPERTIES IMPORTED_LOCATION ${Boost_LOG_LIBRARY_RELEASE} )
@@ -106,9 +118,10 @@ endif()
 # Subdirectories
 #
 add_subdirectory( tprocess )
-add_subdirectory( shmem )
+#add_subdirectory( shmem )
 add_subdirectory( tfuture )
 add_subdirectory( tother )
+add_subdirectory( tmath )
 
 #add_custom_target( one txcomp -w testdb.tidb1 -d 3 )
 add_custom_target( run_tfuture tfuture --log_level=message )
