@@ -16,7 +16,18 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-
+    - name: Download and install Boost
+      # You may pin to the exact commit or the version.
+      # uses: MarkusJx/install-boost@1641187f31aa92d1df45351a459fcf491d8ab423
+      uses: MarkusJx/install-boost@v1.0
+      with:
+        # The boost version to install, e.g. "1.73.0"
+        boost_version: 1.74.0
+        # The toolset used to compile boost, e.g. "msvc14.2". May only be used on windows
+        toolset: # optional, default is 
+        # The platform version boost was compiled on, e.g. "18.04". May only be used on linux
+        platform_version: # optional, default is
+         
     - name: Create Build Environment
       # Some projects don't allow in-source building, so create a separate build directory
       # We'll use this as our working directory for all subsequent commands
