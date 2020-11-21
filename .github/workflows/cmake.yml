@@ -28,15 +28,15 @@ jobs:
         # The platform version boost was compiled on, e.g. "18.04". May only be used on linux
         platform_version: # optional, default is
         
-    - name: Bootstrap boost
-      shell: bash
-      working-directory: /home/runner/boost/boost-1.72.0-linux-16.04-gcc-x64
-      run: ./bootstrap.sh
+#    - name: Bootstrap boost
+#      shell: bash
+#      working-directory: /home/runner/boost/boost-1.72.0-linux-16.04-gcc-x64
+#      run: ./bootstrap.sh
       
-    - name: Build boost
-      shell: bash
-      working-directory: /home/runner/boost/boost-1.72.0-linux-16.04-gcc-x64
-      run: ./b2
+#    - name: Build boost
+#      shell: bash
+#      working-directory: /home/runner/boost/boost-1.72.0-linux-16.04-gcc-x64
+#      run: ./b2
          
     - name: Create Build Environment
       # Some projects don't allow in-source building, so create a separate build directory
