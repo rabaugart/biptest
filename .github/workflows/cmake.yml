@@ -30,12 +30,12 @@ jobs:
         
     - name: Bootstrap boost
       shell: bash
-      working-directory: $BOOST_ROOT
+      working-directory: /home/runner/boost/boost-1.72.0-linux-16.04-gcc-x64
       run: ./bootstrap.sh
       
     - name: Build boost
       shell: bash
-      working-directory: $BOOST_ROOT
+      working-directory: /home/runner/boost/boost-1.72.0-linux-16.04-gcc-x64
       run: ./b2
          
     - name: Create Build Environment
