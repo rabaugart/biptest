@@ -1,6 +1,9 @@
 
 #include <iostream>
 
+#include "boost/date_time/gregorian/gregorian.hpp"
+#include "boost/format.hpp"
+
 #include "message.hpp"
 
 struct A
@@ -29,6 +32,12 @@ int main(int argc, char**argv)
   try
   {
     Message m;
+
+    using namespace boost::gregorian;
+
+    date today = day_clock::local_day();
+
+    std::cout << boost::format("Today: %1%\n") % today;
 
     std::cout << m.pack(1, 2) << std::endl;
     std::cout << "Pack " << m.pack(1, 2, std::string{ "abc" }, A(), "def", 3) << std::endl;
