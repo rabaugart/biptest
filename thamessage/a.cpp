@@ -54,8 +54,6 @@ int main(int argc, char**argv)
     m3.pack(v);
     std::cout << "M3c: " << m3 << std::endl;
 
-    throw std::runtime_error("Error");
-
   } catch (const std::exception& e)
   {
     std::cout << "===== err =====: " << e.what() << std::endl;
