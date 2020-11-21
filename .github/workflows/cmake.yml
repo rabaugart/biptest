@@ -22,11 +22,12 @@ jobs:
       uses: MarkusJx/install-boost@v1.0
       with:
         # The boost version to install, e.g. "1.68.0"
-        boost_version: 1.72.0
+        # See: https://github.com/actions/boost-versions/blob/main/versions-manifest.json  
+        boost_version: 1.73.0
         # The toolset used to compile boost, e.g. "msvc14.2". May only be used on windows
-        toolset: # optional, default is 
+        toolset: gcc
         # The platform version boost was compiled on, e.g. "18.04". May only be used on linux
-        platform_version: # optional, default is
+        platform_version: 18.04
         
 #    - name: Bootstrap boost
 #      shell: bash
