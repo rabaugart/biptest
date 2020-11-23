@@ -5,6 +5,10 @@
 #include "boost/format.hpp"
 #include "boost/filesystem.hpp"
 
+#define BOOST_TEST_MODULE test_mod_1
+#define BOOST_TEST_DYN_LINK
+#include "boost/test/unit_test.hpp"
+
 #include "message.hpp"
 
 struct A
@@ -26,6 +30,16 @@ Message testfun()
   Message m;
   m.pack(55,66);
   return m;
+}
+
+BOOST_AUTO_TEST_CASE(future)
+{
+	BOOST_CHECK_EQUAL(1,0);
+}
+#if 0
+boost::unit_test::test_suite* init_unit_test( int argc, char* argv[] )
+{
+	return 0;
 }
 
 int main(int argc, char**argv)
@@ -64,6 +78,8 @@ int main(int argc, char**argv)
     m3.pack(v);
     std::cout << "M3c: " << m3 << std::endl;
 
+    ::boost::unit_test::unit_test_main( &init_unit_test, argc, argv );
+
     std::cout << "Path: " << boost::filesystem::current_path() << std::endl;
 
   } catch (const std::exception& e)
@@ -74,3 +90,4 @@ int main(int argc, char**argv)
   std::cout << "Ok" << std::endl;
   return 0;
 }
+#endif
