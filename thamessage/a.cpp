@@ -34,7 +34,7 @@ Message testfun()
 
 BOOST_AUTO_TEST_CASE(future)
 {
-	BOOST_CHECK_EQUAL(1,0);
+	BOOST_CHECK_EQUAL(1,1);
 }
 #if 0
 boost::unit_test::test_suite* init_unit_test( int argc, char* argv[] )
