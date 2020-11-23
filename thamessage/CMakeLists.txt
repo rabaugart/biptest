@@ -9,12 +9,12 @@ message( "Installing to ${CMAKE_INSTALL_PREFIX}" )
 include(CTest)
 include(CPack)
 
-find_package( Boost COMPONENTS date_time )
+find_package( Boost COMPONENTS date_time filesystem system )
  
-add_compile_options( -std=c++14 -Wall )
+add_compile_options( -std=c++17 -Wall )
 
 add_executable( a a.cpp message.cpp )
-target_link_libraries( a Boost::date_time )
+target_link_libraries( a Boost::date_time Boost::filesystem Boost::system )
 install( TARGETS a DESTINATION bin )
 
 add_custom_target( run_a a )

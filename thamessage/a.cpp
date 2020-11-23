@@ -3,6 +3,7 @@
 
 #include "boost/date_time/gregorian/gregorian.hpp"
 #include "boost/format.hpp"
+#include "boost/filesystem.hpp"
 
 #include "message.hpp"
 
@@ -62,6 +63,8 @@ int main(int argc, char**argv)
     const std::vector<int> v(3,3);
     m3.pack(v);
     std::cout << "M3c: " << m3 << std::endl;
+
+    std::cout << "Path: " << boost::filesystem::current_path() << std::endl;
 
   } catch (const std::exception& e)
   {
