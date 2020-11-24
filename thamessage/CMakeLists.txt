@@ -17,6 +17,6 @@ add_executable( a a.cpp message.cpp )
 target_link_libraries( a Boost::date_time Boost::filesystem Boost::system Boost::unit_test_framework )
 install( TARGETS a DESTINATION bin )
 
-add_custom_target( run_a a )
+add_custom_target( run_a a --log_level=message )
 
-add_test( testa a )
+add_test( testa a --log_level=error )

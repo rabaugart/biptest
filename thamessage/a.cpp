@@ -46,27 +46,27 @@ BOOST_AUTO_TEST_CASE(message) {
 
 	date today = day_clock::local_day();
 
-	std::cout << boost::format("Today: %1%\n") % today;
+	BOOST_TEST_MESSAGE( boost::format("Today: %1%\n") % today );
 
-	std::cout << m.pack(1, 2) << std::endl;
+	BOOST_TEST_MESSAGE(  m.pack(1, 2) );
 	BOOST_TEST_MESSAGE( "Pack " << m.pack(1, 2, std::string { "abc" }, A(), "def", 3) );
 
-	std::cout << "M1: " << m << std::endl;
+	BOOST_TEST_MESSAGE( "M1: " << m );
 
 	Message m2 { std::move(m) };
 
-	std::cout << "M2: " << m2 << std::endl;
+	BOOST_TEST_MESSAGE( "M2: " << m2 );
 
 	Message m3;
 	m3 = std::move(m2);
 
-	std::cout << "M3: " << m3 << std::endl;
+	BOOST_TEST_MESSAGE( "M3: " << m3 );
 
 	m3 = testfun();
-	std::cout << "M3b: " << m3 << std::endl;
+	BOOST_TEST_MESSAGE( "M3b: " << m3 );
 
 	const Message m4 = testfun();
-	std::cout << "M4: " << m4 << std::endl;
+	BOOST_TEST_MESSAGE( "M4: " << m4 );
 
 	const std::vector<int> v(3, 3);
 	m3.pack(v);

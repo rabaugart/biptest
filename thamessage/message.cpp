@@ -16,12 +16,12 @@ struct Message::Impl
   Impl(const std::string& s_) :
       s(s_), id(count++)
   {
-    std::cout << "<<<< ctor " << id << "\n";
+    //std::cout << "<<<< ctor " << id << "\n";
   }
 
   ~Impl()
   {
-    std::cout << ">>>> dtor " << id << "\n";
+    //std::cout << ">>>> dtor " << id << "\n";
   }
 
   std::string s;
