@@ -1,0 +1,83 @@
+name: CMake
+
+on: [push]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    # The CMake configure and build commands are platform agnostic and should work equally
+    # well on Windows or Mac.  You can convert this to a matrix build if you need
+    # cross-platform coverage.
+    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Download and install Boost
+      # You may pin to the exact commit or the version.
+      # uses: MarkusJx/install-boost@1641187f31aa92d1df45351a459fcf491d8ab423
+      uses: MarkusJx/install-boost@v1.0
+      id: install-boost
+      with:
+        # The boost version to install, e.g. "1.68.0"
+        # See: https://github.com/actions/boost-versions/blob/main/versions-manifest.json  
+        boost_version: 1.73.0
+        # The toolset used to compile boost, e.g. "msvc14.2". May only be used on windows
+        toolset: gcc
+        # The platform version boost was compiled on, e.g. "18.04". May only be used on linux
+        platform_version: 18.04
+        
+#    - name: Bootstrap boost
+#      shell: bash
+#      working-directory: /home/runner/boost/boost-1.72.0-linux-16.04-gcc-x64
+#      run: ./bootstrap.sh
+      
+#    - name: Build boost
+#      shell: bash
+#      working-directory: /home/runner/boost/boost-1.72.0-linux-16.04-gcc-x64
+#      run: ./b2
+         
+    - name: Create Build Environment
+      # Some projects don't allow in-source building, so create a separate build directory
+      # We'll use this as our working directory for all subsequent commands
+      run: cmake -E make_directory ${{runner.workspace}}/build
+
+    - name: Configure CMake
+      # Use a bash shell so we can use the same syntax for environment variable
+      # access regardless of the host operating system
+      shell: bash
+      working-directory: ${{runner.workspace}}/build
+      # Note the current convention is to use the -S and -B options here to specify source 
+      # and build directories, but this is only available with CMake 3.13 and higher.  
+      # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
+      run: cmake $GITHUB_WORKSPACE/thamessage -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+      env:
+        BOOST_ROOT: ${{ steps.install-boost.outputs.BOOST_ROOT }}
+
+    - name: Build
+      working-directory: ${{runner.workspace}}/build
+      shell: bash
+      # Execute the build.  You can specify a specific target with "--target <NAME>"
+      run: cmake --build . --config $BUILD_TYPE
+
+    - name: Test
+      working-directory: ${{runner.workspace}}/build
+      shell: bash
+      # Execute tests defined by the CMake configuration.  
+      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
+      run: ctest --verbose -C $BUILD_TYPE
+      
+    - name: Package
+      working-directory: ${{runner.workspace}}/build
+      shell: bash
+      # Execute the build.  You can specify a specific target with "--target <NAME>"
+      run: cmake --build . --config $BUILD_TYPE --target package
+      
+    - name: Upload
+      uses: actions/upload-artifact@v2
+      with:
+        name: cmtest
+        path: ${{runner.workspace}}/build/CMTest-0.1.1-Linux.tar.gz

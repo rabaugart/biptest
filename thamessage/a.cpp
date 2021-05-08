@@ -1,6 +1,15 @@
 
 #include <iostream>
 
+#include "boost/date_time/gregorian/gregorian.hpp"
+#include "boost/format.hpp"
+#include "boost/filesystem.hpp"
+#include "boost/lexical_cast.hpp"
+
+#define BOOST_TEST_MODULE test_mod_1
+#define BOOST_TEST_DYN_LINK
+#include "boost/test/unit_test.hpp"
+
 #include "message.hpp"
 
 struct A
@@ -24,41 +33,46 @@ Message testfun()
   return m;
 }
 
-int main(int argc, char**argv)
+BOOST_AUTO_TEST_CASE(dummy)
 {
-  try
-  {
-    Message m;
-
-    std::cout << m.pack(1, 2) << std::endl;
-    std::cout << "Pack " << m.pack(1, 2, std::string{ "abc" }, A(), "def", 3) << std::endl;
-
-    std::cout << "M1: " << m << std::endl;
-
-    Message m2{ std::move(m) };
-
-    std::cout << "M2: " << m2 << std::endl;
-
-    Message m3;
-    m3 = std::move(m2);
-
-    std::cout << "M3: " << m3 << std::endl;
-
-    m3 = testfun();
-    std::cout << "M3b: " << m3 << std::endl;
-
-    const Message m4 = testfun();
-    std::cout << "M4: " << m4 << std::endl;
-
-    const std::vector<int> v(3,3);
-    m3.pack(v);
-    std::cout << "M3c: " << m3 << std::endl;
-
-  } catch (const std::exception& e)
-  {
-    std::cout << "===== err =====: " << e.what() << std::endl;
-    return 1;
-  }
-  std::cout << "Ok" << std::endl;
-  return 0;
+	BOOST_CHECK_EQUAL(1,1);
 }
+
+BOOST_AUTO_TEST_CASE(message) {
+
+	Message m;
+
+	using namespace boost::gregorian;
+
+	date today = day_clock::local_day();
+
+	BOOST_TEST_MESSAGE( boost::format("Today: %1%\n") % today );
+
+	BOOST_TEST_MESSAGE(  m.pack(1, 2) );
+	BOOST_TEST_MESSAGE( "Pack " << m.pack(1, 2, std::string { "abc" }, A(), "def", 3) );
+
+	BOOST_TEST_MESSAGE( "M1: " << m );
+
+	Message m2 { std::move(m) };
+
+	BOOST_TEST_MESSAGE( "M2: " << m2 );
+
+	Message m3;
+	m3 = std::move(m2);
+
+	BOOST_TEST_MESSAGE( "M3: " << m3 );
+
+	m3 = testfun();
+	BOOST_TEST_MESSAGE( "M3b: " << m3 );
+
+	const Message m4 = testfun();
+	BOOST_TEST_MESSAGE( "M4: " << m4 );
+
+	const std::vector<int> v(3, 3);
+	m3.pack(v);
+	BOOST_TEST_MESSAGE( "M3c: " << m3 );
+	BOOST_CHECK( boost::lexical_cast<std::string>(m3) == "int:3;int:3;int:3" );
+
+	BOOST_TEST_MESSAGE("Path: " << boost::filesystem::current_path());
+}
+

@@ -1,6 +1,7 @@
 .DS_Store
 test-boost@build-test-boost
 *.swp
+*.FCStd1
 package-lock.json
 node_modules
 build*
