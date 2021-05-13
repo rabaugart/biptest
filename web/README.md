@@ -39,6 +39,16 @@ Admins-MBP:web netz$ npm install --global pug --save
 added 63 packages from 140 contributors in 7.068s
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Stichworte
+--------------------------------------------------------------------------------
+
+  * webpacket
+  * jquery-mobile
+  * FileReader
+  * ReactRouter
+  * ServerSend
+  * passport mit Strategie passport-local
+
 Links
 --------------------------------------------------------------------------------
 
