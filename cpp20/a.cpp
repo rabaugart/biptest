@@ -4,10 +4,12 @@
 #include <variant>
 #include <string>
 #include <type_traits>
+#include <typeinfo>
+#include "boost/core/demangle.hpp"
 
 namespace fs = std::filesystem;
 
-using myvar = std::variant<int,std::string>;
+using myvar = std::variant<int,std::string,std::optional<long long>,long double>;
 
 class printer {
   template<typename T>
@@ -16,6 +18,7 @@ class printer {
 
 template<typename T> struct form;
 
+#if 0
 template<> struct form<int>{
   static const char* name() { return "int"; }
 };
@@ -23,13 +26,37 @@ template<> struct form<int>{
 template<> struct form<std::string>{
   static const char* name() { return "str"; }
 };
+#endif
+
+template<typename T> struct form{
+    static std::string name() {
+        return std::string{"Unknown/"} + std::to_string(sizeof(T)) + "/" +
+                boost::core::demangle(typeid(T).name());
+    }
+};
 
 void pf( myvar const& v ) {
+  size_t counter=0;
   std::visit( 
-    []( auto&& v ) {
-      std::cout << "pf: "
-        << form<std::decay_t<decltype(v)>>::name() << " -- " << v << std::endl; }, v );
+    [&counter]( auto&& v ) {
+      std::cout << "pf: " << counter++ << " "
+        << form<std::decay_t<decltype(v)>>::name() << " -- " << std::endl; }, v );
 }
+
+template<typename... T> struct tprinter;
+template<typename ...Args> struct tprinter<std::variant<Args...>> {
+    static std::string name() {
+        return tprinter<Args...>::name();
+    }
+};
+template<typename Head, typename ...Args> struct tprinter<Head,Args...> {
+    static std::string name() {
+        return form<Head>::name() + ", " + tprinter<Args...>::name();
+    }
+};
+template<> struct tprinter<> {
+    static std::string name() { return ""; }
+};
 
 int main()
 {
@@ -47,10 +74,12 @@ int main()
 
   myvar val;
   pf( val );
-  val = 5;
+  val = std::optional<long>(5);
   pf( val );
   val = "abc";
   pf( val );
   val = myvar();
   pf( val );
+
+  std::cout << std::endl << tprinter<myvar>::name() << std::endl;
 }
