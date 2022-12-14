@@ -60,12 +60,16 @@ template<> struct tprinter<> {
 
 int main()
 {
-  const fs::path p(".");
-  const fs::path p2{ p.parent_path().parent_path() };
-  std::cout << "Hello " << fs::absolute(p2) 
-    << std::boolalpha << fs::is_directory(p) << std::endl;
-  for ( auto const& de : fs::directory_iterator{p/".."} ) {
-    std::cout << de.path() << std::endl;
+  try {
+    const fs::path p(".");
+    const fs::path p2{ p.parent_path().parent_path() };
+    std::cout << "Hello " << fs::absolute(p2) 
+      << std::boolalpha << fs::is_directory(p) << std::endl;
+    for ( auto const& de : fs::directory_iterator{p/".."} ) {
+      std::cout << de.path() << std::endl;
+    }
+  } catch ( std::exception const& e ) {
+    std::cout << "Error: " << e.what() << std::endl;
   }
 
   std::optional<int> oi;
