@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.10)
+add_subdirectory( cpp20 )
+#add_subdirectory( comp )
+#add_subdirectory( test-boost )
+add_subdirectory( test-other )
+#add_subdirectory( thamessage )
