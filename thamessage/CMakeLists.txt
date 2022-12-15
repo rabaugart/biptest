@@ -13,10 +13,10 @@ find_package( Boost COMPONENTS date_time filesystem system unit_test_framework )
  
 add_compile_options( -std=c++17 -Wall )
 
-add_executable( a a.cpp message.cpp )
-target_link_libraries( a Boost::date_time Boost::filesystem Boost::system Boost::unit_test_framework )
-install( TARGETS a DESTINATION bin )
+add_executable( tha a.cpp message.cpp )
+target_link_libraries( tha Boost::date_time Boost::filesystem Boost::system Boost::unit_test_framework )
+install( TARGETS tha DESTINATION bin )
 
-add_custom_target( run_a a --log_level=message )
+add_custom_target( run_tha tha --log_level=message )
 
 add_test( testa a --log_level=error )
