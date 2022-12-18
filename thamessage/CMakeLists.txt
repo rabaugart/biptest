@@ -19,4 +19,4 @@ install( TARGETS tha DESTINATION bin )
 
 add_custom_target( run_tha tha --log_level=message )
 
-add_test( testa a --log_level=error )
+add_test( testa tha --log_level=error )
