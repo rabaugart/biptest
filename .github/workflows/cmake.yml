@@ -16,19 +16,25 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Download and install Boost
-      # You may pin to the exact commit or the version.
-      # uses: MarkusJx/install-boost@1641187f31aa92d1df45351a459fcf491d8ab423
-      uses: MarkusJx/install-boost@v1.0
-      id: install-boost
-      with:
-        # The boost version to install, e.g. "1.68.0"
-        # See: https://github.com/actions/boost-versions/blob/main/versions-manifest.json  
-        boost_version: 1.80.0
-        # The toolset used to compile boost, e.g. "msvc14.2". May only be used on windows
-        toolset: gcc
-        # The platform version boost was compiled on, e.g. "18.04". May only be used on linux
-        platform_version: 22.04
+- name: Download and install Boost
+  # You may pin to the exact commit or the version.
+  # uses: MarkusJx/install-boost@d175e516e6d321b68ff67afecf7da5e7c53c16f7
+  uses: MarkusJx/install-boost@v2.4.3
+  with:
+    # The boost version to install, e.g. "1.73.0"
+    boost_version: 1.81.0
+    # The toolset used to compile boost, e.g. "msvc"
+    toolset: # optional, default is 
+    # The platform version boost was compiled on, e.g. "18.04"
+    platform_version: # optional, default is 
+    # Whether the boost libraries are linked statically or dynamically
+    link: # optional, default is 
+    # The architecture the binaries were built for
+    arch: # optional, default is x86
+    # The dirctory to install boost into
+    boost_install_dir: # optional, default is 
+    # Wheter to use actions/cache to improve build times
+    cache: # optional, default is true
         
 #    - name: Bootstrap boost
 #      shell: bash
