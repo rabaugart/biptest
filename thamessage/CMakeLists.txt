@@ -11,7 +11,7 @@ include(CPack)
 
 find_package( Boost COMPONENTS date_time filesystem system unit_test_framework )
  
-add_compile_options( -std=c++17 -Wall )
+add_compile_options( -Wall )
 
 add_executable( tha a.cpp message.cpp )
 target_link_libraries( tha Boost::date_time Boost::filesystem Boost::system Boost::unit_test_framework )
