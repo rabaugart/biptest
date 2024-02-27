@@ -16,9 +16,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Build
+    - name: Build hello
       working-directory: ./rust/hello
       run: cargo build --verbose
-    - name: Run tests
+    - name: Run tests hello
       working-directory: ./rust/hello
       run: cargo test --verbose
+    - name: Build mqtt
+      working-directory: ./rust/mqtt-fri
+      run: cargo build --verbose
