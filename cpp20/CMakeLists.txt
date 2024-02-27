@@ -9,3 +9,6 @@ add_custom_target( run a )
 
 add_executable( tuple tuple.cpp )
 add_custom_target( runt tuple )
+
+add_test( test_tuple tuple )
+

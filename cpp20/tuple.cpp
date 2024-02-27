@@ -2,6 +2,7 @@
 #include <functional>
 #include <iostream>
 #include <cstddef>
+#include <string>
 
 template<typename S, size_t N, typename ... Args> struct finder_helper;
 
@@ -81,4 +82,5 @@ int main() {
     using my_frame_tuple = frame_maker<my_tuple>::type;
     multi<int,long,unsigned> m;
     std::cout << finder<frame<long>,my_frame_tuple>::value << " " << m.name<long>() << m.rgeti(2);
+    return 0;
 }
