@@ -5,7 +5,7 @@
 #include <string>
 #include <type_traits>
 #include <typeinfo>
-#include "boost/core/demangle.hpp"
+//#include "boost/core/demangle.hpp"
 
 namespace fs = std::filesystem;
 
@@ -30,8 +30,7 @@ template<> struct form<std::string>{
 
 template<typename T> struct form{
     static std::string name() {
-        return std::string{"Unknown/"} + std::to_string(sizeof(T)) + "/" +
-                boost::core::demangle(typeid(T).name());
+        return std::string{"Unknown/"} + std::to_string(sizeof(T)) + "/" + typeid(T).name();
     }
 };
 
