@@ -49,6 +49,7 @@ jobs:
 
     - name: Set win env
       if: ${{ runner.os== 'Windows' }}
+      uses: MarkusJx/install-boost@v2.4.5
       with:
         toolset: msvc
         arch: x68
@@ -57,6 +58,7 @@ jobs:
     - name: Download and install Boost
       # You may pin to the exact commit or the version.
       # uses: MarkusJx/install-boost@1641187f31aa92d1df45351a459fcf491d8ab423
+      if: ${{ runner.os != 'Windows' }}
       uses: MarkusJx/install-boost@v2.4.5
       id: install-boost
       with:
