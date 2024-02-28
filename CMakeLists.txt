@@ -9,7 +9,7 @@ enable_testing()
 
 set( CMAKE_CXX_STANDARD 20 )
 
-add_compile_options( -Wall )
+#add_compile_options( -Wall )
 
 find_package( Boost COMPONENTS date_time filesystem system unit_test_framework )
 
