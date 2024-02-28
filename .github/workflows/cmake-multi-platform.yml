@@ -54,6 +54,7 @@ jobs:
         toolset: msvc
         arch: x68
         link: static
+        boost_version: 1.84.0
 
     - name: Download and install Boost
       # You may pin to the exact commit or the version.
