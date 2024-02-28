@@ -50,6 +50,7 @@ jobs:
     - name: Set win env
       if: ${{ runner.os == 'Windows' }}
       uses: MarkusJx/install-boost@v2.4.5
+      id: install-boost
       with:
         toolset: msvc
         arch: x86
