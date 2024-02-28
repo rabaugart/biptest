@@ -30,8 +30,6 @@ jobs:
           - os: windows-latest
             c_compiler: cl
             cpp_compiler: cl
-            toolset: msvc
-            arch: x86
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
@@ -59,6 +57,7 @@ jobs:
         # A list of supported versions can be found here:
         # https://github.com/MarkusJx/prebuilt-boost/blob/main/versions-manifest.json
         boost_version: 1.84.0
+        link: static+shared
 
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
