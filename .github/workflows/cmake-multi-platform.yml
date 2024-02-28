@@ -57,7 +57,7 @@ jobs:
         # A list of supported versions can be found here:
         # https://github.com/MarkusJx/prebuilt-boost/blob/main/versions-manifest.json
         boost_version: 1.84.0
-        link: static+shared
+        link: static
 
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
