@@ -85,5 +85,6 @@ int main()
   pf( val );
 
   std::cout << std::endl << tprinter<myvar>::name() << std::endl;
-  return 1;
+  std::cout << "Fertig" << std::endl;
+  return 0;
 }
