@@ -2,6 +2,9 @@
 #include <string>
 #include <type_traits>
 #include <vector>
+
+#include <boost/date_time/gregorian/gregorian.hpp>
+
 //
 template< class, class = std::void_t<> >
 struct has_iter_member : std::false_type { };
@@ -40,5 +43,9 @@ int main() {
   std::cout << has_iter_member<int>() << stype(5) << std::endl;
   std::cout << has_iter_member<std::string>() << stype(std::string("abc")) << std::endl;
   std::cout << has_iter_member<std::vector<int>>() << stype(std::vector<int>())<< std::endl;
+  using namespace boost::gregorian;
+  date weekstart(2002,Feb,1);
+  date weekend  = weekstart + weeks(1);
+  std::cout << weekend << std::endl;
   return 0;
 }
