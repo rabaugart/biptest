@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include "fmt/printf.h"
 
 //
 template< class, class = std::void_t<> >
@@ -46,6 +47,7 @@ int main() {
   using namespace boost::gregorian;
   date weekstart(2002,Feb,1);
   date weekend  = weekstart + weeks(1);
+  fmt::print("Testausgabe: {0}\n", "hallo");
   std::cout << "Weekend " << weekend << std::endl;
   return 0;
 }

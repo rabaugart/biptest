@@ -13,6 +13,8 @@ set( CMAKE_CXX_STANDARD 20 )
 
 find_package( Boost COMPONENTS date_time filesystem system unit_test_framework )
 
+find_package(fmt REQUIRED)
+
 set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/install" )
 
 message( "Installing to ${CMAKE_INSTALL_PREFIX}" )
