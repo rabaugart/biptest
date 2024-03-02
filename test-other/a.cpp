@@ -47,7 +47,7 @@ int main() {
   using namespace boost::gregorian;
   date weekstart(2002,Feb,1);
   date weekend  = weekstart + weeks(1);
-  fmt::print("Testausgabe: {0}\n", "hallo");
+  fmt::print("Testausgabe: {0}\n", "hallo welt");
   std::cout << "Weekend " << weekend << std::endl;
   return 0;
 }
