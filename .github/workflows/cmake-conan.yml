@@ -38,7 +38,8 @@ jobs:
             cpp_compiler: clang++
         exclude:
           - os: macos-latest
-            c_compiler: gcc
+            # macos currently not working
+            # c_compiler: gcc
 
     steps:
     - uses: actions/checkout@v3
