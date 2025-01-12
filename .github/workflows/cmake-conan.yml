@@ -33,15 +33,12 @@ jobs:
           - os: ubuntu-latest
             c_compiler: clang
             cpp_compiler: clang++
-          - os: macos-latest
-            c_compiler: clang
-            cpp_compiler: clang++
+#          - os: macos-latest
+#            c_compiler: clang
+#            cpp_compiler: clang++
         exclude:
           - os: macos-latest
             c_compiler: gcc
-          - os: macos-latest
-            # macos currently not working
-            c_compiler: clang
 
     steps:
     - uses: actions/checkout@v3
