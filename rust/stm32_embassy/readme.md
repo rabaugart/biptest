@@ -6,6 +6,12 @@ Flashen mit `probe-rs` über
 
     cargo run --release
 
+Danach werden die Log-Ausgaben in der Konsole angezeigt.
+Abbrechen mit Ctrl-c.
+Nur flashen erfolgt mit
+
+    cargo flash --release --chip STM32L432KCUx
+
 Evtl. vorher `probe-rs` und das Target installieren
 
     cargo install probe-rs-tools
