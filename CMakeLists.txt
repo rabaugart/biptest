@@ -20,6 +20,6 @@ set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/install" )
 message( "Installing to ${CMAKE_INSTALL_PREFIX}" )
 
 add_subdirectory( cpp20 )
-#add_subdirectory( comp )
-#add_subdirectory( test-boost )
+add_subdirectory( comp )
+add_subdirectory( test-boost )
 add_subdirectory( test-other )
