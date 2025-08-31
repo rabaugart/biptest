@@ -1,7 +1,6 @@
 #![no_std]
 #![no_main]
 
-use defmt::*;
 use embassy_executor::Spawner;
 use embassy_stm32::gpio::{Level, Output, Speed};
 use embassy_time::{Duration, Timer};
@@ -22,5 +21,5 @@ async fn main(spawner: Spawner) {
     let p = embassy_stm32::init(Default::default());
 
     let led = Output::new(p.PB3, Level::Low, Speed::Low);
-    spawner.spawn(blinker(led, Duration::from_millis(1_000)));
+    let _ = spawner.spawn(blinker(led, Duration::from_millis(1_000)));
 }
