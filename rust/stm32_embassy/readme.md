@@ -6,7 +6,12 @@ Flashen mit `probe-rs` über
 
     cargo run --release
 
-Funktioniert auf Mac grundsätzlich. Es gibt aber eine Fehlermeldung
+Evtl. vorher `probe-rs` und das Target installieren
+
+    cargo install probe-rs-tools
+    rustup target add thumbv7em-none-eabi
+
+Funktioniert auf Mac und Ubuntu 24.04 grundsätzlich. Es gibt aber eine Fehlermeldung
 
 ~~~~~~
      Running `probe-rs run --chip STM32L432KCUx --connect-under-reset --speed 3300 target/thumbv7em-none-eabi/release/rust_embassy`
