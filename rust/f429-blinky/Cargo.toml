@@ -1,0 +1,36 @@
+[package]
+name = "f429a"
+version = "0.1.0"
+edition = "2024"
+
+publish = false
+[dependencies]
+embassy-executor = { version = "0.9.0", features = [
+    "defmt",
+    "arch-cortex-m",
+    "executor-thread",
+] }
+embassy-time = { version = "0.5.0", features = ["defmt"] }
+embassy-sync = "0.7.0"
+embassy-stm32 = { version = "0.4.0", features = [
+    "defmt",
+    "unstable-pac",
+    "stm32f429zi",
+    "memory-x",
+    "time-driver-any",
+    "exti",
+    "chrono",
+] }
+
+defmt = "1.0.1"
+defmt-rtt = "1.0.0"
+
+cortex-m = { version = "0.7.6", features = ["critical-section-single-core"] }
+cortex-m-rt = "0.7.0"
+embedded-hal = "1.0.0"
+#embedded-hal-1 = { package = "embedded-hal", version = "1.0" }
+embedded-hal-async = { version = "1.0" }
+embedded-hal-bus = { version = "0.3", features = ["async"] }
+panic-probe = { version = "1.0.0", features = ["print-defmt"] }
+[package.metadata.embassy]
+build = [{ target = "thumbv7em-none-eabi" }]
