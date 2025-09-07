@@ -13,7 +13,7 @@ Erzeugt: `bin/atmega328p/blinky.hex`:
 
 Flashen mit dem Teensy-Flasher
 
-    avrdude -c arduino -p m328p -P /dev/ttyACM0 bin/atmega328p/blinky.hex
+    avrdude -c arduino -p m328p -P /dev/ttyACM0 -U flash:w:bin/atmega328p/blinky.hex:i
 
 Ursprüngliches readme
 ---------------------

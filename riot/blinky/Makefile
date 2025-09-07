@@ -12,6 +12,8 @@ RIOTBASE ?= $(HOME)/dev/RIOT
 # development process:
 DEVELHELP ?= 1
 
+USEMODULE += periph_gpio
+
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 1
 

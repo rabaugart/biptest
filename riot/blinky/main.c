@@ -19,9 +19,13 @@
 
 #include "clk.h"
 #include "board.h"
+#include "periph/gpio.h"
 #include "periph_conf.h"
 #include "timex.h"
 #include "ztimer.h"
+
+gpio_t led0 = GPIO_PIN(3,3);
+gpio_mode_t led0_mode = GPIO_OUT;
 
 static void delay(void)
 {
@@ -46,13 +50,16 @@ static void delay(void)
 
 int main(void)
 {
+    /* Initialize the LED0 pin */
+    gpio_init(led0, led0_mode);
+    /* Turn off the LED0 pin */
+    gpio_clear(led0);
+   
+   
     while (1) {
         delay();
-#ifdef LED0_TOGGLE
-        LED0_TOGGLE;
-#else
+        gpio_toggle(led0);
         puts("Blink! (No LED present or configured...)");
-#endif
     }
 
     return 0;
