@@ -27,10 +27,19 @@
 gpio_t led0 = GPIO_PIN(3,3);
 gpio_mode_t led0_mode = GPIO_OUT;
 
-static void delay(void)
+gpio_t button = GPIO_PIN(3,2);
+
+struct config_t {
+   bool low;
+   config_t() : low(true) {}
+   void toggle() { low = !low; }
+   unsigned int delay_ms() const { return low ? 200 : 2000; }
+};
+
+static void delay(config_t const& c)
 {
     if (IS_USED(MODULE_ZTIMER)) {
-        ztimer_sleep(ZTIMER_USEC, 200*MS_PER_SEC);
+        ztimer_sleep(ZTIMER_USEC, c.delay_ms()*MS_PER_SEC);
     }
     else {
         /*
@@ -48,17 +57,25 @@ static void delay(void)
     }
 }
 
+void button_callback(void* vcfg) {
+    config_t& cfg = *reinterpret_cast<config_t*>(vcfg);
+    cfg.toggle();
+}
+
 int main(void)
 {
     /* Initialize the LED0 pin */
     gpio_init(led0, led0_mode);
     /* Turn off the LED0 pin */
     gpio_clear(led0);
-   
-   
+
+    config_t cfg;
+
+    const int init_ok = gpio_init_int( button, GPIO_IN_PU, GPIO_FALLING, button_callback, &cfg );
     while (1) {
-        delay();
-        gpio_toggle(led0);
+        delay(cfg);
+        if (init_ok==0)
+            gpio_toggle(led0);
         puts("Blink! (No LED present or configured...)");
     }
 

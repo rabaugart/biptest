@@ -13,6 +13,7 @@ RIOTBASE ?= $(HOME)/dev/RIOT
 DEVELHELP ?= 1
 
 USEMODULE += periph_gpio
+USEMODULE += periph_gpio_irq
 
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 1
