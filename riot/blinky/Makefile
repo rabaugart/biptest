@@ -21,3 +21,5 @@ QUIET ?= 1
 FEATURES_OPTIONAL += periph_timer
 
 include $(RIOTBASE)/Makefile.include
+fl: bin/atmega328p/blinky.hex
+	avrdude -c arduino -p m328p -P /dev/ttyACM0 -U flash:w:bin/atmega328p/blinky.hex

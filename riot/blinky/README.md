@@ -1,17 +1,19 @@
 Blinky!
 =======
 
-Urpsrünglich von RIOT übernommen.
+Einfaches blinky-Beispiel, ursprünglich von [RIOT/2025.07](https://github.com/RIOT-OS/RIOT/tree/2025.07/examples/basic/blinky) übernommen.
+
+![](board.jpg)
 
 Baut aus dem Stand mit:
 
     make BOARD=atmega328p
 
-Ggf. muß der RIOT-Path angepasst werden.
+Ggf. muß der RIOT-Path angepasst oder als Environment gesetzt werden.
 
 Erzeugt: `bin/atmega328p/blinky.hex`:
 
-Flashen mit dem Teensy-Flasher
+Flashen mit dem Teensy-Flasher und `avrdudei`:
 
     avrdude -c arduino -p m328p -P /dev/ttyACM0 -U flash:w:bin/atmega328p/blinky.hex:i
 
