@@ -1,6 +1,23 @@
 Blinky!
 =======
 
+Urpsrünglich von RIOT übernommen.
+
+Baut aus dem Stand mit:
+
+    make BOARD=atmega328p
+
+Ggf. muß der RIOT-Path angepasst werden.
+
+Erzeugt: `bin/atmega328p/blinky.hex`:
+
+Flashen mit dem Teensy-Flasher
+
+    avrdude -c arduino -p m328p -P /dev/ttyACM0 bin/atmega328p/blinky.hex
+
+Ursprüngliches readme
+---------------------
+
 This is a basic example that blinks an LED, if available. (If no LED is present or configured, it
 will print "Blink!" via stdio instead.)
 
