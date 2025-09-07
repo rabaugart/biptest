@@ -17,6 +17,8 @@ USEMODULE += periph_gpio
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 1
 
+FEATURES_REQUIRED += cpp
+
 # Use a peripheral timer for the delay, if available
 FEATURES_OPTIONAL += periph_timer
 
