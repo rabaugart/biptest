@@ -14,6 +14,8 @@ DEVELHELP ?= 1
 
 USEMODULE += periph_gpio
 USEMODULE += periph_gpio_irq
+# pcint2 funktioniert nicht, wie gedacht
+# USEMODULE += atmega_pcint2
 
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 1

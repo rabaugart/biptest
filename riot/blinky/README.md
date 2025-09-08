@@ -24,6 +24,7 @@ Todo
 - Verwende Messaging
 - Verwende niedrigeren Interrupt
 - Entprelle den Button
+- Checke und korrigiere die LEDs des Teensy ISPs
 
 Ursprüngliches readme
 ---------------------
