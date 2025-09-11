@@ -3,10 +3,19 @@
 ## Raba, 11.9.25
 
 Übernommen von [avr-device](https://github.com/Rahix/avr-device.git).
+Das Beispiel blinkt 9-mal und gerät dann in Panic.
 
 Flashen über Teensy mittels:
 
     avrdude -c arduino -p m328p -P /dev/ttyACM0 -U flash:w:target/avr-none/release/mega328-test.elf:e
+
+Hardware ist die gleiche wie beim [riot-blinky](https://github.com/rabaugart/biptest/commit/9f75816cef791133e4e2dda5c7b0da1e060c676f#diff-ed87f96fcdb5448c971f053679fb47ec8b14bfd30eb62c165984f5c84eaf5780).
+
+![](https://raw.githubusercontent.com/rabaugart/biptest/9f75816cef791133e4e2dda5c7b0da1e060c676f/riot/blinky/board.jpg)
+
+Weitere Ressourcen:
+
+- avr-rust [Book](https://book.avr-rust.org/).
 
 ## Overview
 This example showcases a minimal Rust program that solely utilizes bare
