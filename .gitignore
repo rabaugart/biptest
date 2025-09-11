@@ -5,3 +5,4 @@ test-boost@build-test-boost
 package-lock.json
 node_modules
 build*
+riot/blinky/bin/
