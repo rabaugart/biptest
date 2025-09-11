@@ -1,4 +1,13 @@
 # ATmega328P Example
+
+## Raba, 11.9.25
+
+Übernommen von [avr-device](https://github.com/Rahix/avr-device.git).
+
+Flashen über Teensy mittels:
+
+    avrdude -c arduino -p m328p -P /dev/ttyACM0 -U flash:w:target/avr-none/release/mega328-test.elf:e
+
 ## Overview
 This example showcases a minimal Rust program that solely utilizes bare
 register writes without relying on a Hardware Abstraction Layer.  If you want
