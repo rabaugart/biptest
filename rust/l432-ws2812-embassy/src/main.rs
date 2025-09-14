@@ -35,22 +35,22 @@ async fn main(_spawner: Spawner) {
             freq: mhz(12),
             mode: HseMode::Oscillator,
         });
-        device_config.rcc.pll_src = PllSource::HSE;
         device_config.rcc.pll = Some(Pll {
+            source: PllSource::HSE,
             prediv: PllPreDiv::DIV6,
             mul: PllMul::MUL80,
             divp: Some(PllPDiv::DIV8),
             divq: None,
             divr: None,
         });
-        device_config.rcc.sys = Sysclk::PLL1_P;
+        device_config.rcc.sys = Sysclk::PLL1_R;
     }
 
     let mut dp = embassy_stm32::init(device_config);
 
     let mut ws2812_pwm = SimplePwm::new(
-        dp.TIM3,
-        Some(PwmPin::new(dp.PB4, OutputType::PushPull)),
+        dp.TIM2,
+        Some(PwmPin::new(dp.PA0, OutputType::PushPull)),
         None,
         None,
         None,
@@ -92,7 +92,9 @@ async fn main(_spawner: Spawner) {
     loop {
         for &color in color_list {
             // with &mut, we can easily reuse same DMA channel multiple times
-            ws2812_pwm.waveform_up(dp.DMA1_CH2.reborrow(), pwm_channel, color).await;
+            ws2812_pwm
+                .waveform_up(dp.DMA1_CH2.reborrow(), pwm_channel, color)
+                .await;
             // ws2812 need at least 50 us low level input to confirm the input data and change it's state
             Timer::after_micros(50).await;
             // wait until ticker tick
