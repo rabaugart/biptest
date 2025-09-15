@@ -4,13 +4,14 @@ ws2812
 Versuche, das alte RGB-Leuchtband anzubinden.
 Evtl. sind das gar keine `ws2812`, sondern handelt es sich dabei um [LPD8806](https://cdn-shop.adafruit.com/datasheets/lpd8806%20english.pdf)
 von [Adafruit](https://learn.adafruit.com/digital-led-strip/wiring).
+Im Adafruite-[Code](https://github.com/adafruit/LPD8806/blob/master/LPD8806.cpp)
+erfolgt die Ansteuerung über SPI.
 
-Einfaches blinky-Beispiel, ursprünglich von [RIOT/2025.07](https://github.com/RIOT-OS/RIOT/tree/2025.07/examples/basic/blinky) übernommen.
-Die Blink-LED hängt an PORT `PD3`, der Button an `PD2`. Bisher wird wahrscheinlich `INT0`verwendet.
+Es gibt in Riot ein passendes, das verwendet werden kann mit
 
-![](board.jpg)
+    USEMODULE += ws281x
 
-Baut aus dem Stand mit:
+Bauen mit
 
     make BOARD=atmega328p
 

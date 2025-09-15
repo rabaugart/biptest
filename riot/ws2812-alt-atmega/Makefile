@@ -1,5 +1,5 @@
 # name of your application
-APPLICATION = blinky
+APPLICATION = ws2812_alt
 
 # If no BOARD is found in the environment, use this default:
 BOARD ?= atmega328p
@@ -14,6 +14,7 @@ DEVELHELP ?= 1
 
 USEMODULE += periph_gpio
 USEMODULE += periph_gpio_irq
+USEMODULE += ws281x
 # pcint2 funktioniert nicht, wie gedacht
 # USEMODULE += atmega_pcint2
 
@@ -26,5 +27,5 @@ FEATURES_REQUIRED += cpp
 FEATURES_OPTIONAL += periph_timer
 
 include $(RIOTBASE)/Makefile.include
-fl: bin/atmega328p/blinky.hex
-	avrdude -c arduino -p m328p -P /dev/ttyACM0 -U flash:w:bin/atmega328p/blinky.hex
+fl: bin/atmega328p/ws2812_alt.hex
+	avrdude -c arduino -p m328p -P /dev/ttyACM0 -U flash:w:bin/atmega328p/ws2812_alt.hex
