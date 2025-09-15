@@ -91,8 +91,8 @@ int main(void)
     lpd8808_params_t params = { .led_cnt=NUM_LEDS, .pin_clk=clk_out, .pin_dat=data_out };
     lpd8808_t lpd8808_dev;
 
-    color_rgb_t red = { .r=0x00,.g=0,.b=0x5F};
-    color_rgb_t green = { .r=0x0,.g=0x5F,.b=0x0};
+    color_rgb_t red = { .r=0xFF,.g=0,.b=0x00};
+    color_rgb_t green = { .r=0x0,.g=0xFF,.b=0x0};
 
     const int init_ok = lpd8808_init(&lpd8808_dev, &params);
 

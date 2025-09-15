@@ -1,5 +1,5 @@
 # name of your application
-APPLICATION = ws2812_alt
+APPLICATION = lpd8806_alt
 
 # If no BOARD is found in the environment, use this default:
 BOARD ?= atmega328p
@@ -27,5 +27,5 @@ FEATURES_REQUIRED += cpp
 FEATURES_OPTIONAL += periph_timer
 
 include $(RIOTBASE)/Makefile.include
-fl: bin/atmega328p/ws2812_alt.hex
-	avrdude -c arduino -p m328p -P /dev/ttyACM0 -U flash:w:bin/atmega328p/ws2812_alt.hex
+fl: bin/atmega328p/lpd8806_alt.hex
+	avrdude -c arduino -p m328p -P /dev/ttyACM0 -U flash:w:bin/atmega328p/lpd8806_alt.hex
