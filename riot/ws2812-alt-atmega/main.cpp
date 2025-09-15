@@ -26,13 +26,16 @@
 
 //#define WS281X_BYTES_PER_DEVICE (4U)
 
-#include "ws281x.h"
+#include "lpd8808.h"
 
 gpio_t led0 = GPIO_PIN(3,3);
 gpio_mode_t led0_mode = GPIO_OUT;
 
-gpio_t ws_out = GPIO_PIN(3,4);
-gpio_mode_t ws_out_mode = GPIO_OUT;
+gpio_t data_out = GPIO_PIN(3,4);
+gpio_mode_t data_out_mode = GPIO_OUT;
+
+gpio_t clk_out = GPIO_PIN(3,5);
+gpio_mode_t clk_out_mode = GPIO_OUT;
 
 gpio_t button = GPIO_PIN(3,2);
 
@@ -40,7 +43,7 @@ struct config_t {
    bool low;
    config_t() : low(true) {}
    void toggle() { low = !low; }
-   unsigned int delay_ms() const { return low ? 200 : 2000; }
+   unsigned int delay_ms() const { return low ? 2000 : 2000; }
 };
 
 static void delay(config_t const& c)
@@ -78,19 +81,20 @@ int main(void)
     /* Turn off the LED0 pin */
     gpio_clear(led0);
 
-    gpio_init(ws_out, ws_out_mode);
-    gpio_clear(ws_out);
+    gpio_init(data_out, data_out_mode);
+    gpio_clear(data_out);
+    gpio_init(clk_out, clk_out_mode);
+    gpio_clear(clk_out);
 
     config_t cfg;
 
-    uint8_t led_buf[NUM_LEDS*WS281X_BYTES_PER_DEVICE];
-    ws281x_params_t params = { .buf = led_buf, .numof=NUM_LEDS, .pin=ws_out };
-    ws281x_t ws_dev;
+    lpd8808_params_t params = { .led_cnt=NUM_LEDS, .pin_clk=clk_out, .pin_dat=data_out };
+    lpd8808_t lpd8808_dev;
 
-    const color_rgb_t red = { .r=0xFF,.g=0,.b=0x0};
-    const color_rgb_t green = { .r=0x0,.g=0xFF,.b=0x0};
+    color_rgb_t red = { .r=0x00,.g=0,.b=0x5F};
+    color_rgb_t green = { .r=0x0,.g=0x5F,.b=0x0};
 
-    const int init_ok = ws281x_init(&ws_dev, &params);
+    const int init_ok = lpd8808_init(&lpd8808_dev, &params);
 
     //const int init_ok = gpio_init_int( button, GPIO_IN_PU, GPIO_FALLING, button_callback, &cfg );
 
@@ -98,13 +102,10 @@ int main(void)
     while (1) {
         delay(cfg);
         if (state) {
-            ws281x_set_buffer(&led_buf,0,red);
+            lpd8808_load_rgb(&lpd8808_dev,&red);
         } else {
-            ws281x_set_buffer(&led_buf,0,green);
+            lpd8808_load_rgb(&lpd8808_dev,&green);
         }
-        ws281x_prepare_transmission(&ws_dev);
-        ws281x_write(&ws_dev);
-        ws281x_end_transmission(&ws_dev);
         state = !state;
         if (init_ok==0)
             gpio_toggle(led0);

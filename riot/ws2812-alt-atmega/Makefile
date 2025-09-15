@@ -14,7 +14,7 @@ DEVELHELP ?= 1
 
 USEMODULE += periph_gpio
 USEMODULE += periph_gpio_irq
-USEMODULE += ws281x
+USEMODULE += lpd8808
 # pcint2 funktioniert nicht, wie gedacht
 # USEMODULE += atmega_pcint2
 
