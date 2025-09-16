@@ -15,6 +15,7 @@
  * @}
  */
 
+#include "etl/array.h"
 #include <stdio.h>
 
 #include "clk.h"
@@ -72,7 +73,19 @@ void button_callback(void* vcfg) {
     cfg.toggle();
 }
 
-#define NUM_LEDS  1
+static constexpr size_t NUM_LEDS = 3;
+
+using led_array_t = etl::array<color_rgb_t,NUM_LEDS>;
+
+static constexpr color_rgb_t red = { .r=0xFF,.g=0,.b=0x00};
+static constexpr color_rgb_t blue = { .r=0x00,.g=0xFF,.b=0x00};
+static constexpr color_rgb_t green = { .r=0x00,.g=0x00,.b=0xFF};
+
+static constexpr etl::array<led_array_t,3> SEQ = {
+    led_array_t{red,green,blue},
+    led_array_t{blue,red,green},
+    led_array_t{green,blue,red}
+};
 
 int main(void)
 {
@@ -91,22 +104,16 @@ int main(void)
     lpd8806_params_t params = { .led_cnt=NUM_LEDS, .pin_clk=clk_out, .pin_dat=data_out };
     lpd8806_t lpd8806_dev;
 
-    color_rgb_t red = { .r=0xFF,.g=0,.b=0x00};
-    color_rgb_t green = { .r=0x00,.g=0x00,.b=0xFF};
 
     const int init_ok = lpd8806_init(&lpd8806_dev, &params);
 
     //const int init_ok = gpio_init_int( button, GPIO_IN_PU, GPIO_FALLING, button_callback, &cfg );
 
-    bool state = false;
+    size_t state = 0;
     while (1) {
         delay(cfg);
-        if (state) {
-            lpd8806_load_rgb(&lpd8806_dev,&red);
-        } else {
-            lpd8806_load_rgb(&lpd8806_dev,&green);
-        }
-        state = !state;
+        lpd8806_load_rgb(&lpd8806_dev,const_cast<color_rgb_t*>(&(SEQ[state][0])));
+        state = (state+1) % SEQ.size();
         if (init_ok==0)
             gpio_toggle(led0);
         puts("Blink! (No LED present or configured...)");

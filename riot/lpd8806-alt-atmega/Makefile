@@ -18,6 +18,8 @@ USEMODULE += color
 # pcint2 funktioniert nicht, wie gedacht
 # USEMODULE += atmega_pcint2
 
+USEPKG += etl
+
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 1
 
