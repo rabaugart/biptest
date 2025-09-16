@@ -14,7 +14,7 @@ DEVELHELP ?= 1
 
 USEMODULE += periph_gpio
 USEMODULE += periph_gpio_irq
-USEMODULE += lpd8808
+USEMODULE += color
 # pcint2 funktioniert nicht, wie gedacht
 # USEMODULE += atmega_pcint2
 

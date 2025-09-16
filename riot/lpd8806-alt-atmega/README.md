@@ -7,9 +7,12 @@ von [Adafruit](https://learn.adafruit.com/digital-led-strip/wiring).
 Im Adafruite-[Code](https://github.com/adafruit/LPD8806/blob/master/LPD8806.cpp)
 erfolgt die Ansteuerung über SPI.
 
-Es gibt in Riot einen passenden Treiber `lpd8808`, das verwendet werden kann mit
+Es gibt in Riot einen passenden Treiber `lpd8808`, das verwendet werden könnte mit
 
     USEMODULE += lpd8808
+
+Das Modul ist jedoch fehlerhaft. Eine korrigiert Version liegt als lpd8806 mit in diesem
+Verzeichnis.
 
 Bauen mit
 

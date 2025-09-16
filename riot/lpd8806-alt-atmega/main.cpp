@@ -26,7 +26,7 @@
 
 //#define WS281X_BYTES_PER_DEVICE (4U)
 
-#include "lpd8808.h"
+#include "lpd8806.h"
 
 gpio_t led0 = GPIO_PIN(3,3);
 gpio_mode_t led0_mode = GPIO_OUT;
@@ -88,13 +88,13 @@ int main(void)
 
     config_t cfg;
 
-    lpd8808_params_t params = { .led_cnt=NUM_LEDS, .pin_clk=clk_out, .pin_dat=data_out };
-    lpd8808_t lpd8808_dev;
+    lpd8806_params_t params = { .led_cnt=NUM_LEDS, .pin_clk=clk_out, .pin_dat=data_out };
+    lpd8806_t lpd8806_dev;
 
     color_rgb_t red = { .r=0xFF,.g=0,.b=0x00};
-    color_rgb_t green = { .r=0x0,.g=0xFF,.b=0x0};
+    color_rgb_t green = { .r=0x00,.g=0x00,.b=0xFF};
 
-    const int init_ok = lpd8808_init(&lpd8808_dev, &params);
+    const int init_ok = lpd8806_init(&lpd8806_dev, &params);
 
     //const int init_ok = gpio_init_int( button, GPIO_IN_PU, GPIO_FALLING, button_callback, &cfg );
 
@@ -102,9 +102,9 @@ int main(void)
     while (1) {
         delay(cfg);
         if (state) {
-            lpd8808_load_rgb(&lpd8808_dev,&red);
+            lpd8806_load_rgb(&lpd8806_dev,&red);
         } else {
-            lpd8808_load_rgb(&lpd8808_dev,&green);
+            lpd8806_load_rgb(&lpd8806_dev,&green);
         }
         state = !state;
         if (init_ok==0)
