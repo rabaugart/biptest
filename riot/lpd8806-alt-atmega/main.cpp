@@ -44,7 +44,7 @@ struct config_t {
    bool low;
    config_t() : low(true) {}
    void toggle() { low = !low; }
-   unsigned int delay_ms() const { return low ? 2000 : 2000; }
+   unsigned int delay_ms() const { return low ? 2000 : 200; }
 };
 
 static void delay(config_t const& c)
@@ -109,14 +109,14 @@ int main(void)
 
     const int init_ok = lpd8806_init(&lpd8806_dev, &params);
 
-    //const int init_ok = gpio_init_int( button, GPIO_IN_PU, GPIO_FALLING, button_callback, &cfg );
+    const int init_okb = gpio_init_int( button, GPIO_IN_PU, GPIO_FALLING, button_callback, &cfg );
 
     size_t state = 0;
     while (1) {
         delay(cfg);
         lpd8806_load_rgb(&lpd8806_dev,const_cast<color_rgb_t*>(&(SEQ[state][0])));
         state = (state+1) % SEQ.size();
-        if (init_ok==0)
+        if (init_ok==0 && init_okb==0)
             gpio_toggle(led0);
         puts("Blink! (No LED present or configured...)");
     }
