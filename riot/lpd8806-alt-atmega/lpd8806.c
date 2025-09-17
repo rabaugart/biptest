@@ -69,9 +69,9 @@ int lpd8806_init(lpd8806_t *dev, const lpd8806_params_t *params)
 void lpd8806_load_rgb(const lpd8806_t *dev, color_rgb_t vals[])
 {
     for (int i = 0; i < dev->led_cnt; i++) {
-        put_byte(dev, ((vals[i].r >> 0) | 0x00));
-        put_byte(dev, ((vals[i].g >> 0) | 0x00));
-        put_byte(dev, ((vals[i].b >> 0) | 0x00));
+        put_byte(dev, vals[i].r);
+        put_byte(dev, vals[i].b);
+        put_byte(dev, vals[i].g);
     }
     flush(dev);
 }

@@ -20,6 +20,8 @@ USEMODULE += color
 
 USEPKG += etl
 
+CXXEXFLAGS+=-std=c++1z
+
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 1
 

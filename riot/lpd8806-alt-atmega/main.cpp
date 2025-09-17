@@ -81,10 +81,12 @@ static constexpr color_rgb_t red = { .r=0xFF,.g=0,.b=0x00};
 static constexpr color_rgb_t blue = { .r=0x00,.g=0xFF,.b=0x00};
 static constexpr color_rgb_t green = { .r=0x00,.g=0x00,.b=0xFF};
 
-static constexpr etl::array<led_array_t,3> SEQ = {
+static constexpr etl::array SEQ = {
     led_array_t{red,green,blue},
     led_array_t{blue,red,green},
-    led_array_t{green,blue,red}
+    led_array_t{green,blue,red},
+    led_array_t{red,red,red},
+    led_array_t{green,green,green}
 };
 
 int main(void)
