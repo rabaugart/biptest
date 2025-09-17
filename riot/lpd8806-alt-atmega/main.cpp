@@ -61,11 +61,13 @@ void button_callback(void* vcfg) {
     config_t& cfg = *reinterpret_cast<config_t*>(vcfg);
     if (!gpio_read(button)) {
         // Button low ist gedrückt
-        ztimer_stopwatch_reset(&cfg.stopwatch);
+        ztimer_stopwatch_start(&cfg.stopwatch);
     } else {
-        if (ztimer_stopwatch_measure(&cfg.stopwatch)>50) {
+        if (ztimer_stopwatch_measure(&cfg.stopwatch)>100) {
             cfg.toggle();
         }
+        ztimer_stopwatch_stop(&cfg.stopwatch);
+        ztimer_stopwatch_reset(&cfg.stopwatch);
     }
 }
 
