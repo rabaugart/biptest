@@ -15,11 +15,14 @@ DEVELHELP ?= 1
 USEMODULE += periph_gpio
 USEMODULE += periph_gpio_irq
 USEMODULE += color
+USEMODULE += ztimer
+USEMODULE += ztimer_msec
 # pcint2 funktioniert nicht, wie gedacht
 # USEMODULE += atmega_pcint2
 
 USEPKG += etl
 
+# c++20 bisher nicht verfügbar
 CXXEXFLAGS+=-std=c++1z
 
 # Change this to 0 show compiler invocation lines by default:

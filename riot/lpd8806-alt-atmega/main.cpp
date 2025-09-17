@@ -15,8 +15,9 @@
  * @}
  */
 
-#include "etl/array.h"
 #include <stdio.h>
+
+#include "etl/array.h"
 
 #include "clk.h"
 #include "board.h"
@@ -24,6 +25,7 @@
 #include "periph_conf.h"
 #include "timex.h"
 #include "ztimer.h"
+#include "ztimer/stopwatch.h"
 
 //#define WS281X_BYTES_PER_DEVICE (4U)
 
@@ -42,35 +44,29 @@ gpio_t button = GPIO_PIN(3,2);
 
 struct config_t {
    bool low;
-   config_t() : low(true) {}
+   ztimer_stopwatch_t stopwatch;
+   config_t() : low(true) {
+       ztimer_stopwatch_init(ZTIMER_MSEC,&stopwatch);
+   }
    void toggle() { low = !low; }
    unsigned int delay_ms() const { return low ? 2000 : 200; }
 };
 
 static void delay(config_t const& c)
 {
-    if (IS_USED(MODULE_ZTIMER)) {
-        ztimer_sleep(ZTIMER_USEC, c.delay_ms()*MS_PER_SEC);
-    }
-    else {
-        /*
-         * As fallback for freshly ported boards with no timer drivers written
-         * yet, we just use the CPU to delay execution and assume that roughly
-         * 20 CPU cycles are spend per loop iteration.
-         *
-         * Note that the volatile qualifier disables compiler optimizations for
-         * all accesses to the counter variable. Without volatile, modern
-         * compilers would detect that the loop is only wasting CPU cycles and
-         * optimize it out - but here the wasting of CPU cycles is desired.
-         */
-        uint32_t loops = coreclk() / 20;
-        for (volatile uint32_t i = 0; i < loops; i++) { }
-    }
+    ztimer_sleep(ZTIMER_MSEC, c.delay_ms());
 }
 
 void button_callback(void* vcfg) {
     config_t& cfg = *reinterpret_cast<config_t*>(vcfg);
-    cfg.toggle();
+    if (!gpio_read(button)) {
+        // Button low ist gedrückt
+        ztimer_stopwatch_reset(&cfg.stopwatch);
+    } else {
+        if (ztimer_stopwatch_measure(&cfg.stopwatch)>50) {
+            cfg.toggle();
+        }
+    }
 }
 
 static constexpr size_t NUM_LEDS = 3;
@@ -80,13 +76,17 @@ using led_array_t = etl::array<color_rgb_t,NUM_LEDS>;
 static constexpr color_rgb_t red = { .r=0xFF,.g=0,.b=0x00};
 static constexpr color_rgb_t blue = { .r=0x00,.g=0xFF,.b=0x00};
 static constexpr color_rgb_t green = { .r=0x00,.g=0x00,.b=0xFF};
+static constexpr color_rgb_t gelb = { .r=0xFF,.g=0xFF,.b=0x00};
+static constexpr color_rgb_t weiss = { .r=0xFF,.g=0xFF,.b=0xFF};
 
 static constexpr etl::array SEQ = {
     led_array_t{red,green,blue},
     led_array_t{blue,red,green},
     led_array_t{green,blue,red},
+    led_array_t{gelb,gelb,gelb},
     led_array_t{red,red,red},
-    led_array_t{green,green,green}
+    led_array_t{green,green,green},
+    led_array_t{weiss,weiss,weiss}
 };
 
 int main(void)
@@ -106,10 +106,9 @@ int main(void)
     lpd8806_params_t params = { .led_cnt=NUM_LEDS, .pin_clk=clk_out, .pin_dat=data_out };
     lpd8806_t lpd8806_dev;
 
-
     const int init_ok = lpd8806_init(&lpd8806_dev, &params);
 
-    const int init_okb = gpio_init_int( button, GPIO_IN_PU, GPIO_FALLING, button_callback, &cfg );
+    const int init_okb = gpio_init_int( button, GPIO_IN_PU, GPIO_BOTH, button_callback, &cfg );
 
     size_t state = 0;
     while (1) {
