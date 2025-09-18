@@ -1,7 +1,10 @@
 LPD8806
 =======
 
-Versuche, das alte RGB-Leuchtband anzubinden.
+Binde das alte RGB-Leuchtband an.
+
+![](board.jpeg)
+
 Das sind gar keine `ws2812`, sondern handelt es sich dabei um [LPD8806](https://cdn-shop.adafruit.com/datasheets/lpd8806%20english.pdf)
 von [Adafruit](https://learn.adafruit.com/digital-led-strip/wiring).
 Im Adafruite-[Code](https://github.com/adafruit/LPD8806/blob/master/LPD8806.cpp)
