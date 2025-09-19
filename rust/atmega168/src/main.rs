@@ -22,17 +22,17 @@ fn panic(_info: &core::panic::PanicInfo) -> ! {
     // SAFETY: Because main() already has references to the peripherals this is an unsafe
     // operation - but because no other code can run after the panic handler was called,
     // we know it is okay.
-    let dp = unsafe { avr_device::atmega328p::Peripherals::steal() };
+    let dp = unsafe { avr_device::atmega168::Peripherals::steal() };
 
     loop {
         avr_device::asm::delay_cycles(1_000_000);
-        dp.PORTD.portd().write(|w| w.pd3().set_bit());
+        dp.PORTC.portc.write(|w| w.pc3().set_bit());
         avr_device::asm::delay_cycles(1_000_000);
-        dp.PORTD.portd().write(|w| w.pd3().clear_bit());
+        dp.PORTC.portc.write(|w| w.pc3().clear_bit());
     }
 }
 
-#[avr_device::interrupt(atmega328p)]
+#[avr_device::interrupt(atmega168)]
 fn TIMER0_OVF() {
     // This interrupt should raise every (1024*255)/16MHz s ≈ 0.01s
     // We then count 61 times to approximate 1s.
@@ -56,20 +56,20 @@ fn TIMER0_OVF() {
 
 #[avr_device::entry]
 fn main() -> ! {
-    let dp = avr_device::atmega328p::Peripherals::take().unwrap();
+    let dp = avr_device::atmega168::Peripherals::take().unwrap();
 
     // As you can see, we use .write() instead of .modify(), so the register
     // will be written value + the modified bits
 
     // Divide by 1024 -> 16MHz/1024 = 15.6kHz
-    dp.TC0.tccr0b().write(|w| w.cs0().prescale_1024());
+    dp.TC0.tccr0b.write(|w| w.cs0().prescale_1024());
     // Enable overflow interrupts
-    dp.TC0.timsk0().write(|w| w.toie0().set_bit());
+    dp.TC0.timsk0.write(|w| w.toie0().set_bit());
 
     // Make pd2 and pd3 outputs
     // We use .modify() in order not to change the other bits
-    dp.PORTD.ddrd().modify(|_, w| w.pd2().set_bit());
-    dp.PORTD.ddrd().modify(|_, w| w.pd3().set_bit());
+    dp.PORTC.ddrc.modify(|_, w| w.pc2().set_bit());
+    dp.PORTC.ddrc.modify(|_, w| w.pc3().set_bit());
 
     // SAFETY: We can enable the interrupts here as we are not inside
     // a critical section.
@@ -85,7 +85,7 @@ fn main() -> ! {
             led_state = LED_STATE.borrow(cs).get();
         });
 
-        dp.PORTD.portd().modify(|_, w| w.pd3().bit(led_state));
+        dp.PORTC.portc.modify(|_, w| w.pc3().bit(led_state));
 
         // We want to make the program crash after 9 blinks
         if previous_state != led_state {

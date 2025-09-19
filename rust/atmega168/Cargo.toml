@@ -6,7 +6,7 @@ edition = "2024"
 license = "MIT OR Apache-2.0"
 
 [[bin]]
-name = "mega328-test"
+name = "mega168-test"
 test = false
 bench = false
 
@@ -19,7 +19,7 @@ embedded-hal = "0.2.3"
 
 [dependencies.avr-device]
 version = "0.7"
-path = "../.."
+#path = "../.."
 features = ["atmega168", "rt"]
 
 # Configure the build for minimal size - AVRs have very little program memory
