@@ -1,13 +1,18 @@
-# ATmega328P Example
+# ATmega168 Example
 
-## Raba, 11.9.25
+Pinout Atmega aus dem [Datenblatt](https://ww1.microchip.com/downloads/en/DeviceDoc/ATmega48_88_168_megaAVR-Data-Sheet-40002074.pdf)
 
-Übernommen von [avr-device](https://github.com/Rahix/avr-device.git).
+![](ATmega48_88_168_pinout.svg)
+
+## Raba, 19.9.25
+
+Übernommen von avr_rust_blinky hier und [avr-device](https://github.com/Rahix/avr-device.git).
+
 Das Beispiel blinkt 9-mal und gerät dann in Panic.
 
 Flashen über Teensy mittels:
 
-    avrdude -c arduino -p m328p -P /dev/ttyACM0 -U flash:w:target/avr-none/release/mega328-test.elf:e
+    avrdude -c arduino -p m168p -P /dev/ttyACM0 -U flash:w:target/avr-none/release/mega168-test.elf:e
 
 Hardware ist die gleiche wie beim [riot-blinky](https://github.com/rabaugart/biptest/commit/9f75816cef791133e4e2dda5c7b0da1e060c676f#diff-ed87f96fcdb5448c971f053679fb47ec8b14bfd30eb62c165984f5c84eaf5780).
 
