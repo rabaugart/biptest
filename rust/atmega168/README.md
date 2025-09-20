@@ -20,7 +20,11 @@ Hardware ist die gleiche wie beim [riot-blinky](https://github.com/rabaugart/bip
 
 ## Programmieren
 
-Siehe Teensy-[ISP](../avr-rust-blinky)
+Siehe Teensy-ISP in [avr-rust-blinky](../avr-rust-blinky)
+
+Beide Atmega-MCUS können über einen ISP laufen.
+Die Verbindungen `SCK`, `MISO` und `MOSI` sind parallel geführt.
+Nur die `Reset`-Verbindung muss umgesteckt werden.
 
 ## Weitere Ressourcen:
 
