@@ -14,6 +14,10 @@ Flashen über Teensy mittels:
 
     avrdude -c arduino -p m168p -P /dev/ttyACM0 -U flash:w:target/avr-none/release/mega168-test.elf:e
 
+oder
+
+    cargo run --release
+
 Hardware ist die gleiche wie beim [riot-blinky](https://github.com/rabaugart/biptest/commit/9f75816cef791133e4e2dda5c7b0da1e060c676f#diff-ed87f96fcdb5448c971f053679fb47ec8b14bfd30eb62c165984f5c84eaf5780).
 
 ![](https://raw.githubusercontent.com/rabaugart/biptest/9f75816cef791133e4e2dda5c7b0da1e060c676f/riot/blinky/board.jpg)
@@ -25,6 +29,8 @@ Siehe Teensy-ISP in [avr-rust-blinky](../avr-rust-blinky)
 Beide Atmega-MCUS können über einen ISP laufen.
 Die Verbindungen `SCK`, `MISO` und `MOSI` sind parallel geführt.
 Nur die `Reset`-Verbindung muss umgesteckt werden.
+
+Als `runner` wird `avrdude` direkt verwendet.
 
 ## Weitere Ressourcen:
 
