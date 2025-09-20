@@ -13,7 +13,23 @@ Hardware ist die gleiche wie beim [riot-blinky](https://github.com/rabaugart/bip
 
 ![](https://raw.githubusercontent.com/rabaugart/biptest/9f75816cef791133e4e2dda5c7b0da1e060c676f/riot/blinky/board.jpg)
 
-Weitere Ressourcen:
+## Programmieren mit Teensy
+
+Bezeichnung     Arduino    Teensy              Target Pin  Bemerkung
+-------------- --------- -------------------- ------------ -------------------------------------
+Slave select     10         CS                  1 RES      Wird auf Reset(P1) am Target gelegt
+MOSI             11         Data out (DOUT)     17 MOSI
+MISO             12         Data input (DIN)    18 MISO
+SCK              13         SCK                 19 SCK
+Heartbeat         9         9
+Error             8         8
+Programming       7         7
+
+![](teensy-30-pins.svg)
+
+![](atmega328p-pinout.svg)
+
+## Weitere Ressourcen:
 
 - avr-rust [Book](https://book.avr-rust.org/).
 
