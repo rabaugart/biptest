@@ -15,15 +15,15 @@ Hardware ist die gleiche wie beim [riot-blinky](https://github.com/rabaugart/bip
 
 ## Programmieren mit Teensy
 
-Bezeichnung     Arduino    Teensy              Target Pin  Bemerkung
--------------- --------- -------------------- ------------ -------------------------------------
-Slave select     10         CS                  1 RES      Wird auf Reset(P1) am Target gelegt
-MOSI             11         Data out (DOUT)     17 MOSI
-MISO             12         Data input (DIN)    18 MISO
-SCK              13         SCK                 19 SCK
-Heartbeat         9         9
-Error             8         8
-Programming       7         7
+|Bezeichnung   | Arduino |  Teensy            | Target Pin |Bemerkung
+|--------------|---------|--------------------|------------|-------------------------------------
+|Slave select  |  10     |   CS               |  1 RES     |Wird auf Reset(P1) am Target gelegt
+|MOSI          |  11     |   Data out (DOUT)  |  17 MOSI   |
+|MISO          |  12     |   Data input (DIN) |  18 MISO   |
+|SCK           |  13     |   SCK              |  19 SCK    |
+|Heartbeat     |   9     |   9                |            |
+|Error         |   8     |   8                |            |
+|Programming   |   7     |   7                |            |
 
 ![](teensy-30-pins.svg)
 
