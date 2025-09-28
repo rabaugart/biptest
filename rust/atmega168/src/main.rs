@@ -4,7 +4,7 @@
 
 use core::cell::Cell;
 
-use avr_device::interrupt::{self, Mutex};
+use avr_device::{atmega168::Peripherals, interrupt::{self, Mutex}};
 
 static LED_STATE: Mutex<Cell<bool>> = Mutex::new(Cell::new(true));
 
@@ -54,6 +54,26 @@ fn TIMER0_OVF() {
     }
 }
 
+struct RGB(u8,u8,u8);
+
+const WEISS : RGB = RGB(0xff_u8,0xff_u8,0xff_u8);
+const AUS : RGB = RGB(0x00_u8,0x00_u8,0x00_u8);
+
+fn sende_byte( dp: &Peripherals, b: u8 ) {
+    for i in 0..8 {
+        let led_state = ((b<<i) & 1) != 0;
+        dp.PORTC.portc.modify(|_, w| w.pc2().bit(led_state));
+        dp.PORTC.portc.modify(|_, w| w.pc3().bit(true));
+        dp.PORTC.portc.modify(|_, w| w.pc3().bit(false));
+    }
+}
+
+fn leuchte( dp: &Peripherals, col:&RGB ) {
+    for ci in [col.0,col.1,col.2] {
+        sende_byte(dp,ci);
+    }
+}
+
 #[avr_device::entry]
 fn main() -> ! {
     let dp = avr_device::atmega168::Peripherals::take().unwrap();
@@ -79,19 +99,27 @@ fn main() -> ! {
 
     let mut counter = 0;
     let mut previous_state: bool = true;
+    sende_byte(&dp,0);
     loop {
         let mut led_state: bool = true;
         interrupt::free(|cs| {
             led_state = LED_STATE.borrow(cs).get();
         });
 
-        dp.PORTC.portc.modify(|_, w| w.pc3().bit(led_state));
+        //dp.PORTC.portc.modify(|_, w| w.pc3().bit(led_state));
+
+        if led_state {
+            leuchte(&dp,&WEISS);
+        } else {
+            leuchte(&dp,&AUS);
+        }
+        sende_byte(&dp,0);
 
         // We want to make the program crash after 9 blinks
         if previous_state != led_state {
             counter += 1;
         }
-        if counter > 9 {
+        if counter > 999 {
             // The following panics, but it could also be
             // a more "general" bug like dividing by zero, out of bounds,
             // etc..
