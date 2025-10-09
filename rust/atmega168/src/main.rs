@@ -57,15 +57,23 @@ fn TIMER0_OVF() {
 struct RGB(u8,u8,u8);
 
 const WEISS : RGB = RGB(0xff_u8,0xff_u8,0xff_u8);
+const GRÜN : RGB = RGB(0x00_u8,0xff_u8,0x00_u8);
 const AUS : RGB = RGB(0x00_u8,0x00_u8,0x00_u8);
 
 fn sende_byte( dp: &Peripherals, b: u8 ) {
     for i in 0..8 {
-        let led_state = ((b<<i) & 1) != 0;
+        let led_state = ((1<<i) & b) != 0;
         dp.PORTC.portc.modify(|_, w| w.pc2().bit(led_state));
         dp.PORTC.portc.modify(|_, w| w.pc3().bit(true));
+        avr_device::asm::delay_cycles(100);
         dp.PORTC.portc.modify(|_, w| w.pc3().bit(false));
     }
+}
+
+fn abschluss( dp: &Peripherals ) {
+    dp.PORTC.portc.modify(|_, w| w.pc3().bit(true));
+    avr_device::asm::delay_cycles(1_000);
+    dp.PORTC.portc.modify(|_, w| w.pc3().bit(false));
 }
 
 fn leuchte( dp: &Peripherals, col:&RGB ) {
@@ -86,10 +94,11 @@ fn main() -> ! {
     // Enable overflow interrupts
     dp.TC0.timsk0.write(|w| w.toie0().set_bit());
 
-    // Make pd2 and pd3 outputs
+    // Make pc2 and pc3 outputs
     // We use .modify() in order not to change the other bits
     dp.PORTC.ddrc.modify(|_, w| w.pc2().set_bit());
     dp.PORTC.ddrc.modify(|_, w| w.pc3().set_bit());
+    dp.PORTC.ddrc.modify(|_, w| w.pc4().set_bit());
 
     // SAFETY: We can enable the interrupts here as we are not inside
     // a critical section.
@@ -100,6 +109,7 @@ fn main() -> ! {
     let mut counter = 0;
     let mut previous_state: bool = true;
     sende_byte(&dp,0);
+    avr_device::asm::delay_cycles(1_000_000);
     loop {
         let mut led_state: bool = true;
         interrupt::free(|cs| {
@@ -113,7 +123,10 @@ fn main() -> ! {
         } else {
             leuchte(&dp,&AUS);
         }
-        sende_byte(&dp,0);
+        //sende_byte(&dp,0);
+        abschluss(&dp);
+        dp.PORTC.portc.modify(|_, w| w.pc4().bit(led_state));
+        avr_device::asm::delay_cycles(2_000_000);
 
         // We want to make the program crash after 9 blinks
         if previous_state != led_state {
@@ -125,6 +138,7 @@ fn main() -> ! {
             // etc..
             panic!();
         }
+        led_state = !led_state;
         previous_state = led_state;
     }
 }
