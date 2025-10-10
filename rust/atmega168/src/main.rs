@@ -26,9 +26,9 @@ fn panic(_info: &core::panic::PanicInfo) -> ! {
 
     loop {
         avr_device::asm::delay_cycles(1_000_000);
-        dp.PORTC.portc.write(|w| w.pc3().set_bit());
+        set_test_led(&dp, true);
         avr_device::asm::delay_cycles(1_000_000);
-        dp.PORTC.portc.write(|w| w.pc3().clear_bit());
+        set_test_led(&dp, false);
     }
 }
 
@@ -60,20 +60,45 @@ const WEISS : RGB = RGB(0xff_u8,0xff_u8,0xff_u8);
 const GRÜN : RGB = RGB(0x00_u8,0xff_u8,0x00_u8);
 const AUS : RGB = RGB(0x00_u8,0x00_u8,0x00_u8);
 
+fn set_data( dp: &Peripherals, b:bool ) {
+    if b {
+        dp.PORTC.portc.modify(|_, w| w.pc2().set_bit());
+    } else {
+        dp.PORTC.portc.modify(|_, w| w.pc2().clear_bit());
+    }
+}
+
+fn set_clock( dp: &Peripherals, b: bool ) {
+    if b {
+        dp.PORTC.portc.modify(|_, w| w.pc3().set_bit());
+    } else {
+        dp.PORTC.portc.modify(|_, w| w.pc3().clear_bit());
+    }
+}
+
+fn set_test_led( dp: &Peripherals, b: bool ) {
+    if b {
+        dp.PORTC.portc.modify(|_, w| w.pc4().set_bit());
+    } else {
+        dp.PORTC.portc.modify(|_, w| w.pc4().clear_bit());
+    }
+}
+
 fn sende_byte( dp: &Peripherals, b: u8 ) {
     for i in 0..8 {
         let led_state = ((1<<i) & b) != 0;
-        dp.PORTC.portc.modify(|_, w| w.pc2().bit(led_state));
-        dp.PORTC.portc.modify(|_, w| w.pc3().bit(true));
-        avr_device::asm::delay_cycles(100);
-        dp.PORTC.portc.modify(|_, w| w.pc3().bit(false));
+        set_data(dp, led_state);
+        set_clock(dp, true);
+        //avr_device::asm::delay_cycles(2);
+        set_clock(dp, false);
     }
 }
 
 fn abschluss( dp: &Peripherals ) {
-    dp.PORTC.portc.modify(|_, w| w.pc3().bit(true));
+    //dp.PORTC.portc.modify(|_, w| w.pc3().bit(true));
+    //dp.PORTC.portc.modify(|_, w| w.pc3().bit(false));
+    set_clock(dp, false);
     avr_device::asm::delay_cycles(1_000);
-    dp.PORTC.portc.modify(|_, w| w.pc3().bit(false));
 }
 
 fn leuchte( dp: &Peripherals, col:&RGB ) {
@@ -105,15 +130,17 @@ fn main() -> ! {
     unsafe {
         avr_device::interrupt::enable();
     }
+    set_test_led(&dp, true);
 
     let mut counter = 0;
     let mut previous_state: bool = true;
-    sende_byte(&dp,0);
-    avr_device::asm::delay_cycles(1_000_000);
+    //sende_byte(&dp,0);
+    //avr_device::asm::delay_cycles(1_000_000);
+    abschluss(&dp);
     loop {
         let mut led_state: bool = true;
         interrupt::free(|cs| {
-            led_state = LED_STATE.borrow(cs).get();
+            //led_state = LED_STATE.borrow(cs).get();
         });
 
         //dp.PORTC.portc.modify(|_, w| w.pc3().bit(led_state));
@@ -125,8 +152,9 @@ fn main() -> ! {
         }
         //sende_byte(&dp,0);
         abschluss(&dp);
-        dp.PORTC.portc.modify(|_, w| w.pc4().bit(led_state));
-        avr_device::asm::delay_cycles(2_000_000);
+        //dp.PORTC.portc.modify(|_, w| w.pc4().set_bit());
+        //set_test_led(&dp, led_state);
+        avr_device::asm::delay_cycles(2_000);
 
         // We want to make the program crash after 9 blinks
         if previous_state != led_state {
