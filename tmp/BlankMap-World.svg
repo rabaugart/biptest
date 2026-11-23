@@ -124,6 +124,14 @@
 	stroke-width: 0.5;
 }
 
+.de
+{
+	opacity: 1;
+	fill: #0000ff;
+	stroke: #000000;
+	stroke-width: 0.5;
+}
+		
 /*
  * Reserved class names:
  *
